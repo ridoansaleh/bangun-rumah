@@ -51,7 +51,7 @@ class Promo extends Component {
 
 const styles = StyleSheet.create({
   exampleContainer: {
-    paddingVertical: 5,
+    paddingVertical: 3,
   },
   slider: {
     // marginTop: 15,

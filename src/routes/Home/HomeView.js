@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Container, Content } from 'native-base';
+import { StyleSheet } from 'react-native';
+import { Container, Content, Text } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import Header from '../../components/Header';
 import Promo from './Promo';
@@ -18,10 +19,13 @@ class HomeScreen extends Component {
         <Header openDrawer={() => this.props.navigation.openDrawer()} />
         <Content>
           <Grid>
-            <Row size={1}>
+            <Row>
               <Promo />
             </Row>
-            <Row size={3}>
+            <Row>
+              <Text style={styles.productLabel}>Produk</Text>
+            </Row>
+            <Row>
               <ProductList />
             </Row>
           </Grid>
@@ -31,5 +35,11 @@ class HomeScreen extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  productLabel: {
+    padding: 10,
+  },
+});
 
 export default HomeScreen;
