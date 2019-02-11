@@ -6,16 +6,16 @@ class BottomNavbar extends Component {
     return (
       <Footer>
         <FooterTab>
-          <Button vertical>
+          <Button active>
             <Icon active name="home" />
           </Button>
-          <Button vertical>
+          <Button>
             <Icon name="apps" />
           </Button>
-          <Button vertical>
+          <Button>
             <Icon name="cart" />
           </Button>
-          <Button vertical>
+          <Button>
             <Icon name="person" />
           </Button>
         </FooterTab>
