@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Font } from 'expo';
+import firebase from 'firebase';
 import AppContainer from './src/routes';
+import config from './firebase.config';
 
 class App extends Component {
   state = {
@@ -8,6 +10,7 @@ class App extends Component {
   };
 
   componentDidMount() {
+    firebase.initializeApp(config);
     this.loadFonts();
   }
 

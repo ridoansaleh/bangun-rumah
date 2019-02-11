@@ -25,3 +25,7 @@ DerivedData
 #
 npm-debug.log
 node_modules
+
+# secret configs
+#
+firebase.config.js

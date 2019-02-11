@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
-import { Footer, FooterTab, Button, Icon, Text } from 'native-base';
+import { Footer, FooterTab, Button, Icon } from 'native-base';
 
 class BottomNavbar extends Component {
   render() {
     return (
       <Footer>
         <FooterTab>
-          <Button vertical active>
-            <Icon name="home" />
+          <Button active>
+            <Icon active name="home" />
           </Button>
-          <Button vertical>
+          <Button>
             <Icon name="apps" />
           </Button>
-          <Button vertical>
-            <Icon active name="cart" />
+          <Button>
+            <Icon name="cart" />
           </Button>
-          <Button vertical>
+          <Button>
             <Icon name="person" />
           </Button>
         </FooterTab>
