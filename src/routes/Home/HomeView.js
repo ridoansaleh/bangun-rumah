@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import { Container, Content, Text } from 'native-base';
-import { Col, Row, Grid } from 'react-native-easy-grid';
+import { Row, Grid } from 'react-native-easy-grid';
 import Header from '../../components/Header';
 import Promo from './Promo';
 import ProductList from './ProductList';
