@@ -5,10 +5,12 @@ import CategoryScreen from './Category/CategoryView';
 import ShoppingCartScreen from './ShoppingCart/ShoppingCartView';
 import ProfileScreen from './Profile/ProfileView';
 import SideBar from '../components/SideBar';
+import LoginScreen from '../routes/Login/LoginView';
 
 const DrawerNav = createDrawerNavigator(
   {
     Home: HomeScreen,
+    Login: LoginScreen,
   },
   {
     initialRouteName: 'Home',

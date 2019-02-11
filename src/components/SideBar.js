@@ -2,73 +2,45 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, Platform, StyleSheet, View } from 'react-native';
 import { Content, Text, List, ListItem, Icon, Container, Left, Thumbnail } from 'native-base';
+import { drawerMenus as datas } from '../constant';
 
 const defaultPhoto = require('../../assets/default_profile.jpg');
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
-
-const datas = [
-  {
-    name: 'Riwayat Pemesanan',
-    route: 'OrderHistory',
-    icon: 'paper',
-    bg: '#C5F442',
-  },
-  {
-    name: 'Pesan',
-    route: 'PersonalMessage',
-    icon: 'mail',
-    bg: '#477EEA',
-  },
-  {
-    name: 'Diskusi',
-    route: 'Discussion',
-    icon: 'chatboxes',
-    bg: '#DA4437',
-  },
-  {
-    name: 'Review',
-    route: 'PersonalReview',
-    icon: 'repeat',
-    bg: '#C5F442',
-  },
-  {
-    name: 'Syarat dan Ketentuan',
-    route: 'Terms',
-    icon: 'book',
-    bg: '#477EEA',
-  },
-  {
-    name: 'FAQ',
-    route: 'Faq',
-    icon: 'help-circle-outline',
-    bg: '#DA4437',
-  },
-  {
-    name: 'Keluar',
-    route: 'NHAccordion',
-    icon: 'log-out',
-    bg: '#C5F442',
-  },
-];
 
 class SideBar extends Component {
   static propTypes = {
     navigation: PropTypes.object,
   };
 
+  state = {
+    isLogin: false,
+  };
+
   render() {
+    let menuList = [];
+
+    if (!this.state.isLogin) {
+      datas.splice(8, 1);
+      menuList = datas.slice(4);
+    } else {
+      datas.splice(6, 1);
+      datas.splice(6, 1);
+    }
+
     return (
       <Container>
         <Content
           bounces={false}
           style={{ flex: 1, backgroundColor: '#fff', top: -1, paddingTop: 25 }}>
-          <View style={styles.profile}>
-            <Thumbnail small source={defaultPhoto} />
-            <Text style={styles.nameText}>Ridoan Saleh Nasution</Text>
-          </View>
+          {this.state.isLogin && (
+            <View style={styles.profile}>
+              <Thumbnail small source={defaultPhoto} />
+              <Text style={styles.nameText}>Ridoan Saleh Nasution</Text>
+            </View>
+          )}
           <List
-            dataArray={datas}
+            dataArray={menuList}
             renderRow={data => (
               <ListItem button noBorder onPress={() => this.props.navigation.navigate(data.route)}>
                 <Left>
