@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
 import {
   Button,
@@ -25,16 +24,11 @@ const { width, height } = Dimensions.get('window');
 // Forgot password link is not ready yet
 
 class LoginView extends Component {
-  static propTypes = {
-    openDrawer: PropTypes.func,
-  };
-
   handleRouteChange = url => {
     this.props.navigation.navigate(url);
   };
 
   render() {
-    console.log('props : ', this.props);
     return (
       <Container>
         <Header style={styles.header}>
