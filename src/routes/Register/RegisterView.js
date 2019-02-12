@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions, TouchableOpacity, Picker, Image } from 'react-native';
 import {
   Button,
@@ -23,6 +24,12 @@ const loginUser = require('../../../assets/default_upload.png');
 const { width } = Dimensions.get('window');
 
 class RegisterView extends Component {
+  static propTypes = {
+    navigation: PropTypes.object,
+  };
+
+  state = {};
+
   handleRouteChange = url => {
     this.props.navigation.navigate(url);
   };

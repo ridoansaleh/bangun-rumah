@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { Provider } from 'react-redux';
 import { Font } from 'expo';
-import firebase from 'firebase';
+import createStore from './src/redux/store';
 import AppContainer from './src/routes';
-import config from './firebase.config';
+
+const storeValue = createStore();
 
 class App extends Component {
   state = {
@@ -10,7 +12,6 @@ class App extends Component {
   };
 
   componentDidMount() {
-    firebase.initializeApp(config);
     this.loadFonts();
   }
 
@@ -32,7 +33,11 @@ class App extends Component {
     if (!this.state.isFontsLoaded) {
       return null;
     }
-    return <AppContainer />;
+    return (
+      <Provider store={storeValue}>
+        <AppContainer />
+      </Provider>
+    );
   }
 }
 
