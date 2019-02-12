@@ -6,11 +6,13 @@ import ShoppingCartScreen from './ShoppingCart/ShoppingCartView';
 import ProfileScreen from './Profile/ProfileView';
 import SideBar from '../components/SideBar';
 import LoginScreen from '../routes/Login/LoginView';
+import RegisterScreen from '../routes/Register/RegisterView';
 
 const DrawerNav = createDrawerNavigator(
   {
     Home: HomeScreen,
     Login: LoginScreen,
+    Register: RegisterScreen,
   },
   {
     initialRouteName: 'Home',
