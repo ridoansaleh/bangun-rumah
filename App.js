@@ -1,11 +1,19 @@
 import React, { Component } from 'react';
+import { YellowBox } from 'react-native';
+import { Root } from 'native-base';
 import { Font } from 'expo';
 import AppContainer from './src/routes';
 
 class App extends Component {
-  state = {
-    isFontsLoaded: false,
-  };
+  constructor(props) {
+    super(props);
+
+    YellowBox.ignoreWarnings(['Setting a timer']);
+
+    this.state = {
+      isFontsLoaded: false,
+    };
+  }
 
   componentDidMount() {
     this.loadFonts();
@@ -29,7 +37,11 @@ class App extends Component {
     if (!this.state.isFontsLoaded) {
       return null;
     }
-    return <AppContainer />;
+    return (
+      <Root>
+        <AppContainer />
+      </Root>
+    );
   }
 }
 

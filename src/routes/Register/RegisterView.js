@@ -16,9 +16,14 @@ import {
   Text,
   Label,
   View,
+  Toast,
 } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ImagePicker } from 'expo';
+import uuid from 'uuid';
+import { st as storageRef, auth, db } from '../../../firebase.config';
+import initialState from './State';
 const loginUser = require('../../../assets/default_upload.png');
 const { width } = Dimensions.get('window');
 
@@ -28,22 +33,7 @@ class RegisterView extends Component {
   };
 
   state = {
-    name: '',
-    address: '',
-    email: '',
-    password: '',
-    gender: '',
-    born_date: '',
-    isNameValid: false,
-    isAddressValid: false,
-    isEmailValid: false,
-    isPasswordValid: false,
-    isDateValid: false,
-    isNameChanged: false,
-    isAddressChanged: false,
-    isEmailChanged: false,
-    isPasswordChanged: false,
-    isDateChanged: false,
+    ...initialState,
   };
 
   handleRouteChange = url => {
@@ -51,8 +41,6 @@ class RegisterView extends Component {
   };
 
   handleChangeField = (val, name) => {
-    console.log('val : ', val);
-    console.log('name : ', name);
     if (name === 'name') {
       if (val.length >= 3) {
         if (/^[a-zA-Z\ ]+$/.test(val)) {
@@ -96,8 +84,110 @@ class RegisterView extends Component {
     }
   };
 
+  choosePhoto = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: false,
+      aspect: [4, 3],
+    });
+
+    if (!result.cancelled) {
+      this.handleImagePicked(result);
+    }
+  };
+
+  handleImagePicked = async pickerResult => {
+    try {
+      // this.setState({ uploading: true });
+      if (!pickerResult.cancelled) {
+        const uploadUrl = await this.uploadImageAsync(pickerResult.uri);
+        this.setState({ userPhoto: uploadUrl, isPhotoUploaded: true });
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      // this.setState({ uploading: false });
+    }
+  };
+
+  uploadImageAsync = async uri => {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function(e) {
+        console.log(e);
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+    });
+
+    const ref = storageRef.child(uuid.v4());
+    const snapshot = await ref.put(blob);
+
+    blob.close();
+
+    return await snapshot.ref.getDownloadURL();
+  };
+
+  handleSubmit = () => {
+    let { userPhoto, name, email, password, address, gender, born_date } = this.state;
+    // this.setState({ isSpinnerLoading: true });
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then(res => {
+        db.collection('user')
+          .doc(res.user.uid)
+          .set({
+            photo: userPhoto,
+            nama: name,
+            alamat: address,
+            email,
+            jenis_kelamin: gender,
+            tanggal_lahir: born_date,
+          })
+          .then(function() {
+            console.log('Document successfully written!');
+          })
+          .catch(function(error) {
+            console.error('Error writing document: ', error);
+          });
+        this.setState({ ...initialState });
+        this.showToastMessage('Kamu berhasil signup, silahkan login!');
+      })
+      .catch(error => {
+        // this.setState({ isSpinnerLoading: false });
+        if (error.code === 'auth/email-already-in-use') {
+          this.showToastMessage('Email tersebut sudah digunakan akun lain');
+        } else {
+          this.showToastMessage('Kamu gagal signup, coba lagi!');
+        }
+      });
+  };
+
+  showToastMessage = message => {
+    Toast.show({
+      text: message,
+      textStyle: { color: 'yellow' },
+      buttonText: 'Close',
+      duration: 3000,
+    });
+  };
+
+  showErrorMessage = message => {
+    return (
+      <Item style={styles.errorBox}>
+        <Text style={styles.errorMessage}>{message}</Text>
+      </Item>
+    );
+  };
+
   render() {
     const {
+      userPhoto,
+      isPhotoUploaded,
       name,
       address,
       email,
@@ -132,8 +222,9 @@ class RegisterView extends Component {
           <Right />
         </Header>
         <Content padder>
-          <Image source={loginUser} style={styles.image} />
-          <Button small bordered dark style={styles.upload}>
+          {!isPhotoUploaded && <Image source={loginUser} style={styles.image} />}
+          {isPhotoUploaded && <Image source={{ uri: userPhoto }} style={styles.image} />}
+          <Button small bordered dark style={styles.upload} onPress={this.choosePhoto}>
             <Text>Upload</Text>
           </Button>
           <Form>
@@ -141,33 +232,21 @@ class RegisterView extends Component {
               <Label>Nama</Label>
               <Input value={name} onChangeText={val => this.handleChangeField(val, 'name')} />
             </Item>
-            {!isNameValid && isNameChanged && (
-              <Item style={styles.errorBox}>
-                <Text style={styles.errorMessage}>
-                  {'Tidak boleh angka atau karakter spesial (min. 3 huruf)'}
-                </Text>
-              </Item>
-            )}
+            {!isNameValid &&
+              isNameChanged &&
+              this.showErrorMessage('Tidak boleh angka atau karakter spesial (min. 3 huruf)')}
             {/* end of name */}
             <Item floatingLabel error={!!(isAddressChanged && !isAddressValid)}>
               <Label>Alamat</Label>
               <Input value={address} onChangeText={val => this.handleChangeField(val, 'address')} />
             </Item>
-            {!isAddressValid && isAddressChanged && (
-              <Item style={styles.errorBox}>
-                <Text style={styles.errorMessage}>{'Alamat minimal 3 huruf'}</Text>
-              </Item>
-            )}
+            {!isAddressValid && isAddressChanged && this.showErrorMessage('Alamat minimal 3 huruf')}
             {/* end of address */}
             <Item floatingLabel error={!!(isEmailChanged && !isEmailValid)}>
               <Label>Email</Label>
               <Input value={email} onChangeText={val => this.handleChangeField(val, 'email')} />
             </Item>
-            {!isEmailValid && isEmailChanged && (
-              <Item style={styles.errorBox}>
-                <Text style={styles.errorMessage}>{'Email tidak valid'}</Text>
-              </Item>
-            )}
+            {!isEmailValid && isEmailChanged && this.showErrorMessage('Email tidak valid')}
             {/* end of email */}
             <Item floatingLabel last error={!!(isPasswordChanged && !isPasswordChanged)}>
               <Label>Password</Label>
@@ -177,13 +256,9 @@ class RegisterView extends Component {
                 onChangeText={val => this.handleChangeField(val, 'password')}
               />
             </Item>
-            {!isPasswordValid && isPasswordChanged && (
-              <Item style={styles.errorBox}>
-                <Text style={styles.errorMessage}>
-                  {'Password minimal terdiri dari 8 karakter'}
-                </Text>
-              </Item>
-            )}
+            {!isPasswordValid &&
+              isPasswordChanged &&
+              this.showErrorMessage('Password minimal terdiri dari 8 karakter')}
             {/* end of password */}
             <Picker
               selectedValue={gender}
@@ -193,11 +268,9 @@ class RegisterView extends Component {
               <Picker.Item label="Laki-Laki" value="Laki-Laki" />
               <Picker.Item label="Perempuan" value="Perempuan" />
             </Picker>
-            {!isGenderValid && isGenderChanged && (
-              <Item style={styles.errorBox}>
-                <Text style={styles.errorMessage}>{'Silahkan pilih jenis kelamin'}</Text>
-              </Item>
-            )}
+            {!isGenderValid &&
+              isGenderChanged &&
+              this.showErrorMessage('Silahkan pilih jenis kelamin')}
             {/* end of gender */}
             <DatePicker
               style={styles.date}
@@ -218,15 +291,30 @@ class RegisterView extends Component {
               }}
               onDateChange={val => this.handleChangeField(val, 'born_date')}
             />
-            {!isDateChanged && isDateValid && (
-              <Item style={styles.errorBox}>
-                <Text style={styles.errorMessage}>{'Tanggal lahir harus dipilih'}</Text>
-              </Item>
-            )}
+            {!isDateChanged && isDateValid && this.showErrorMessage('Tanggal lahir harus dipilih')}
             {/* end of date */}
-            <Button block success style={styles.btn}>
-              <Text>Daftar</Text>
-            </Button>
+            {isPhotoUploaded &&
+              isNameValid &&
+              isAddressValid &&
+              isEmailValid &&
+              isPasswordValid &&
+              isGenderValid &&
+              isDateValid && (
+                <Button block success style={styles.btn} onPress={this.handleSubmit}>
+                  <Text>Daftar</Text>
+                </Button>
+              )}
+            {(!isPhotoUploaded ||
+              !isNameValid ||
+              !isAddressValid ||
+              !isEmailValid ||
+              !isPasswordValid ||
+              !isGenderValid ||
+              !isDateValid) && (
+              <Button block disabled style={styles.btn}>
+                <Text>Daftar</Text>
+              </Button>
+            )}
           </Form>
           <View style={styles.hasAccount}>
             <Text>Sudah punya Akun? Klik di </Text>
