@@ -1,16 +1,21 @@
 import React, { Component } from 'react';
+import { YellowBox } from 'react-native';
+import { Root } from 'native-base';
 import { Font } from 'expo';
-import firebase from 'firebase';
 import AppContainer from './src/routes';
-import config from './firebase.config';
 
 class App extends Component {
-  state = {
-    isFontsLoaded: false,
-  };
+  constructor(props) {
+    super(props);
+
+    YellowBox.ignoreWarnings(['Setting a timer']);
+
+    this.state = {
+      isFontsLoaded: false,
+    };
+  }
 
   componentDidMount() {
-    firebase.initializeApp(config);
     this.loadFonts();
   }
 
@@ -32,7 +37,11 @@ class App extends Component {
     if (!this.state.isFontsLoaded) {
       return null;
     }
-    return <AppContainer />;
+    return (
+      <Root>
+        <AppContainer />
+      </Root>
+    );
   }
 }
 
