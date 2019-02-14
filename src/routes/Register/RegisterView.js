@@ -275,6 +275,7 @@ class RegisterView extends Component {
             <DatePicker
               style={styles.date}
               date={born_date}
+              androidMode="spinner"
               mode="date"
               placeholder="Tanggal Lahir"
               format="YYYY-MM-DD"
