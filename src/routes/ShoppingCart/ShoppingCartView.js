@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
+import Authentication from '../../components/Authentication';
 
 class ShoppingCartScreen extends Component {
   render() {
@@ -11,4 +12,4 @@ class ShoppingCartScreen extends Component {
   }
 }
 
-export default ShoppingCartScreen;
+export default Authentication(ShoppingCartScreen);

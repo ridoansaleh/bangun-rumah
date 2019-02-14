@@ -21,22 +21,21 @@ class ProductList extends Component {
   }
 
   getProducts = () => {
-    const that = this;
     const productsRef = db.collection('produk');
     let products = [];
     productsRef
       .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
           products.push(doc.data());
         });
-        that.setState({
+        this.setState({
           isDataFetched: true,
           dataProducts: products,
         });
       })
-      .catch(function(error) {
-        console.error('Error getting document:', error);
+      .catch(error => {
+        console.error("Error getting product's collection \n", error);
       });
   };
 

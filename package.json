@@ -15,7 +15,6 @@
     "prop-types": "^15.6.2",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
-    "react-native-camera-roll-picker": "^1.2.3",
     "react-native-datepicker": "^1.7.2",
     "react-native-easy-grid": "^0.2.0",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
+import Authentication from '../../components/Authentication';
 
 class CategoryScreen extends Component {
   render() {
@@ -11,4 +12,4 @@ class CategoryScreen extends Component {
   }
 }
 
-export default CategoryScreen;
+export default Authentication(CategoryScreen);

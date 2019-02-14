@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
+import Authentication from '../../components/Authentication';
 
 class ProfileScreen extends Component {
   render() {
@@ -11,4 +12,4 @@ class ProfileScreen extends Component {
   }
 }
 
-export default ProfileScreen;
+export default Authentication(ProfileScreen);

@@ -8,17 +8,35 @@ import Promo from './Promo';
 import ProductList from './ProductList';
 import Footer from '../../components/Footer';
 import Authentication from '../../components/Authentication';
+import { urls } from '../../constant';
 
 class HomeScreen extends Component {
   static propTypes = {
     nav: PropTypes.object,
-    user: PropTypes.array,
+    user: PropTypes.object,
+  };
+
+  state = {
+    isLogin: false,
+  };
+
+  componentDidMount() {
+    this.checkUserLogin();
+  }
+
+  checkUserLogin = () => {
+    this.setState({
+      isLogin: Object.keys(this.props.user).length > 0,
+    });
   };
 
   render() {
     return (
       <Container>
-        <Header openDrawer={() => this.props.nav.navigation.openDrawer()} />
+        <Header
+          openDrawer={() => this.props.nav.navigation.openDrawer()}
+          isLogin={this.state.isLogin}
+        />
         <Content>
           <Grid>
             <Row>
@@ -32,7 +50,7 @@ class HomeScreen extends Component {
             </Row>
           </Grid>
         </Content>
-        <Footer />
+        <Footer {...this.props.nav} pageActive={urls.home} />
       </Container>
     );
   }
