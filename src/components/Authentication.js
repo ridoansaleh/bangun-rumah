@@ -11,9 +11,7 @@ const Authentication = Wrapped => {
     };
 
     componentDidMount() {
-      console.log('propss : ', this.props);
       auth.onAuthStateChanged(user => {
-        console.log('_user : ', user);
         if (user) {
           this.getProfile();
         } else {

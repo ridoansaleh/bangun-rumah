@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { ParallaxImage } from 'react-native-snap-carousel';
 import colors from '../../colors';
-import { itemWidth, itemHorizontalMargin, slideHeight, IS_IOS } from '../../utils';
+import { itemWidth, slideHeight, IS_IOS } from '../../utils';
+const defaultPromo = require('../../../assets/default_promo.png');
 
 class SliderEntry extends Component {
   static propTypes = {
@@ -15,7 +16,7 @@ class SliderEntry extends Component {
 
   get image() {
     const {
-      data: { illustration },
+      data: { banner },
       parallax,
       parallaxProps,
       even,
@@ -23,7 +24,7 @@ class SliderEntry extends Component {
 
     return parallax ? (
       <ParallaxImage
-        source={{ uri: illustration }}
+        source={{ uri: banner }}
         containerStyle={[styles.imageContainer, even ? styles.imageContainerEven : {}]}
         style={styles.image}
         parallaxFactor={0.35}
@@ -32,16 +33,16 @@ class SliderEntry extends Component {
         {...parallaxProps}
       />
     ) : (
-      <Image source={{ uri: illustration }} style={styles.image} />
+      <Image source={defaultPromo} style={styles.image} />
     );
   }
 
   render() {
-    const { even } = this.props;
+    const { even, parallax } = this.props;
 
     return (
       <TouchableOpacity activeOpacity={1} style={styles.slideInnerContainer}>
-        <View style={[styles.imageContainer, even ? styles.imageContainerEven : {}]}>
+        <View style={[styles.imageContainer, even && !parallax ? styles.imageContainerEven : {}]}>
           {this.image}
         </View>
       </TouchableOpacity>
@@ -53,11 +54,10 @@ const styles = StyleSheet.create({
   slideInnerContainer: {
     width: itemWidth,
     height: slideHeight,
-    paddingHorizontal: itemHorizontalMargin,
   },
   imageContainer: {
     flex: 1,
-    marginBottom: IS_IOS ? 0 : -1, //Prevent a random Android rendering issue
+    marginBottom: IS_IOS ? 0 : -1,
     backgroundColor: 'white',
   },
   imageContainerEven: {
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   },
   image: {
     ...StyleSheet.absoluteFillObject,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
 });
 
