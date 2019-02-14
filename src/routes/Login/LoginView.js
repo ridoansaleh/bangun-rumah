@@ -109,6 +109,7 @@ class LoginView extends Component {
                   AsyncStorage.setItem('_jenisKelamin', data.jenis_kelamin);
                   AsyncStorage.setItem('_tanggalLahir', data.tanggal_lahir);
                   AsyncStorage.setItem('_photo', data.photo);
+                  AsyncStorage.setItem('_verfikasiEmail', user.emailVerified.toString());
                   that.setState(
                     {
                       email: '',
