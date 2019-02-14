@@ -55,4 +55,15 @@ let drawerMenus = [
   },
 ];
 
-export { drawerMenus };
+let user = [
+  '_id',
+  '_nama',
+  '_alamat',
+  '_email',
+  '_jenisKelamin',
+  '_tanggalLahir',
+  '_photo',
+  '_verfikasiEmail',
+];
+
+export { drawerMenus, user };

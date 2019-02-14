@@ -7,16 +7,18 @@ import Header from '../../components/Header';
 import Promo from './Promo';
 import ProductList from './ProductList';
 import Footer from '../../components/Footer';
+import Authentication from '../../components/Authentication';
 
 class HomeScreen extends Component {
   static propTypes = {
-    navigation: PropTypes.object,
+    nav: PropTypes.object,
+    user: PropTypes.array,
   };
 
   render() {
     return (
       <Container>
-        <Header openDrawer={() => this.props.navigation.openDrawer()} />
+        <Header openDrawer={() => this.props.nav.navigation.openDrawer()} />
         <Content>
           <Grid>
             <Row>
@@ -42,4 +44,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default Authentication(HomeScreen);

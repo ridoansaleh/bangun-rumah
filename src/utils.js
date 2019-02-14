@@ -15,4 +15,4 @@ const itemHorizontalMargin = wp(0.5);
 const sliderWidth = viewportWidth;
 const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
-export { sliderWidth, slideHeight, itemWidth, itemHorizontalMargin, IS_IOS };
+export { sliderWidth, slideHeight, itemWidth, IS_IOS };
