@@ -1,33 +1,47 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, Platform, StyleSheet, View } from 'react-native';
+import { AsyncStorage, Dimensions, Platform, StyleSheet, View } from 'react-native';
 import { Content, Text, List, ListItem, Icon, Container, Left, Thumbnail } from 'native-base';
-import { drawerMenus as datas } from '../constant';
+import Authentication from '../components/Authentication';
+import { loginMenus, nonLoginMenus, user, urls } from '../constant';
+import { auth } from '../../firebase.config';
 
 const defaultPhoto = require('../../assets/default_profile.jpg');
-const deviceHeight = Dimensions.get('window').height;
-const deviceWidth = Dimensions.get('window').width;
+const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
 
 class SideBar extends Component {
   static propTypes = {
-    navigation: PropTypes.object,
+    nav: PropTypes.object,
+    user: PropTypes.object,
   };
 
-  state = {
-    isLogin: false,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isLogin: Object.keys(props.user).length > 0,
+      drawerMenus: Object.keys(props.user).length ? loginMenus : nonLoginMenus,
+    };
+  }
+
+  handleMenuClick = route => {
+    if (route === 'Logout') {
+      auth
+        .signOut()
+        .then(() => {
+          AsyncStorage.multiRemove(user, error => {
+            error && console.error(error);
+          });
+          this.props.nav.navigation.navigate(urls.home);
+        })
+        .catch(error => console.error('Error while perform logout \n', error));
+    } else {
+      this.props.nav.navigation.navigate(route);
+    }
   };
 
   render() {
-    let menuList = [];
-
-    if (!this.state.isLogin) {
-      datas.splice(8, 1);
-      menuList = datas.slice(4);
-    } else {
-      datas.splice(6, 1);
-      datas.splice(6, 1);
-    }
-
+    console.log('propppp : ', this.props);
     return (
       <Container>
         <Content
@@ -35,14 +49,19 @@ class SideBar extends Component {
           style={{ flex: 1, backgroundColor: '#fff', top: -1, paddingTop: 25 }}>
           {this.state.isLogin && (
             <View style={styles.profile}>
-              <Thumbnail small source={defaultPhoto} />
-              <Text style={styles.nameText}>Ridoan Saleh Nasution</Text>
+              {Object.keys(this.props.user).length > 0 && (
+                <Thumbnail small source={{ uri: this.props.user.photo }} />
+              )}
+              {Object.keys(this.props.user).length === 0 && (
+                <Thumbnail small source={defaultPhoto} />
+              )}
+              <Text style={styles.nameText}>{this.props.user.nama}</Text>
             </View>
           )}
           <List
-            dataArray={menuList}
+            dataArray={this.state.drawerMenus}
             renderRow={data => (
-              <ListItem button noBorder onPress={() => this.props.navigation.navigate(data.route)}>
+              <ListItem button noBorder onPress={() => this.handleMenuClick(data.route)}>
                 <Left>
                   <Icon
                     active
@@ -95,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SideBar;
+export default Authentication(SideBar);

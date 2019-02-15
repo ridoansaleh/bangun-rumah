@@ -1,4 +1,4 @@
-let drawerMenus = [
+let loginMenus = [
   {
     name: 'Riwayat Pemesanan',
     route: 'OrderHistory',
@@ -36,6 +36,27 @@ let drawerMenus = [
     bg: '#DA4437',
   },
   {
+    name: 'Keluar',
+    route: 'Logout',
+    icon: 'log-out',
+    bg: '#C5F442',
+  },
+];
+
+let nonLoginMenus = [
+  {
+    name: 'Syarat dan Ketentuan',
+    route: 'Terms',
+    icon: 'book',
+    bg: '#477EEA',
+  },
+  {
+    name: 'FAQ',
+    route: 'Faq',
+    icon: 'help-circle-outline',
+    bg: '#DA4437',
+  },
+  {
     name: 'Daftar',
     route: 'Register',
     icon: 'person-add',
@@ -46,12 +67,6 @@ let drawerMenus = [
     route: 'Login',
     icon: 'log-in',
     bg: '#DA4437',
-  },
-  {
-    name: 'Keluar',
-    route: 'Logout',
-    icon: 'log-out',
-    bg: '#C5F442',
   },
 ];
 
@@ -66,4 +81,16 @@ let user = [
   '_verfikasiEmail',
 ];
 
-export { drawerMenus, user };
+const urls = {
+  drawer: 'Drawer',
+  home: 'Home',
+  login: 'Login',
+  register: 'Register',
+  category: 'Category',
+  cart: 'ShoppingCart',
+  profile: 'Profile',
+};
+
+const nonAuthenticatedUrls = [urls.drawer, urls.register, urls.login, urls.home];
+
+export { loginMenus, nonLoginMenus, user, urls, nonAuthenticatedUrls };

@@ -19,22 +19,21 @@ class Promo extends Component {
   }
 
   getPromos = () => {
-    const that = this;
     const promoRef = db.collection('promo');
     let promo = [];
     promoRef
       .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
           promo.push(doc.data());
         });
-        that.setState({
+        this.setState({
           isDataFetched: true,
           dataPromos: promo,
         });
       })
-      .catch(function(error) {
-        console.error('Error getting document:', error);
+      .catch(error => {
+        console.error("Error getting promo's collection \n", error);
       });
   };
 
@@ -73,7 +72,7 @@ class Promo extends Component {
           containerCustomStyle={styles.slider}
           loop
           loopClonesPerSide={2}
-          autoplay={false}
+          autoplay={this.state.dataPromos.length > 0}
           autoplayDelay={500}
           autoplayInterval={3000}
           onSnapToItem={index => this.setState({ slider1ActiveSlide: index })}
