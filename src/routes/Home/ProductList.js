@@ -1,54 +1,120 @@
 import React, { Component } from 'react';
 import { Dimensions, StyleSheet, FlatList, Image } from 'react-native';
-import { View, Text } from 'native-base';
+import { View, Text, Spinner } from 'native-base';
 import StarRating from 'react-native-star-rating';
-const defaultProduct = require('../../../assets/default-product.jpg');
-
-const data = [
-  { id: 'a', name: 'Nama Produk', value: 'Rp 200.000,00' },
-  { id: 'b', name: 'Nama Produk', value: 'Rp 70.000,00' },
-  { id: 'c', name: 'Nama Produk', value: 'Rp 56.000,00' },
-  { id: 'd', name: 'Nama Produk', value: 'Rp 290.000,00' },
-  { id: 'e', name: 'Nama Produk', value: 'Rp 300.000,00' },
-  { id: 'f', name: 'Nama Produk', value: 'Rp 550.000,00' },
-];
+import { db } from '../../../firebase.config';
+import { convertToCurrency } from '../../utils';
+const emptyResult = require('../../../assets/empty_search_result.png');
 
 const numColumns = 2;
-const size = Dimensions.get('window').width / numColumns;
+const { width } = Dimensions.get('window');
+const halfWidth = width / numColumns;
 
 class ProductList extends Component {
+  state = {
+    isDataFetched: false,
+    dataProducts: [],
+  };
+
+  componentDidMount() {
+    this.getProducts();
+  }
+
+  getProducts = () => {
+    const that = this;
+    const productsRef = db.collection('produk');
+    let products = [];
+    productsRef
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          products.push(doc.data());
+        });
+        that.setState({
+          isDataFetched: true,
+          dataProducts: products,
+        });
+      })
+      .catch(function(error) {
+        console.error('Error getting document:', error);
+      });
+  };
+
   render() {
-    return (
-      <FlatList
-        data={data}
-        renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <Image source={defaultProduct} style={styles.productImage} />
-            <Text>{item.name}</Text>
-            <StarRating disabled maxStars={5} rating={4} starSize={20} fullStarColor={'gold'} />
-            <Text>{item.value}</Text>
+    const { isDataFetched, dataProducts } = this.state;
+    if (!isDataFetched) {
+      return (
+        <View style={styles.spin}>
+          <Spinner color="green" size="large" />
+        </View>
+      );
+    } else {
+      if (dataProducts.length > 0) {
+        return (
+          <FlatList
+            data={dataProducts}
+            renderItem={({ item }) => (
+              <View style={styles.itemContainer}>
+                <Image source={{ uri: item.photo_produk[0] }} style={styles.productImage} />
+                <Text>{item.nama}</Text>
+                <StarRating
+                  disabled
+                  maxStars={5}
+                  rating={parseInt(item.bintang)}
+                  starSize={20}
+                  fullStarColor={'gold'}
+                />
+                <Text>Rp {convertToCurrency(parseInt(item.harga))}</Text>
+              </View>
+            )}
+            keyExtractor={item => item.id}
+            numColumns={numColumns}
+          />
+        );
+      } else {
+        return (
+          <View style={styles.emptyContainer}>
+            <Image source={emptyResult} style={styles.emptyLogo} />
+            <Text style={styles.emptyText}>Belum Ada Produk</Text>
           </View>
-        )}
-        keyExtractor={item => item.id}
-        numColumns={numColumns}
-      />
-    );
+        );
+      }
+    }
   }
 }
 
 const styles = StyleSheet.create({
   itemContainer: {
-    width: size,
-    height: size,
+    width: halfWidth,
+    height: halfWidth,
     flex: 1,
     margin: 3,
-    // backgroundColor: 'lightblue',
     alignItems: 'center',
   },
   productImage: {
-    width: size * 0.7,
-    height: size * 0.6,
+    width: halfWidth * 0.7,
+    height: halfWidth * 0.6,
     marginTop: 15,
+  },
+  spin: {
+    paddingVertical: 6,
+    width: width * 0.25,
+    height: width * 0.25,
+    marginLeft: (width * 0.75) / 2,
+    marginRight: (width * 0.75) / 2,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyLogo: {
+    width: width * 0.5,
+    height: width * 0.5,
+  },
+  emptyText: {
+    fontSize: 20,
+    // fontWeight: 'bold',
   },
 });
 
