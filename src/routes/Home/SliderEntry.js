@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { ParallaxImage } from 'react-native-snap-carousel';
+import defaultPromo from '../../../assets/default_promo.png';
 import colors from '../../colors';
 import { itemWidth, slideHeight, IS_IOS } from '../../utils';
-const defaultPromo = require('../../../assets/default_promo.png');
 
 class SliderEntry extends Component {
   static propTypes = {

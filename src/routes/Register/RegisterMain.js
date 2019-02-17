@@ -22,9 +22,10 @@ import DatePicker from 'react-native-datepicker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ImagePicker } from 'expo';
 import uuid from 'uuid';
+import loginUser from '../../../assets/default_upload.png';
 import { st as storageRef, auth, db } from '../../../firebase.config';
 import initialState from './State';
-const loginUser = require('../../../assets/default_upload.png');
+
 const { width } = Dimensions.get('window');
 
 class RegisterView extends Component {

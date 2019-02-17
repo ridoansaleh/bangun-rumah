@@ -19,10 +19,10 @@ import {
   View,
 } from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
+import loginUser from '../../../assets/login-user.jpg';
 import { auth as authenticate, db } from '../../../firebase.config';
 import { urls } from '../../constant';
 
-const loginUser = require('../../../assets/login-user.jpg');
 const { width, height } = Dimensions.get('window');
 // Forgot password link is not ready yet
 

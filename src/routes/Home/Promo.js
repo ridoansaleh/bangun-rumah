@@ -5,6 +5,7 @@ import Carousel from 'react-native-snap-carousel';
 import SliderEntry from './SliderEntry';
 import { db } from '../../../firebase.config';
 import { itemWidth, sliderWidth } from '../../utils';
+
 const { width } = Dimensions.get('window');
 
 class Promo extends Component {
