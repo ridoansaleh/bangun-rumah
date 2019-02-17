@@ -1,18 +1,29 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 import { Container, Content, Text, Separator, ListItem } from 'native-base';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Authentication from '../../components/Authentication';
+import { urls } from '../../constant';
 import categories from './Data';
 
 class CategoryScreen extends Component {
+  static propTypes = {
+    nav: PropTypes.object,
+    user: PropTypes.object,
+  };
+
   render() {
+    console.log('this.props.nav : ', this.props.nav);
     return (
       <Container>
-        <Header openDrawer={() => this.props.nav.navigation.openDrawer()} />
+        <Header
+          openDrawer={() => this.props.nav.navigation.openDrawer()}
+          title
+          titleText="Kategori Produk"
+          search={false}
+        />
         <Content>
-          <Text style={styles.header}>Kategori Produk</Text>
           {categories.map((data, i) => {
             if (data.status === 'main') {
               return (
@@ -29,17 +40,10 @@ class CategoryScreen extends Component {
             }
           })}
         </Content>
-        <Footer />
+        <Footer {...this.props.nav} pageActive={urls.category} />
       </Container>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  header: {
-    padding: 15,
-    fontWeight: 'bold',
-  },
-});
 
 export default Authentication(CategoryScreen);

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Image, Dimensions, ScrollView } from 'react-native';
 import { Container, Content, Text, CheckBox, Button } from 'native-base';
 import { Row, Grid, Col } from 'react-native-easy-grid';
@@ -6,20 +7,28 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Authentication from '../../components/Authentication';
 import defaultImage from '../../../assets/default-product.jpg';
+import { urls } from '../../constant';
 
 const { width, height } = Dimensions.get('window');
 
 class ShoppingCartScreen extends Component {
+  static propTypes = {
+    nav: PropTypes.object,
+    user: PropTypes.object,
+  };
+
   render() {
     return (
       <Container>
-        <Header openDrawer={() => this.props.nav.navigation.openDrawer()} />
-        <Content style={{ backgroundColor: 'yellow' }}>
+        <Header
+          openDrawer={() => this.props.nav.navigation.openDrawer()}
+          title
+          titleText="Keranjang"
+          search={false}
+        />
+        <Content>
           <Grid style={{ backgroundColor: 'white', height: height * 0.8 }}>
-            <Row size={10}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 10 }}>Keranjang</Text>
-            </Row>
-            <Row size={80}>
+            <Row size={90} style={{ marginTop: 15 }}>
               <ScrollView>
                 <Row style={{ marginBottom: 10 }}>
                   <Col size={1}>
@@ -259,7 +268,7 @@ class ShoppingCartScreen extends Component {
             </Row>
           </Grid>
         </Content>
-        <Footer />
+        <Footer {...this.props.nav} pageActive={urls.cart} />
       </Container>
     );
   }
