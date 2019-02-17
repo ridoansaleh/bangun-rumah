@@ -13,6 +13,8 @@ class SideBar extends Component {
   static propTypes = {
     nav: PropTypes.object,
     user: PropTypes.object,
+    getProfile: PropTypes.func,
+    resetUserStatus: PropTypes.func,
   };
 
   constructor(props) {
@@ -24,6 +26,21 @@ class SideBar extends Component {
     };
   }
 
+  static getDerivedStateFromProps(nextProps) {
+    let state = {
+      isLogin: Object.keys(nextProps.user).length > 0,
+      drawerMenus: Object.keys(nextProps.user).length ? loginMenus : nonLoginMenus,
+    };
+    return state;
+  }
+
+  shouldComponentUpdate(nextProps) {
+    if (Object.keys(nextProps.user).length > 1 && nextProps.user.nama === null) {
+      this.props.getProfile();
+    }
+    return true;
+  }
+
   handleMenuClick = route => {
     if (route === 'Logout') {
       auth
@@ -32,7 +49,7 @@ class SideBar extends Component {
           AsyncStorage.multiRemove(user, error => {
             error && console.error(error);
           });
-          this.props.nav.navigation.navigate(urls.home);
+          this.props.resetUserStatus();
         })
         .catch(error => console.error('Error while perform logout \n', error));
     } else {
@@ -41,7 +58,6 @@ class SideBar extends Component {
   };
 
   render() {
-    console.log('propppp : ', this.props);
     return (
       <Container>
         <Content

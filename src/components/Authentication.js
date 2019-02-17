@@ -42,12 +42,24 @@ const Authentication = Wrapped => {
       }
     };
 
+    resetUserStatus = () => {
+      this.setState({
+        dataUser: {},
+      });
+    };
+
     render() {
-      let { isDataFetched, dataUser } = this.state;
-      if (!isDataFetched) {
+      if (!this.state.isDataFetched) {
         return null;
       }
-      return <Wrapped user={dataUser} nav={this.props} />;
+      return (
+        <Wrapped
+          user={this.state.dataUser}
+          nav={this.props}
+          getProfile={this.getProfile}
+          resetUserStatus={this.resetUserStatus}
+        />
+      );
     }
   };
 };

@@ -5,6 +5,7 @@ import { Row, Grid } from 'react-native-easy-grid';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Authentication from '../../components/Authentication';
+import { urls } from '../../constant';
 
 class ProfileScreen extends Component {
   render() {
@@ -14,7 +15,7 @@ class ProfileScreen extends Component {
         <Content>
           <Text>Profile Dashboard</Text>
         </Content>
-        <Footer />
+        <Footer {...this.props.nav} pageActive={urls.profile} />
       </Container>
     );
   }
