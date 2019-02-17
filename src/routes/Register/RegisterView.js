@@ -148,10 +148,10 @@ class RegisterView extends Component {
             jenis_kelamin: gender,
             tanggal_lahir: born_date,
           })
-          .then(function() {
+          .then(() => {
             console.log('Document successfully written!');
           })
-          .catch(function(error) {
+          .catch(error => {
             console.error('Error writing document: ', error);
           });
         this.setState({ ...initialState });

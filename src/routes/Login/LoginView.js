@@ -20,8 +20,9 @@ import {
 } from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
 import { auth as authenticate, db } from '../../../firebase.config';
-const loginUser = require('../../../assets/login-user.jpg');
+import { urls } from '../../constant';
 
+const loginUser = require('../../../assets/login-user.jpg');
 const { width, height } = Dimensions.get('window');
 // Forgot password link is not ready yet
 
@@ -77,20 +78,11 @@ class LoginView extends Component {
         });
       }
     } else {
-      this.setState(
-        {
-          isEmailValid: false,
-          isPasswordValid: false,
-        },
-        () => {
-          this.login(email, password);
-        }
-      );
+      this.login(email, password);
     }
   };
 
   login = (e, p) => {
-    const that = this;
     authenticate
       .signInWithEmailAndPassword(e, p)
       .then(() => {
@@ -99,7 +91,7 @@ class LoginView extends Component {
             const docRef = db.collection('user').doc(user.uid);
             docRef
               .get()
-              .then(function(doc) {
+              .then(doc => {
                 if (doc.exists) {
                   const data = doc.data();
                   AsyncStorage.setItem('_id', user.uid);
@@ -110,7 +102,7 @@ class LoginView extends Component {
                   AsyncStorage.setItem('_tanggalLahir', data.tanggal_lahir);
                   AsyncStorage.setItem('_photo', data.photo);
                   AsyncStorage.setItem('_verfikasiEmail', user.emailVerified.toString());
-                  that.setState(
+                  this.setState(
                     {
                       email: '',
                       password: '',
@@ -118,14 +110,14 @@ class LoginView extends Component {
                       isPasswordValid: true,
                     },
                     () => {
-                      that.handleRouteChange('Home');
+                      this.handleRouteChange(urls.home);
                     }
                   );
                 } else {
                   console.error('No such document!');
                 }
               })
-              .catch(function(error) {
+              .catch(error => {
                 console.error('Error getting document:', error);
               });
           }
