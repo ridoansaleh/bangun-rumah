@@ -5,9 +5,9 @@ import { Row, Grid, Col } from 'react-native-easy-grid';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Authentication from '../../components/Authentication';
+import defaultImage from '../../../assets/default-product.jpg';
 
 const { width, height } = Dimensions.get('window');
-const defaultImage = require('../../../assets/default-product.jpg');
 
 class ShoppingCartScreen extends Component {
   render() {
@@ -248,10 +248,10 @@ class ShoppingCartScreen extends Component {
               <Col size={1}>
                 <CheckBox checked={false} style={{ marginTop: 15 }} />
               </Col>
-              <Col size={7}>
+              <Col size={6}>
                 <Text style={{ marginTop: 15 }}>Semua</Text>
               </Col>
-              <Col size={2}>
+              <Col size={3}>
                 <Button small bordered dark style={{ marginTop: 10 }}>
                   <Text>Pesan</Text>
                 </Button>

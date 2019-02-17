@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Dimensions, StyleSheet, FlatList, Image } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
 import StarRating from 'react-native-star-rating';
+import emptyResult from '../../../assets/empty_search_result.png';
 import { db } from '../../../firebase.config';
 import { convertToCurrency } from '../../utils';
-const emptyResult = require('../../../assets/empty_search_result.png');
 
 const numColumns = 2;
 const { width } = Dimensions.get('window');

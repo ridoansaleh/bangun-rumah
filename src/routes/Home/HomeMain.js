@@ -16,19 +16,13 @@ class HomeScreen extends Component {
     user: PropTypes.object,
   };
 
-  state = {
-    isLogin: false,
-  };
+  constructor(props) {
+    super(props);
 
-  componentDidMount() {
-    this.checkUserLogin();
+    this.state = {
+      isLogin: Object.keys(props.user).length > 0,
+    };
   }
-
-  checkUserLogin = () => {
-    this.setState({
-      isLogin: Object.keys(this.props.user).length > 0,
-    });
-  };
 
   render() {
     return (

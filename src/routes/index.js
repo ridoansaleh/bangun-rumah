@@ -1,12 +1,12 @@
 import React from 'react';
 import { createStackNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation';
-import HomeScreen from './Home/HomeView';
-import CategoryScreen from './Category/CategoryView';
-import ShoppingCartScreen from './ShoppingCart/ShoppingCartView';
-import ProfileScreen from './Profile/ProfileView';
+import HomeScreen from './Home/HomeMain';
+import CategoryScreen from './Category/CategoryMain';
+import ShoppingCartScreen from './ShoppingCart/ShoppingCartMain';
+import ProfileScreen from './Profile/ProfileMain';
 import SideBar from '../components/SideBar';
-import LoginScreen from '../routes/Login/LoginView';
-import RegisterScreen from '../routes/Register/RegisterView';
+import LoginScreen from '../routes/Login/LoginMain';
+import RegisterScreen from '../routes/Register/RegisterMain';
 
 const DrawerNav = createDrawerNavigator(
   {

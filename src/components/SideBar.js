@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { AsyncStorage, Dimensions, Platform, StyleSheet, View } from 'react-native';
 import { Content, Text, List, ListItem, Icon, Container, Left, Thumbnail } from 'native-base';
 import Authentication from '../components/Authentication';
-import { loginMenus, nonLoginMenus, user, urls } from '../constant';
+import defaultPhoto from '../../assets/default_profile.jpg';
+import { loginMenus, nonLoginMenus, user } from '../constant';
 import { auth } from '../../firebase.config';
 
-const defaultPhoto = require('../../assets/default_profile.jpg');
 const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
 
 class SideBar extends Component {
