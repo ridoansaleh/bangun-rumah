@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
-import { Header, Button, Icon, Left, Right } from 'native-base';
+import { Header, Button, Body, Title, Icon, Left, Right } from 'native-base';
 
 class Navbar extends Component {
   static propTypes = {
     openDrawer: PropTypes.func,
+    title: PropTypes.bool,
+    titleText: PropTypes.string,
+    search: PropTypes.bool,
   };
 
   render() {
@@ -16,10 +19,17 @@ class Navbar extends Component {
             <Icon name="menu" />
           </Button>
         </Left>
+        {this.props.title && (
+          <Body>
+            <Title>{this.props.titleText}</Title>
+          </Body>
+        )}
         <Right>
-          <Button transparent>
-            <Icon name="search" />
-          </Button>
+          {this.props.search && (
+            <Button transparent>
+              <Icon name="search" />
+            </Button>
+          )}
           <Button transparent>
             <Icon name="notifications-outline" />
           </Button>

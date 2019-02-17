@@ -30,6 +30,7 @@ class HomeScreen extends Component {
         <Header
           openDrawer={() => this.props.nav.navigation.openDrawer()}
           isLogin={this.state.isLogin}
+          search
         />
         <Content>
           <Grid>

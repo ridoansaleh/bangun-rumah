@@ -13,6 +13,8 @@ const DrawerNav = createDrawerNavigator(
     Home: HomeScreen,
     Login: LoginScreen,
     Register: RegisterScreen,
+    Category: CategoryScreen,
+    ShoppingCart: ShoppingCartScreen,
   },
   {
     initialRouteName: 'Home',
@@ -23,8 +25,6 @@ const DrawerNav = createDrawerNavigator(
 const AppNavigator = createStackNavigator(
   {
     Drawer: DrawerNav,
-    Category: CategoryScreen,
-    ShoppingCart: ShoppingCartScreen,
     Profile: ProfileScreen,
   },
   {
