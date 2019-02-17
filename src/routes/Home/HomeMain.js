@@ -24,16 +24,6 @@ class HomeScreen extends Component {
     };
   }
 
-  // componentDidMount() {
-  //   this.checkUserLogin();
-  // }
-
-  // checkUserLogin = () => {
-  //   this.setState({
-  //     isLogin: Object.keys(this.props.user).length > 0,
-  //   });
-  // };
-
   render() {
     return (
       <Container>
