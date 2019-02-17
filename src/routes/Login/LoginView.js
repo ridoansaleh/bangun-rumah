@@ -19,7 +19,9 @@ import {
   View,
 } from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
+// import Authentication from '../../components/Authentication';
 import { auth as authenticate, db } from '../../../firebase.config';
+import { urls } from '../../constant';
 const loginUser = require('../../../assets/login-user.jpg');
 
 const { width, height } = Dimensions.get('window');
@@ -27,7 +29,8 @@ const { width, height } = Dimensions.get('window');
 
 class LoginView extends Component {
   static propTypes = {
-    navigation: PropTypes.object,
+    nav: PropTypes.object,
+    login: PropTypes.func,
   };
 
   state = {
@@ -90,7 +93,7 @@ class LoginView extends Component {
   };
 
   login = (e, p) => {
-    const that = this;
+    // const that = this;
     authenticate
       .signInWithEmailAndPassword(e, p)
       .then(() => {
@@ -99,7 +102,7 @@ class LoginView extends Component {
             const docRef = db.collection('user').doc(user.uid);
             docRef
               .get()
-              .then(function(doc) {
+              .then(doc => {
                 if (doc.exists) {
                   const data = doc.data();
                   AsyncStorage.setItem('_id', user.uid);
@@ -110,17 +113,30 @@ class LoginView extends Component {
                   AsyncStorage.setItem('_tanggalLahir', data.tanggal_lahir);
                   AsyncStorage.setItem('_photo', data.photo);
                   AsyncStorage.setItem('_verfikasiEmail', user.emailVerified.toString());
-                  that.setState(
-                    {
-                      email: '',
-                      password: '',
-                      isEmailValid: true,
-                      isPasswordValid: true,
-                    },
-                    () => {
-                      that.handleRouteChange('Home');
-                    }
-                  );
+                  // setTimeout(() => {
+                  // let ver = AsyncStorage.getItem('_verfikasiEmail').then(data => {
+                  //   console.log('1.Verifikasi : ', data);
+                  //   return data;
+                  // });
+                  // console.log('2.verifikasi : ', ver);
+
+                  this.props.navigation.navigate(urls.home, { prevPath: 'Login' });
+                  // }, 1000);
+                  // this.props.login();
+                  // this.props.navigation.navigate(urls.home);
+                  // that.forceUpdate();
+                  // that.handleRouteChange('Home');
+                  // that.setState(
+                  //   {
+                  //     email: '',
+                  //     password: '',
+                  //     isEmailValid: true,
+                  //     isPasswordValid: true,
+                  //   },
+                  //   () => {
+                  //     that.handleRouteChange('Home');
+                  //   }
+                  // );
                 } else {
                   console.error('No such document!');
                 }

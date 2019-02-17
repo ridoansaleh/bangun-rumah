@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { AsyncStorage, Dimensions, Platform, StyleSheet, View } from 'react-native';
 import { Content, Text, List, ListItem, Icon, Container, Left, Thumbnail } from 'native-base';
-import Authentication from '../components/Authentication';
+// import Authentication from '../components/Authentication';
 import { loginMenus, nonLoginMenus, user, urls } from '../constant';
 import { auth } from '../../firebase.config';
 
@@ -11,17 +11,81 @@ const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
 
 class SideBar extends Component {
   static propTypes = {
-    nav: PropTypes.object,
-    user: PropTypes.object,
+    // nav: PropTypes.object,
+    // user: PropTypes.object,
+    // logout: PropTypes.func,
   };
 
   constructor(props) {
     super(props);
 
+    // console.log('user : ', props.user);
+
     this.state = {
-      isLogin: Object.keys(props.user).length > 0,
-      drawerMenus: Object.keys(props.user).length ? loginMenus : nonLoginMenus,
+      // isLogin: Object.keys(props.user).length > 0,
+      // drawerMenus: Object.keys(props.user).length ? loginMenus : nonLoginMenus,
+      isLogin: false,
+      drawerMenus: nonLoginMenus,
+      userData: {},
     };
+  }
+
+  componentDidMount() {
+    console.log('Side > DID MOUNT');
+  }
+
+  shouldComponentUpdate(nextProps) {
+    console.log('props : ', this.props.navigation.getParam);
+    // console.log('nextProps : ', nextProps.user);
+    // const user1 = Object.keys(this.props.user).length;
+    // const user2 = Object.keys(nextProps.user).length;
+    // console.log('user1 : ', user1);
+    // console.log('user2 : ', user2);
+    // if (user1 !== user2 && user2 === 0) {
+    //   this.setState({
+    //     isLogin: false,
+    //     drawerMenus: nonLoginMenus,
+    //   });
+    // }
+    return true;
+  }
+
+  componentDidUpdate(prevProps) {
+    console.log('DID UPDATE');
+
+    console.log('Heyy : ', this.props.navigation.getParam('prevPath', 'noo'));
+    console.log('Double heyy : ', this.props.navigation.state.params);
+
+    // auth.onAuthStateChanged(res => {
+    //   if (res) {
+    //     this.getProfile();
+    //   } else {
+    //     //
+    //   }
+    // });
+  }
+
+  getProfile = () => {
+    console.log('Get Profile ...');
+    let profile = {};
+    for (let i = 0; i < user.length; i++) {
+      AsyncStorage.getItem(user[i]).then(data => {
+        let key = user[i].substr(1, user[i].length);
+        // console.log(user[i] + ' : ' + data);
+        profile[key] = data;
+        if (i === user.length - 1) {
+          this.setState({
+            isLogin: true,
+            drawerMenus: loginMenus,
+            userData: profile,
+          });
+        }
+      });
+    }
+  };
+
+  componentWillUnmount() {
+    console.log('Side > WILL UNMOUNT');
   }
 
   handleMenuClick = route => {
@@ -32,16 +96,27 @@ class SideBar extends Component {
           AsyncStorage.multiRemove(user, error => {
             error && console.error(error);
           });
-          this.props.nav.navigation.navigate(urls.home);
+          // this.props.logout();
+          // console.log('this.props.nav > ', this.props.nav);
+          this.setState(
+            {
+              isLogin: false,
+              drawerMenus: nonLoginMenus,
+              userData: {},
+            },
+            () => {
+              this.props.navigation.navigate(urls.home);
+            }
+          );
+          // this.forceUpdate();
         })
         .catch(error => console.error('Error while perform logout \n', error));
     } else {
-      this.props.nav.navigation.navigate(route);
+      this.props.navigation.navigate(route);
     }
   };
 
   render() {
-    console.log('propppp : ', this.props);
     return (
       <Container>
         <Content
@@ -49,13 +124,13 @@ class SideBar extends Component {
           style={{ flex: 1, backgroundColor: '#fff', top: -1, paddingTop: 25 }}>
           {this.state.isLogin && (
             <View style={styles.profile}>
-              {Object.keys(this.props.user).length > 0 && (
-                <Thumbnail small source={{ uri: this.props.user.photo }} />
+              {Object.keys(this.state.userData).length > 0 && (
+                <Thumbnail small source={{ uri: this.state.userData.photo }} />
               )}
-              {Object.keys(this.props.user).length === 0 && (
+              {Object.keys(this.state.userData).length === 0 && (
                 <Thumbnail small source={defaultPhoto} />
               )}
-              <Text style={styles.nameText}>{this.props.user.nama}</Text>
+              <Text style={styles.nameText}>{this.state.userData.nama}</Text>
             </View>
           )}
           <List
@@ -114,4 +189,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Authentication(SideBar);
+export default SideBar;

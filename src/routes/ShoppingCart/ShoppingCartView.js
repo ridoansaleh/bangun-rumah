@@ -248,10 +248,10 @@ class ShoppingCartScreen extends Component {
               <Col size={1}>
                 <CheckBox checked={false} style={{ marginTop: 15 }} />
               </Col>
-              <Col size={7}>
+              <Col size={6}>
                 <Text style={{ marginTop: 15 }}>Semua</Text>
               </Col>
-              <Col size={2}>
+              <Col size={3}>
                 <Button small bordered dark style={{ marginTop: 10 }}>
                   <Text>Pesan</Text>
                 </Button>
