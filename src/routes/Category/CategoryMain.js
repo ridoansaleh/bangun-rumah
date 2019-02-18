@@ -14,7 +14,6 @@ class CategoryScreen extends Component {
   };
 
   render() {
-    console.log('this.props.nav : ', this.props.nav);
     return (
       <Container>
         <Header

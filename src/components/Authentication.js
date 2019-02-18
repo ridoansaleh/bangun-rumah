@@ -49,12 +49,21 @@ const Authentication = Wrapped => {
     };
 
     render() {
-      if (!this.state.isDataFetched) {
+      let { isDataFetched, dataUser } = this.state;
+      let { state, navigate } = this.props.navigation;
+
+      if (Object.keys(dataUser).length === 0) {
+        if (state.routeName === urls.drawer && state.index === 4) {
+          navigate(urls.login);
+        }
+      }
+
+      if (!isDataFetched) {
         return null;
       }
       return (
         <Wrapped
-          user={this.state.dataUser}
+          user={dataUser}
           nav={this.props}
           getProfile={this.getProfile}
           resetUserStatus={this.resetUserStatus}
