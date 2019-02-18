@@ -91,6 +91,6 @@ const urls = {
   profile: 'Profile',
 };
 
-const nonAuthenticatedUrls = [urls.drawer, urls.register, urls.login, urls.home];
+const nonAuthenticatedUrls = [urls.register, urls.login, urls.category];
 
 export { loginMenus, nonLoginMenus, user, urls, nonAuthenticatedUrls };
