@@ -20,9 +20,8 @@ class Promo extends Component {
   }
 
   getPromos = () => {
-    const promoRef = db.collection('promo');
     let promo = [];
-    promoRef
+    db.collection('promo')
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
