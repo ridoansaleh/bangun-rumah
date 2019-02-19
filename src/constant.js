@@ -89,8 +89,9 @@ const urls = {
   category: 'Category',
   cart: 'ShoppingCart',
   profile: 'Profile',
+  search: 'SearchProduct',
 };
 
-const nonAuthenticatedUrls = [urls.register, urls.login, urls.category];
+const nonAuthenticatedUrls = [urls.register, urls.login, urls.category, urls.search];
 
 export { loginMenus, nonLoginMenus, user, urls, nonAuthenticatedUrls };

@@ -13,6 +13,11 @@ class CategoryScreen extends Component {
     user: PropTypes.object,
   };
 
+  searchProductByCategory = category => {
+    console.log('Category : ', category);
+    this.props.nav.navigation.navigate(urls.search, { cat: category });
+  };
+
   render() {
     return (
       <Container>
@@ -32,7 +37,7 @@ class CategoryScreen extends Component {
               );
             } else {
               return (
-                <ListItem key={i}>
+                <ListItem key={i} onPress={() => this.searchProductByCategory(data.name)}>
                   <Text>{data.name}</Text>
                 </ListItem>
               );
