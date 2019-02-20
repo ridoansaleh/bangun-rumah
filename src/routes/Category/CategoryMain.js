@@ -14,7 +14,6 @@ class CategoryScreen extends Component {
   };
 
   searchProductByCategory = category => {
-    console.log('Category : ', category);
     this.props.nav.navigation.navigate(urls.search, { cat: category });
   };
 

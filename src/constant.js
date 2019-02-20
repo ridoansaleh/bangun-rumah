@@ -92,6 +92,13 @@ const urls = {
   search: 'SearchProduct',
 };
 
-const nonAuthenticatedUrls = [urls.register, urls.login, urls.category, urls.search];
+const nonAuthenticatedUrls = [
+  urls.drawer,
+  urls.home,
+  urls.register,
+  urls.login,
+  urls.category,
+  urls.search,
+];
 
 export { loginMenus, nonLoginMenus, user, urls, nonAuthenticatedUrls };
