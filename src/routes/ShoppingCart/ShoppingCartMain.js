@@ -143,7 +143,9 @@ class ShoppingCartScreen extends Component {
                           style={{ marginTop: width * 0.2 * 0.3 }}
                         />
                       </Col>
-                      <Col size={2}>
+                      <Col
+                        size={2}
+                        onPress={() => this.props.nav.navigation.navigate(urls.product)}>
                         {data.photo === '' && (
                           <Image
                             source={defaultImage}

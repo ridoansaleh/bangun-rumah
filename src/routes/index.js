@@ -8,6 +8,7 @@ import SideBar from '../components/SideBar';
 import LoginScreen from '../routes/Login/LoginMain';
 import RegisterScreen from '../routes/Register/RegisterMain';
 import SearchProductScreen from '../routes/SearchProduct/SearchProductMain';
+import ProductScreen from '../routes/Product/ProductMain';
 
 const DrawerNav = createDrawerNavigator(
   {
@@ -27,6 +28,7 @@ const AppNavigator = createStackNavigator(
   {
     Drawer: DrawerNav,
     SearchProduct: SearchProductScreen,
+    Product: ProductScreen,
     Profile: ProfileScreen,
   },
   {
