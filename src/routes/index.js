@@ -9,6 +9,8 @@ import LoginScreen from '../routes/Login/LoginMain';
 import RegisterScreen from '../routes/Register/RegisterMain';
 import SearchProductScreen from '../routes/SearchProduct/SearchProductMain';
 import ProductScreen from '../routes/Product/ProductMain';
+import ReviewScreen from '../routes/Review/ReviewMain';
+import DiscussionScreen from '../routes/Discussion/DiscussionMain';
 
 const DrawerNav = createDrawerNavigator(
   {
@@ -29,6 +31,8 @@ const AppNavigator = createStackNavigator(
     Drawer: DrawerNav,
     SearchProduct: SearchProductScreen,
     Product: ProductScreen,
+    Review: ReviewScreen,
+    Discussion: DiscussionScreen,
     Profile: ProfileScreen,
   },
   {

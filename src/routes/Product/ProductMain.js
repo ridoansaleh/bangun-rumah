@@ -14,6 +14,7 @@ import {
   Spinner,
 } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Authentication from '../../components/Authentication';
 import ProductPhoto from './ProductPhoto';
 import ProductDescription from './ProductDescription';
@@ -28,7 +29,6 @@ class ProductMainScreen extends Component {
   };
 
   state = {
-    productID: this.props.nav.navigation.getParam('productID', 0),
     isDataFetched: false,
     dataProduct: {},
   };
@@ -56,7 +56,7 @@ class ProductMainScreen extends Component {
   render() {
     let { isDataFetched, dataProduct } = this.state;
     return (
-      <Container>
+      <KeyboardAwareScrollView enableOnAndroid>
         <Header style={styles.header}>
           <Left>
             <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
@@ -80,7 +80,7 @@ class ProductMainScreen extends Component {
                   <View>
                     <ProductPhoto data={dataProduct} />
                     <ProductDescription data={dataProduct} />
-                    <Interactions data={dataProduct} />
+                    <Interactions data={dataProduct} {...this.props.nav} />
                   </View>
                 )}
               </ScrollView>
@@ -100,7 +100,7 @@ class ProductMainScreen extends Component {
             </Row>
           </Grid>
         </Content>
-      </Container>
+      </KeyboardAwareScrollView>
     );
   }
 }
