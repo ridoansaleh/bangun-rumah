@@ -1,72 +1,68 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, Image, FlatList, Dimensions } from 'react-native';
-import {
-  Container,
-  Content,
-  Text,
-  Header,
-  Left,
-  Button,
-  Icon,
-  Title,
-  Body,
-  Spinner,
-  ActionSheet,
-} from 'native-base';
+import { View, FlatList } from 'react-native';
+import { Text } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
-import Authentication from '../../components/Authentication';
-import { db } from '../../../firebase.config';
 import { convertToCurrency } from '../../utils';
-
-const numColumns = 2;
-const { width, height } = Dimensions.get('window');
-const halfWidth = width / numColumns;
-
-const dataSpecs = [
-  { id: 1, text: 'In order to constrain memory' },
-  { id: 2, text: 'In order to constrain memory' },
-  { id: 3, text: 'In order to constrain memory' },
-  { id: 4, text: 'In order to constrain memory' },
-];
-
 class ProductDescription extends Component {
   static propTypes = {
-    nav: PropTypes.object,
+    data: PropTypes.object,
   };
 
   state = {
-    category: '', //this.props.nav.navigation.getParam('cat', 'Kategori Produk'),
-    isDataFetched: false,
-    dataProducts: [],
-    clicked: 0,
+    productName: this.props.data.nama,
+    productPrice: this.props.data.harga,
+    star: this.props.data.bintang,
+    shopName: this.props.data.nama_toko,
+    specs: [],
+    isConstructed: false,
   };
 
   componentDidMount() {
-    console.log('product photo');
+    let arrNew = this.props.data.spesifikasi.split(',');
+    let resArr = [];
+    for (let i = 0; i < arrNew.length; i++) {
+      resArr.push({
+        id: i,
+        text: arrNew[i],
+      });
+      if (i === arrNew.length - 1) {
+        this.setState({
+          isConstructed: true,
+          specs: resArr,
+        });
+      }
+    }
   }
 
   render() {
-    let { isDataFetched, dataProducts, category } = this.state;
+    if (!this.state.isConstructed) {
+      return null;
+    }
     return (
       <View style={{ padding: 20 }}>
-        <Text style={{ marginBottom: 20, fontWeight: 'bold' }}>Nama Barang</Text>
+        <Text style={{ marginBottom: 20, fontWeight: 'bold' }}>{this.state.productName}</Text>
         <Grid>
           <Row style={{ marginBottom: 30 }}>
-            <Text>
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-              has been the industry's standard dummy text ever since the 1500s, when an unknown
-              printer took a galley of type and scrambled it to make a type specimen book.
-            </Text>
+            <Text>{this.props.data.deskripsi}</Text>
+          </Row>
+          <Row style={{ marginBottom: 10 }}>
+            <Text>Rp {convertToCurrency(this.state.productPrice)}</Text>
           </Row>
           <Row style={{ marginBottom: 30 }}>
             <Col size={2}>
-              <StarRating disabled maxStars={5} rating={4} starSize={20} fullStarColor={'gold'} />
+              <StarRating
+                disabled
+                maxStars={5}
+                rating={this.state.star}
+                starSize={20}
+                fullStarColor={'gold'}
+              />
             </Col>
             <Col size={2} />
             <Col size={2}>
-              <Text style={{ fontWeight: 'bold' }}>Nama Toko</Text>
+              <Text style={{ fontWeight: 'bold' }}>{this.state.shopName}</Text>
             </Col>
           </Row>
           <Row>
@@ -74,7 +70,7 @@ class ProductDescription extends Component {
           </Row>
           <Row>
             <FlatList
-              data={dataSpecs}
+              data={this.state.specs}
               renderItem={({ item, index }) => {
                 return (
                   <Text>
@@ -90,11 +86,5 @@ class ProductDescription extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
-});
 
 export default ProductDescription;

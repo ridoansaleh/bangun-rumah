@@ -12,29 +12,15 @@ import {
   Title,
   Body,
   Spinner,
-  ActionSheet,
 } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
-import { Ionicons } from '@expo/vector-icons';
-import StarRating from 'react-native-star-rating';
 import Authentication from '../../components/Authentication';
 import ProductPhoto from './ProductPhoto';
 import ProductDescription from './ProductDescription';
 import Interactions from './Interactions';
-import emptyResult from '../../../assets/empty_search_result.png';
 import { db } from '../../../firebase.config';
-import { convertToCurrency } from '../../utils';
 
-const numColumns = 2;
 const { width, height } = Dimensions.get('window');
-const halfWidth = width / numColumns;
-
-const fontAwesome = {
-  iconFamily: 'FontAwesome',
-  iconFontSize: Platform.OS === 'ios' ? 30 : 28,
-  iconMargin: 7,
-  iconLineHeight: Platform.OS === 'ios' ? 37 : 30,
-};
 
 class ProductMainScreen extends Component {
   static propTypes = {
@@ -43,32 +29,32 @@ class ProductMainScreen extends Component {
 
   state = {
     productID: this.props.nav.navigation.getParam('productID', 0),
-    isDataFetched: true,
-    dataProducts: [],
-    clicked: 0,
+    isDataFetched: false,
+    dataProduct: {},
   };
 
   componentDidMount() {
-    // let products = [];
-    // db.collection('produk')
-    //   .where('kategori', '==', this.state.category)
-    //   .get()
-    //   .then(querySnapshot => {
-    //     querySnapshot.forEach(function(doc) {
-    //       products.push(doc.data());
-    //     });
-    //     this.setState({
-    //       isDataFetched: true,
-    //       dataProducts: products,
-    //     });
-    //   })
-    //   .catch(error => {
-    //     console.log(`Error getting products with category ${this.state.category} \n`, error);
-    //   });
+    let id_product = this.props.nav.navigation.getParam('product_id', 0);
+    db.collection('produk')
+      .doc(id_product)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          this.setState({
+            isDataFetched: true,
+            dataProduct: doc.data(),
+          });
+        } else {
+          console.log('No such document!');
+        }
+      })
+      .catch(function(error) {
+        console.log(`Error getting product with id ${id_product} \n`, error);
+      });
   }
 
   render() {
-    let { isDataFetched, dataProducts, category } = this.state;
+    let { isDataFetched, dataProduct } = this.state;
     return (
       <Container>
         <Header style={styles.header}>
@@ -90,12 +76,11 @@ class ProductMainScreen extends Component {
                     <Spinner color="green" size="large" />
                   </View>
                 )}
-                {/* {isDataFetched && dataProducts.length > 0 && ( */}
                 {isDataFetched && (
                   <View>
-                    <ProductPhoto />
-                    <ProductDescription />
-                    <Interactions />
+                    <ProductPhoto data={dataProduct} />
+                    <ProductDescription data={dataProduct} />
+                    <Interactions data={dataProduct} />
                   </View>
                 )}
               </ScrollView>
@@ -124,17 +109,6 @@ const styles = StyleSheet.create({
   header: {
     marginTop: 25,
   },
-  itemContainer: {
-    width: halfWidth,
-    height: halfWidth,
-    margin: 3,
-    alignItems: 'center',
-  },
-  productImage: {
-    width: halfWidth * 0.7,
-    height: halfWidth * 0.6,
-    marginTop: 15,
-  },
   spin: {
     paddingVertical: 6,
     width: width * 0.25,
@@ -143,21 +117,6 @@ const styles = StyleSheet.create({
     marginRight: (width * 0.75) / 2,
     marginTop: (height * 0.75) / 2,
     marginBottom: (height * 0.75) / 2,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: height * 0.5,
-    marginTop: height * 0.15,
-    marginBottom: height * 0.25,
-  },
-  emptyLogo: {
-    width: width * 0.5,
-    height: width * 0.5,
-  },
-  emptyText: {
-    fontSize: 13,
   },
 });
 

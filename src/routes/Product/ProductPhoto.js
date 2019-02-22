@@ -1,76 +1,72 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Image, Dimensions, ScrollView } from 'react-native';
-// import { Constants } from 'expo';
-import {
-  Container,
-  Content,
-  Text,
-  Header,
-  Left,
-  Button,
-  Icon,
-  Title,
-  Body,
-  Spinner,
-  ActionSheet,
-} from 'native-base';
-// import { Grid, Row, Col } from 'react-native-easy-grid';
-// import emptyResult from '../../../assets/empty_search_result.png';
-// import { db } from '../../../firebase.config';
+import { Icon } from 'native-base';
+import { Grid, Col } from 'react-native-easy-grid';
 
-const numColumns = 2;
 const { width, height } = Dimensions.get('window');
-const halfWidth = width / numColumns;
-
-const images = [
-  {
-    source: {
-      uri: 'https://cdn.pixabay.com/photo/2017/05/19/07/34/teacup-2325722__340.jpg',
-    },
-  },
-  {
-    source: {
-      uri: 'https://cdn.pixabay.com/photo/2017/05/02/22/43/mushroom-2279558__340.jpg',
-    },
-  },
-  {
-    source: {
-      uri: 'https://cdn.pixabay.com/photo/2017/05/18/21/54/tower-bridge-2324875__340.jpg',
-    },
-  },
-  {
-    source: {
-      uri: 'https://cdn.pixabay.com/photo/2017/05/16/21/24/gorilla-2318998__340.jpg',
-    },
-  },
-];
 
 class ProductPhoto extends Component {
   static propTypes = {
-    nav: PropTypes.object,
+    data: PropTypes.object,
   };
 
   state = {
-    category: '',
-    isDataFetched: false,
-    dataProducts: [],
-    clicked: 0,
+    images: this.props.data.photo_produk || [],
   };
 
-  componentDidMount() {
-    // console.log('product photo');
-  }
+  prevImage = index => {
+    let totalImages = this.state.images.length;
+    if (index === 0) {
+      this.myScroll.scrollTo({ x: totalImages * width, y: 0, animated: true });
+    } else if (index === 1) {
+      this.myScroll.scrollTo({ x: 0, y: 0, animated: true });
+    } else if (index === 2) {
+      this.myScroll.scrollTo({ x: width, y: 0, animated: true });
+    }
+  };
+
+  nextImage = index => {
+    let totalImages = this.state.images.length;
+    let slideTwoValue = totalImages === 2 ? -1 * width : 2 * width;
+    if (index === 0) {
+      this.myScroll.scrollTo({ x: width, y: 0, animated: true });
+    } else if (index === 1) {
+      this.myScroll.scrollTo({ x: slideTwoValue, y: 0, animated: true });
+    } else if (index === 2) {
+      this.myScroll.scrollTo({ x: -2 * width, y: 0, animated: true });
+    }
+  };
 
   render() {
-    let { isDataFetched, dataProducts, category } = this.state;
+    let { images } = this.state;
     return (
       <View style={styles.scrollContainer}>
-        <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
-          {images.map((image, i) => (
-            <Image style={styles.image} source={image.source} key={i} />
-          ))}
-        </ScrollView>
+        {images.length > 1 ? (
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            ref={e => (this.myScroll = e)}>
+            {images.map((val, i) => (
+              <View key={i}>
+                <Grid>
+                  <Col style={{ width: width * 0.05, marginTop: height * 0.13 }}>
+                    <Icon name="arrow-dropleft-circle" onPress={() => this.prevImage(i)} />
+                  </Col>
+                  <Col>
+                    <Image style={styles.image} source={{ uri: val }} key={i} />
+                  </Col>
+                  <Col style={{ width: width * 0.05, marginTop: height * 0.13 }}>
+                    <Icon name="arrow-dropright-circle" onPress={() => this.nextImage(i)} />
+                  </Col>
+                </Grid>
+              </View>
+            ))}
+          </ScrollView>
+        ) : (
+          <Image style={styles.image} source={{ uri: images[0] }} />
+        )}
       </View>
     );
   }
@@ -78,10 +74,11 @@ class ProductPhoto extends Component {
 
 const styles = StyleSheet.create({
   scrollContainer: {
+    marginTop: 10,
     height: height * 0.3,
   },
   image: {
-    width,
+    width: width * 0.9,
     height: height * 0.3,
   },
 });
