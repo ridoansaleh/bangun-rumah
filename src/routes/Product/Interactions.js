@@ -69,13 +69,15 @@ class Interactions extends Component {
     console.log('PROPS : ', this.props);
     return (
       <View style={{ padding: 20 }}>
-        <Grid style={{ backgroundColor: '#AAAAAA', padding: 5, height: height * 0.05 }}>
+        <Grid style={{ padding: 5, height: height * 0.05, borderColor: 'black', borderWidth: 1 }}>
           <Col style={{ borderRightColor: 'black', borderRightWidth: 1 }}>
             <Grid>
               <Col size={4}>
                 <TouchableHighlight
                   onPress={() => {
-                    this.props.navigation.navigate(urls.review);
+                    this.props.navigation.navigate(urls.review, {
+                      product_id: this.props.idProduct,
+                    });
                   }}>
                   <Text>Review</Text>
                 </TouchableHighlight>

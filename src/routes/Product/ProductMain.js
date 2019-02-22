@@ -29,14 +29,14 @@ class ProductMainScreen extends Component {
   };
 
   state = {
+    idProduct: this.props.nav.navigation.getParam('product_id', 0),
     isDataFetched: false,
     dataProduct: {},
   };
 
   componentDidMount() {
-    let id_product = this.props.nav.navigation.getParam('product_id', 0);
     db.collection('produk')
-      .doc(id_product)
+      .doc(this.state.idProduct)
       .get()
       .then(doc => {
         if (doc.exists) {
@@ -49,7 +49,7 @@ class ProductMainScreen extends Component {
         }
       })
       .catch(function(error) {
-        console.log(`Error getting product with id ${id_product} \n`, error);
+        console.log(`Error getting product with id ${this.state.idProduct} \n`, error);
       });
   }
 
@@ -80,7 +80,11 @@ class ProductMainScreen extends Component {
                   <View>
                     <ProductPhoto data={dataProduct} />
                     <ProductDescription data={dataProduct} />
-                    <Interactions data={dataProduct} {...this.props.nav} />
+                    <Interactions
+                      data={dataProduct}
+                      idProduct={this.state.idProduct}
+                      {...this.props.nav}
+                    />
                   </View>
                 )}
               </ScrollView>
