@@ -63,6 +63,8 @@ const discuss = [{ title: 'Diskusi', content: 'Lorem ipsum dolor sit amet' }];
 class Interactions extends Component {
   static propTypes = {
     nav: PropTypes.object,
+    data: PropTypes.object,
+    idProduct: PropTypes.string,
   };
 
   render() {
@@ -77,6 +79,7 @@ class Interactions extends Component {
                   onPress={() => {
                     this.props.navigation.navigate(urls.review, {
                       product_id: this.props.idProduct,
+                      shop_id: this.props.data.id_toko,
                     });
                   }}>
                   <Text>Review</Text>

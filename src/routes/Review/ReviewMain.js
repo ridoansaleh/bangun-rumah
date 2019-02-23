@@ -41,15 +41,19 @@ const { width, height } = Dimensions.get('window');
 class Review extends Component {
   static propTypes = {
     nav: PropTypes.object,
+    user: PropTypes.object,
   };
 
   state = {
     idProduct: this.props.nav.navigation.getParam('product_id', 0),
+    idShop: this.props.nav.navigation.getParam('shop_id', 0),
     isDataFetched: false,
     isEligibleToReview: false,
     dataReview: [],
     text: '',
     starCount: 0,
+    invalidForm: false,
+    readyToUpdate: false,
   };
 
   componentDidMount() {
@@ -63,13 +67,34 @@ class Review extends Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
-          reviews.push(doc.data());
+          // reviews.push(doc.data());
+          reviews.push({
+            id_review: doc.id,
+            ...doc.data(),
+          });
         });
-        this.checkHasUserBuyIt(reviews);
+        this.orderReviewData(reviews);
+        // this.checkHasUserReview(reviews);
       })
       .catch(error => {
         console.error("Error getting review's data \n", error);
       });
+  };
+
+  orderReviewData = reviews => {
+    if (reviews.length > 0) {
+      let newData = reviews.filter(rev => rev.id_user === this.props.user.id);
+      console.log('newData : ', newData);
+      if (newData.length === 1) {
+        let temp = reviews.filter(rev => rev.id_user !== this.props.user.id);
+        temp.unshift(newData);
+        this.checkHasUserReview(temp);
+      } else {
+        this.checkHasUserReview(reviews);
+      }
+    } else {
+      this.checkHasUserReview(reviews);
+    }
   };
 
   checkHasUserReview = reviews => {
@@ -83,6 +108,7 @@ class Review extends Component {
         querySnapshot.forEach(doc => {
           data.push(doc.data());
         });
+        console.log('checkHasUserReview : ', data);
         if (data.length === 1) {
           this.setState({
             dataReview: reviews,
@@ -109,6 +135,7 @@ class Review extends Component {
         querySnapshot.forEach(doc => {
           data.push(doc.data());
         });
+        console.log('checkHasUserBuyIt : ', data);
         if (data.length === 1) {
           this.setState({
             dataReview: reviews,
@@ -128,16 +155,105 @@ class Review extends Component {
       });
   };
 
+  changeFieldValue = (type, val) => {
+    if (type === 'star') {
+      if (this.state.text) {
+        this.setState({
+          starCount: val,
+          invalidForm: false,
+        });
+      } else {
+        this.setState({
+          starCount: val,
+          invalidForm: true,
+        });
+      }
+    } else {
+      if (this.state.starCount) {
+        this.setState({
+          text: val,
+          invalidForm: false,
+        });
+      } else {
+        this.setState({
+          text: val,
+          invalidForm: true,
+        });
+      }
+    }
+  };
+
   submitReview = () => {
     // submit to firebase
+    if (this.state.starCount && this.state.text) {
+      this.setState({
+        invalidForm: false,
+        isDataFetched: false,
+      });
+      db.collection('review')
+        .add({
+          id_produk: this.state.idProduct,
+          id_toko: this.state.idShop,
+          id_user: this.props.user.id,
+          reviewer: this.props.user.nama,
+          bintang: this.state.starCount,
+          teks: this.state.text,
+        })
+        .then(docRef => {
+          console.log('Document written with ID: ', docRef.id);
+          this.getDataReviews();
+        })
+        .catch(error => {
+          console.error('Error adding document: ', error);
+        });
+    } else {
+      this.setState({
+        invalidForm: true,
+      });
+    }
+  };
+
+  editReview = id => {
+    if (this.state.starCount && this.state.text) {
+      this.setState({
+        invalidForm: false,
+        readyToUpdate: false,
+        isDataFetched: false,
+      });
+
+      let docRef = db.collection('review').doc(id);
+
+      docRef
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            // this.setState({
+            //   isDataFetched: true,
+            //   dataProduct: doc.data(),
+            // });
+            docRef.update({
+              bintang: this.state.starCount,
+              teks: this.state.text,
+            });
+            this.getDataReviews();
+          } else {
+            console.log('No such document!');
+          }
+        })
+        .catch(function(error) {
+          console.log(`Error searching review with id ${id} \n`, error);
+        });
+    } else {
+      this.setState({
+        invalidForm: true,
+      });
+    }
   };
 
   //   checkIsUserEligibleToReview = () => {
   //     // check whether user has reviewed or not
   //     // check whether user buy the product or not
   //   };
-
-  onStarRatingPress = () => {};
 
   render() {
     console.log('ReviewSTATE : ', this.state);
@@ -178,22 +294,30 @@ class Review extends Component {
                     maxStars={5}
                     rating={this.state.starCount}
                     starSize={18}
-                    selectedStar={rating => this.onStarRatingPress(rating)}
+                    selectedStar={val => this.changeFieldValue('star', val)}
                   />
                 </Col>
                 <Col size={35}>
-                  <Text style={{ position: 'absolute', right: 0 }}>Nama User</Text>
+                  <Text style={{ position: 'absolute', right: 0 }}>{this.props.user.nama}</Text>
                 </Col>
               </Row>
               <Row style={{ marginBottom: 15 }}>
                 <TextInput
                   multiline
                   numberOfLines={4}
-                  onChangeText={val => this.setState({ text: val })}
+                  onChangeText={val => this.changeFieldValue('text', val)}
                   value={this.state.text}
                   style={{ borderColor: 'black', borderWidth: 1, width: 0.95 * width, padding: 5 }}
                 />
               </Row>
+              {/* VALIDATION MESSAGE */}
+              {this.state.invalidForm && (
+                <Row style={{ marginBottom: 15 }}>
+                  <Text style={{ color: 'red', fontSize: 12 }}>
+                    Bintang dan teks tidak boleh kosong
+                  </Text>
+                </Row>
+              )}
               <Row>
                 <Button small onPress={() => this.submitReview()}>
                   <Text>Submit</Text>
@@ -212,26 +336,129 @@ class Review extends Component {
           {/* THERE ARE SOME REVIEWS */}
           {this.state.isDataFetched && this.state.dataReview.length > 0 && (
             <View style={{ marginTop: 30 }}>
-              {this.state.dataReview.map((rev, i) => (
-                <Grid style={{ marginBottom: 10 }} key={i}>
-                  <Row>
-                    <Col size={38}>
-                      <Text style={{ fontWeight: 'bold' }}>{rev.reviewer}</Text>
-                    </Col>
-                    <Col size={12}>
-                      <StarRating
-                        disabled
-                        maxStars={5}
-                        rating={parseInt(rev.bintang)}
-                        starSize={18}
-                      />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Text>{rev.teks}</Text>
-                  </Row>
-                </Grid>
-              ))}
+              {this.state.dataReview.map((rev, i) => {
+                if (rev.id_user === this.props.user.id) {
+                  return (
+                    <Grid>
+                      <Row>
+                        <Col size={38}>
+                          <Text style={{ fontWeight: 'bold' }}>{rev.reviewer}</Text>
+                        </Col>
+                        <Col size={12}>
+                          {!this.state.readyToUpdate ? (
+                            <StarRating
+                              disabled
+                              maxStars={5}
+                              rating={parseInt(rev.bintang)}
+                              starSize={18}
+                            />
+                          ) : (
+                            <StarRating
+                              disabled={false}
+                              maxStars={5}
+                              rating={parseInt(rev.bintang)}
+                              starSize={18}
+                              selectedStar={val => this.changeFieldValue('star', val)}
+                            />
+                          )}
+                        </Col>
+                      </Row>
+                      <Row>
+                        {!this.state.readyToUpdate ? (
+                          <Text>{rev.teks}</Text>
+                        ) : (
+                          <TextInput
+                            multiline
+                            numberOfLines={4}
+                            onChangeText={val => this.changeFieldValue('text', val)}
+                            value={this.state.text ? this.state.text : rev.teks}
+                            style={{
+                              borderColor: 'black',
+                              borderWidth: 1,
+                              width: 0.95 * width,
+                              padding: 5,
+                            }}
+                          />
+                        )}
+                      </Row>
+                      {!this.state.readyToUpdate && (
+                        <Row>
+                          <TouchableHighlight
+                            onPress={() => this.setState({ readyToUpdate: true })}>
+                            <Text>Review</Text>
+                          </TouchableHighlight>
+                        </Row>
+                      )}
+                      {/* <Row style={{ marginBottom: 15 }}>
+                        <Col size={15}>
+                          <StarRating
+                            disabled={false}
+                            maxStars={5}
+                            rating={this.state.starCount}
+                            starSize={18}
+                            selectedStar={val => this.changeFieldValue('star', val)}
+                          />
+                        </Col>
+                        <Col size={35}>
+                          <Text style={{ position: 'absolute', right: 0 }}>
+                            {this.props.user.nama}
+                          </Text>
+                        </Col>
+                      </Row>
+                      <Row style={{ marginBottom: 15 }}>
+                        <TextInput
+                          multiline
+                          numberOfLines={4}
+                          onChangeText={val => this.changeFieldValue('text', val)}
+                          value={this.state.text}
+                          style={{
+                            borderColor: 'black',
+                            borderWidth: 1,
+                            width: 0.95 * width,
+                            padding: 5,
+                          }}
+                        />
+                      </Row> */}
+                      {/* VALIDATION MESSAGE */}
+                      {this.state.readyToUpdate && this.state.invalidForm && (
+                        <Row style={{ marginBottom: 15 }}>
+                          <Text style={{ color: 'red', fontSize: 12 }}>
+                            Bintang dan teks tidak boleh kosong
+                          </Text>
+                        </Row>
+                      )}
+                      {this.state.readyToUpdate && (
+                        <Row>
+                          <Button small onPress={() => this.editReview(rev.id_review)}>
+                            <Text>Submit</Text>
+                          </Button>
+                        </Row>
+                      )}
+                    </Grid>
+                  );
+                } else {
+                  return (
+                    <Grid style={{ marginBottom: 10 }} key={i}>
+                      <Row>
+                        <Col size={38}>
+                          <Text style={{ fontWeight: 'bold' }}>{rev.reviewer}</Text>
+                        </Col>
+                        <Col size={12}>
+                          <StarRating
+                            disabled
+                            maxStars={5}
+                            rating={parseInt(rev.bintang)}
+                            starSize={18}
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Text>{rev.teks}</Text>
+                      </Row>
+                    </Grid>
+                  );
+                }
+              })}
             </View>
           )}
         </Content>
