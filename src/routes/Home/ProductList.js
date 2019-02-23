@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, FlatList, Image } from 'react-native';
+import { Dimensions, StyleSheet, FlatList, Image, TouchableWithoutFeedback } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
 import StarRating from 'react-native-star-rating';
 import emptyResult from '../../../assets/empty_search_result.png';
 import { db } from '../../../firebase.config';
 import { convertToCurrency } from '../../utils';
+import { urls } from '../../constant';
 
 const numColumns = 2;
 const { width } = Dimensions.get('window');
@@ -27,7 +28,10 @@ class ProductList extends Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
-          products.push(doc.data());
+          products.push({
+            id_produk: doc.id,
+            ...doc.data(),
+          });
         });
         this.setState({
           isDataFetched: true,
@@ -40,6 +44,7 @@ class ProductList extends Component {
   };
 
   render() {
+    console.log('ProductLIST : ', this.props);
     const { isDataFetched, dataProducts } = this.state;
     if (!isDataFetched) {
       return (
@@ -53,18 +58,25 @@ class ProductList extends Component {
           <FlatList
             data={dataProducts}
             renderItem={({ item }) => (
-              <View style={styles.itemContainer}>
-                <Image source={{ uri: item.photo_produk[0] }} style={styles.productImage} />
-                <Text>{item.nama}</Text>
-                <StarRating
-                  disabled
-                  maxStars={5}
-                  rating={parseInt(item.bintang)}
-                  starSize={20}
-                  fullStarColor={'gold'}
-                />
-                <Text>Rp {convertToCurrency(parseInt(item.harga))}</Text>
-              </View>
+              <TouchableWithoutFeedback
+                onPress={() =>
+                  this.props.navigation.navigate(urls.product, {
+                    product_id: item.id_produk,
+                  })
+                }>
+                <View style={styles.itemContainer}>
+                  <Image source={{ uri: item.photo_produk[0] }} style={styles.productImage} />
+                  <Text>{item.nama}</Text>
+                  <StarRating
+                    disabled
+                    maxStars={5}
+                    rating={parseInt(item.bintang)}
+                    starSize={20}
+                    fullStarColor={'gold'}
+                  />
+                  <Text>Rp {convertToCurrency(parseInt(item.harga))}</Text>
+                </View>
+              </TouchableWithoutFeedback>
             )}
             keyExtractor={item => item.id}
             numColumns={numColumns}

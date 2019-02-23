@@ -8,6 +8,7 @@ const Authentication = Wrapped => {
     state = {
       isDataFetched: false,
       dataUser: {},
+      isLogin: false,
     };
 
     componentDidMount() {
@@ -20,6 +21,7 @@ const Authentication = Wrapped => {
           } else {
             this.setState({
               isDataFetched: true,
+              isLogin: false,
             });
           }
         }
@@ -36,6 +38,7 @@ const Authentication = Wrapped => {
             this.setState({
               isDataFetched: true,
               dataUser: profile,
+              isLogin: true,
             });
           }
         });
@@ -49,7 +52,7 @@ const Authentication = Wrapped => {
     };
 
     render() {
-      let { isDataFetched, dataUser } = this.state;
+      let { isDataFetched, dataUser, isLogin } = this.state;
       let { state, navigate } = this.props.navigation;
 
       if (Object.keys(dataUser).length === 0) {
@@ -64,6 +67,7 @@ const Authentication = Wrapped => {
       return (
         <Wrapped
           user={dataUser}
+          isLogin={isLogin}
           nav={this.props}
           getProfile={this.getProfile}
           resetUserStatus={this.resetUserStatus}

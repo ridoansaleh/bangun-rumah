@@ -143,7 +143,13 @@ class ShoppingCartScreen extends Component {
                           style={{ marginTop: width * 0.2 * 0.3 }}
                         />
                       </Col>
-                      <Col size={2}>
+                      <Col
+                        size={2}
+                        onPress={() =>
+                          this.props.nav.navigation.navigate(urls.product, {
+                            product_id: data.id_produk,
+                          })
+                        }>
                         {data.photo === '' && (
                           <Image
                             source={defaultImage}
@@ -157,7 +163,14 @@ class ShoppingCartScreen extends Component {
                           />
                         )}
                       </Col>
-                      <Col size={5} style={{ paddingLeft: 10 }}>
+                      <Col
+                        size={5}
+                        style={{ paddingLeft: 10 }}
+                        onPress={() =>
+                          this.props.nav.navigation.navigate(urls.product, {
+                            product_id: data.id_produk,
+                          })
+                        }>
                         <Text>{data.nama}</Text>
                         <Text style={{ fontSize: 12 }}>
                           Rp {convertToCurrency(data.total_harga)}

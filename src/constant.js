@@ -90,6 +90,9 @@ const urls = {
   cart: 'ShoppingCart',
   profile: 'Profile',
   search: 'SearchProduct',
+  product: 'Product',
+  review: 'Review',
+  discussion: 'Discussion',
 };
 
 const nonAuthenticatedUrls = [
@@ -99,6 +102,9 @@ const nonAuthenticatedUrls = [
   urls.login,
   urls.category,
   urls.search,
+  urls.product,
+  urls.review,
+  urls.discussion,
 ];
 
 export { loginMenus, nonLoginMenus, user, urls, nonAuthenticatedUrls };
