@@ -41,7 +41,7 @@ class HomeScreen extends Component {
               <Text style={styles.productLabel}>Produk</Text>
             </Row>
             <Row>
-              <ProductList />
+              <ProductList {...this.props.nav} />
             </Row>
           </Grid>
         </Content>

@@ -1,15 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  StyleSheet,
-  View,
-  Image,
-  Dimensions,
-  TextInput,
-  Modal,
-  TouchableHighlight,
-  Alert,
-} from 'react-native';
+import { StyleSheet, View, Dimensions, TextInput, TouchableHighlight } from 'react-native';
 import {
   Container,
   Content,
@@ -22,19 +13,11 @@ import {
   Title,
   Body,
   Spinner,
-  ActionSheet,
-  Tabs,
-  Tab,
-  Accordion,
 } from 'native-base';
-// import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
-import { urls } from '../../constant';
 import Authentication from '../../components/Authentication';
-// import emptyResult from '../../../assets/empty_search_result.png';
 import { db } from '../../../firebase.config';
-// import { convertToCurrency } from '../../utils';
 
 const { width, height } = Dimensions.get('window');
 
@@ -42,6 +25,7 @@ class Review extends Component {
   static propTypes = {
     nav: PropTypes.object,
     user: PropTypes.object,
+    isLogin: PropTypes.bool,
   };
 
   state = {
@@ -67,14 +51,19 @@ class Review extends Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
-          // reviews.push(doc.data());
           reviews.push({
             id_review: doc.id,
             ...doc.data(),
           });
         });
-        this.orderReviewData(reviews);
-        // this.checkHasUserReview(reviews);
+        if (this.props.isLogin) {
+          this.orderReviewData(reviews);
+        } else {
+          this.setState({
+            isDataFetched: true,
+            dataReview: reviews,
+          });
+        }
       })
       .catch(error => {
         console.error("Error getting review's data \n", error);
@@ -84,10 +73,9 @@ class Review extends Component {
   orderReviewData = reviews => {
     if (reviews.length > 0) {
       let newData = reviews.filter(rev => rev.id_user === this.props.user.id);
-      console.log('newData : ', newData);
       if (newData.length === 1) {
         let temp = reviews.filter(rev => rev.id_user !== this.props.user.id);
-        temp.unshift(newData);
+        temp.unshift(newData[0]);
         this.checkHasUserReview(temp);
       } else {
         this.checkHasUserReview(reviews);
@@ -108,7 +96,6 @@ class Review extends Component {
         querySnapshot.forEach(doc => {
           data.push(doc.data());
         });
-        console.log('checkHasUserReview : ', data);
         if (data.length === 1) {
           this.setState({
             dataReview: reviews,
@@ -135,7 +122,6 @@ class Review extends Component {
         querySnapshot.forEach(doc => {
           data.push(doc.data());
         });
-        console.log('checkHasUserBuyIt : ', data);
         if (data.length === 1) {
           this.setState({
             dataReview: reviews,
@@ -220,17 +206,11 @@ class Review extends Component {
         readyToUpdate: false,
         isDataFetched: false,
       });
-
       let docRef = db.collection('review').doc(id);
-
       docRef
         .get()
         .then(doc => {
           if (doc.exists) {
-            // this.setState({
-            //   isDataFetched: true,
-            //   dataProduct: doc.data(),
-            // });
             docRef.update({
               bintang: this.state.starCount,
               teks: this.state.text,
@@ -250,13 +230,7 @@ class Review extends Component {
     }
   };
 
-  //   checkIsUserEligibleToReview = () => {
-  //     // check whether user has reviewed or not
-  //     // check whether user buy the product or not
-  //   };
-
   render() {
-    console.log('ReviewSTATE : ', this.state);
     return (
       <Container>
         <Header style={styles.header}>
@@ -339,8 +313,15 @@ class Review extends Component {
               {this.state.dataReview.map((rev, i) => {
                 if (rev.id_user === this.props.user.id) {
                   return (
-                    <Grid>
-                      <Row>
+                    <Grid
+                      style={{
+                        marginBottom: 10,
+                        borderBottomColor: 'black',
+                        borderBottomWidth: 1,
+                        paddingBottom: 15,
+                      }}
+                      key={i}>
+                      <Row style={{ marginBottom: 15 }}>
                         <Col size={38}>
                           <Text style={{ fontWeight: 'bold' }}>{rev.reviewer}</Text>
                         </Col>
@@ -356,14 +337,18 @@ class Review extends Component {
                             <StarRating
                               disabled={false}
                               maxStars={5}
-                              rating={parseInt(rev.bintang)}
+                              rating={
+                                this.state.starCount
+                                  ? this.state.starCount
+                                  : this.setState({ starCount: parseInt(rev.bintang) })
+                              }
                               starSize={18}
                               selectedStar={val => this.changeFieldValue('star', val)}
                             />
                           )}
                         </Col>
                       </Row>
-                      <Row>
+                      <Row style={{ marginBottom: 15 }}>
                         {!this.state.readyToUpdate ? (
                           <Text>{rev.teks}</Text>
                         ) : (
@@ -371,7 +356,9 @@ class Review extends Component {
                             multiline
                             numberOfLines={4}
                             onChangeText={val => this.changeFieldValue('text', val)}
-                            value={this.state.text ? this.state.text : rev.teks}
+                            value={
+                              this.state.text ? this.state.text : this.setState({ text: rev.teks })
+                            }
                             style={{
                               borderColor: 'black',
                               borderWidth: 1,
@@ -382,43 +369,13 @@ class Review extends Component {
                         )}
                       </Row>
                       {!this.state.readyToUpdate && (
-                        <Row>
+                        <Row style={{ justifyContent: 'center' }}>
                           <TouchableHighlight
                             onPress={() => this.setState({ readyToUpdate: true })}>
-                            <Text>Review</Text>
+                            <Text>Edit Review</Text>
                           </TouchableHighlight>
                         </Row>
                       )}
-                      {/* <Row style={{ marginBottom: 15 }}>
-                        <Col size={15}>
-                          <StarRating
-                            disabled={false}
-                            maxStars={5}
-                            rating={this.state.starCount}
-                            starSize={18}
-                            selectedStar={val => this.changeFieldValue('star', val)}
-                          />
-                        </Col>
-                        <Col size={35}>
-                          <Text style={{ position: 'absolute', right: 0 }}>
-                            {this.props.user.nama}
-                          </Text>
-                        </Col>
-                      </Row>
-                      <Row style={{ marginBottom: 15 }}>
-                        <TextInput
-                          multiline
-                          numberOfLines={4}
-                          onChangeText={val => this.changeFieldValue('text', val)}
-                          value={this.state.text}
-                          style={{
-                            borderColor: 'black',
-                            borderWidth: 1,
-                            width: 0.95 * width,
-                            padding: 5,
-                          }}
-                        />
-                      </Row> */}
                       {/* VALIDATION MESSAGE */}
                       {this.state.readyToUpdate && this.state.invalidForm && (
                         <Row style={{ marginBottom: 15 }}>
@@ -429,9 +386,25 @@ class Review extends Component {
                       )}
                       {this.state.readyToUpdate && (
                         <Row>
-                          <Button small onPress={() => this.editReview(rev.id_review)}>
-                            <Text>Submit</Text>
-                          </Button>
+                          <Col size={4}>
+                            <Button
+                              small
+                              bordered
+                              info
+                              onPress={() => this.editReview(rev.id_review)}>
+                              <Text>Submit</Text>
+                            </Button>
+                          </Col>
+                          <Col size={2}>
+                            <Button
+                              small
+                              bordered
+                              danger
+                              style={{ position: 'absolute', right: 0 }}
+                              onPress={() => this.setState({ readyToUpdate: false })}>
+                              <Text>Batal</Text>
+                            </Button>
+                          </Col>
                         </Row>
                       )}
                     </Grid>
