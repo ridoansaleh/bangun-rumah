@@ -97,7 +97,10 @@ class Interactions extends Component {
               <Col size={4}>
                 <TouchableHighlight
                   onPress={() => {
-                    this.props.navigation.navigate(urls.discussion);
+                    this.props.navigation.navigate(urls.discussion, {
+                      product_id: this.props.idProduct,
+                      shop_id: this.props.data.id_toko,
+                    });
                   }}>
                   <Text style={{ marginLeft: 5 }}>Diskusi</Text>
                 </TouchableHighlight>

@@ -29,10 +29,10 @@ class Review extends Component {
   };
 
   state = {
-    idProduct: this.props.nav.navigation.getParam('product_id', 0),
-    idShop: this.props.nav.navigation.getParam('shop_id', 0),
     isDataFetched: false,
     isEligibleToReview: false,
+    idProduct: this.props.nav.navigation.getParam('product_id', 0),
+    idShop: this.props.nav.navigation.getParam('shop_id', 0),
     dataReview: [],
     text: '',
     starCount: 0,
