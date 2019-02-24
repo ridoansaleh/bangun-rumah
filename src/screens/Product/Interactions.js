@@ -1,64 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  StyleSheet,
-  View,
-  Image,
-  Dimensions,
-  TextInput,
-  Modal,
-  TouchableHighlight,
-  Alert,
-} from 'react-native';
-import {
-  Container,
-  Content,
-  Text,
-  Header,
-  Left,
-  Button,
-  Icon,
-  Title,
-  Body,
-  Spinner,
-  ActionSheet,
-  Tabs,
-  Tab,
-  Accordion,
-} from 'native-base';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Grid, Row, Col } from 'react-native-easy-grid';
-import StarRating from 'react-native-star-rating';
+import { View, Dimensions, TouchableHighlight } from 'react-native';
+import { Text, Icon } from 'native-base';
+import { Grid, Col } from 'react-native-easy-grid';
 import { urls } from '../../constant';
-// import Authentication from '../../components/Authentication';
-// import emptyResult from '../../../assets/empty_search_result.png';
-// import { db } from '../../../firebase.config';
-// import { convertToCurrency } from '../../utils';
 
-// const numColumns = 2;
-const { width, height } = Dimensions.get('window');
-
-// const Tab1 = () => (
-//   <View>
-//     <Text>
-//       Tabs are a horizontal region of buttons or links that allow for a consistent navigation
-//       experience between screens.
-//     </Text>
-//   </View>
-// );
-
-// const Tab2 = () => (
-//   <View>
-//     <Text>
-//       It can contain any combination of text and icons, and is a popular method for enabling mobile
-//       navigation.
-//     </Text>
-//   </View>
-// );
-
-const review = [{ title: 'Review', content: 'Lorem ipsum dolor sit amet' }];
-
-const discuss = [{ title: 'Diskusi', content: 'Lorem ipsum dolor sit amet' }];
+const { height } = Dimensions.get('window');
 
 class Interactions extends Component {
   static propTypes = {
@@ -68,7 +15,6 @@ class Interactions extends Component {
   };
 
   render() {
-    console.log('PROPS : ', this.props);
     return (
       <View style={{ padding: 20 }}>
         <Grid style={{ padding: 5, height: height * 0.05, borderColor: 'black', borderWidth: 1 }}>

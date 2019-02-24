@@ -35,8 +35,8 @@ class BottomNavbar extends Component {
             <Icon name="cart" />
           </Button>
           <Button
-            active={this.props.pageActive === urls.profile}
-            onPress={() => this.handleRouteChange(urls.profile)}>
+            active={this.props.pageActive === urls.dashboard_profile}
+            onPress={() => this.handleRouteChange(urls.dashboard_profile)}>
             <Icon name="person" />
           </Button>
         </FooterTab>

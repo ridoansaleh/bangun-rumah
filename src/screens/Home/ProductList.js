@@ -44,7 +44,6 @@ class ProductList extends Component {
   };
 
   render() {
-    console.log('ProductLIST : ', this.props);
     const { isDataFetched, dataProducts } = this.state;
     if (!isDataFetched) {
       return (
