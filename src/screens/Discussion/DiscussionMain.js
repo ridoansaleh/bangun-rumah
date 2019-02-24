@@ -21,7 +21,7 @@ import { db } from '../../../firebase.config';
 
 const { width, height } = Dimensions.get('window');
 
-class Discussion extends Component {
+class DiscussionScreen extends Component {
   static propTypes = {
     nav: PropTypes.object,
     user: PropTypes.object,
@@ -216,4 +216,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Authentication(Discussion);
+export default Authentication(DiscussionScreen);

@@ -13,6 +13,7 @@ class SideBar extends Component {
   static propTypes = {
     nav: PropTypes.object,
     user: PropTypes.object,
+    isLogin: PropTypes.bool,
     getProfile: PropTypes.func,
     resetUserStatus: PropTypes.func,
   };
@@ -21,21 +22,21 @@ class SideBar extends Component {
     super(props);
 
     this.state = {
-      isLogin: Object.keys(props.user).length > 0,
-      drawerMenus: Object.keys(props.user).length ? loginMenus : nonLoginMenus,
+      isLogin: props.isLogin,
+      drawerMenus: props.isLogin ? loginMenus : nonLoginMenus,
     };
   }
 
   static getDerivedStateFromProps(nextProps) {
     let state = {
-      isLogin: Object.keys(nextProps.user).length > 0,
-      drawerMenus: Object.keys(nextProps.user).length ? loginMenus : nonLoginMenus,
+      isLogin: nextProps.isLogin,
+      drawerMenus: nextProps.isLogin ? loginMenus : nonLoginMenus,
     };
     return state;
   }
 
   shouldComponentUpdate(nextProps) {
-    if (Object.keys(nextProps.user).length > 1 && nextProps.user.nama === null) {
+    if (nextProps.isLogin && nextProps.user.nama === null) {
       this.props.getProfile();
     }
     return true;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { YellowBox } from 'react-native';
 import { Root } from 'native-base';
 import { Font } from 'expo';
-import AppContainer from './src/routes';
+import AppContainer from './src/screens';
 
 class App extends Component {
   constructor(props) {
