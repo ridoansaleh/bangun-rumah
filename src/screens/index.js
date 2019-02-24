@@ -5,6 +5,7 @@ import CategoryScreen from './Category/CategoryMain';
 import ShoppingCartScreen from './ShoppingCart/ShoppingCartMain';
 import DashboardProfileScreen from './DashboardProfile/DashboardProfileMain';
 import ProfileScreen from './Profile/ProfileMain';
+import EditProfileScreen from './EditProfile/EditProfileMain';
 import OrderHistoryScreen from './OrderHistory/OrderHistoryMain';
 import ShopScreen from './Shop/ShopMain';
 import ChangePasswordScreen from './ChangePassword/ChangePasswordMain';
@@ -40,6 +41,7 @@ const AppNavigator = createStackNavigator(
     Discussion: DiscussionScreen,
     DashboardProfile: DashboardProfileScreen,
     Profile: ProfileScreen,
+    EditProfile: EditProfileScreen,
     OrderHistory: OrderHistoryScreen,
     Shop: ShopScreen,
     ChangePassword: ChangePasswordScreen,

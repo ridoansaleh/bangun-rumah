@@ -91,6 +91,7 @@ const urls = {
   cart: 'ShoppingCart',
   dashboard_profile: 'DashboardProfile',
   profile: 'Profile',
+  edit_profile: 'EditProfile',
   order_history: 'OrderHistory',
   shop: 'Shop',
   change_password: 'ChangePassword',

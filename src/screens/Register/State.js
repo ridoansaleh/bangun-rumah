@@ -11,11 +11,13 @@ const state = {
   isAddressValid: false,
   isEmailValid: false,
   isPasswordValid: false,
+  isGenderValid: false,
   isDateValid: false,
   isNameChanged: false,
   isAddressChanged: false,
   isEmailChanged: false,
   isPasswordChanged: false,
+  isGenderChanged: false,
   isDateChanged: false,
 };
 

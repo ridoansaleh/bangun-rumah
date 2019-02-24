@@ -81,7 +81,7 @@ class ShoppingCartScreen extends Component {
           this.getCartData();
         }
       }
-    } else if (this.state.selectedProductsID.length == 1) {
+    } else if (this.state.selectedProductsID.length === 1) {
       this.setState({
         isDataFetched: false,
       });

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, AsyncStorage, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import {
   Button,
   Container,
@@ -11,26 +11,36 @@ import {
   Body,
   Right,
   Title,
-  Form,
-  Item,
-  Input,
   Text,
-  Label,
-  View,
 } from 'native-base';
-import { Grid, Col } from 'react-native-easy-grid';
+import { Grid, Col, Row } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
-import loginUser from '../../../assets/login-user.jpg';
-import { auth as authenticate, db } from '../../../firebase.config';
 import { urls } from '../../constant';
-
-const { width, height } = Dimensions.get('window');
-// Forgot password link is not ready yet
 
 class ProfileScreen extends Component {
   static propTypes = {
     nav: PropTypes.object,
+    user: PropTypes.object,
   };
+
+  state = {
+    name: this.props.user.nama,
+    gender: this.props.user.jenisKelamin,
+    bornDate: this.props.user.tanggalLahir,
+    email: this.props.user.email,
+    address: this.props.user.alamat,
+  };
+
+  static getDerivedStateFromProps(nextProps) {
+    let state = {
+      name: nextProps.user.nama,
+      gender: nextProps.user.jenisKelamin,
+      bornDate: nextProps.user.tanggalLahir,
+      email: nextProps.user.email,
+      address: nextProps.user.alamat,
+    };
+    return state;
+  }
 
   render() {
     return (
@@ -47,7 +57,90 @@ class ProfileScreen extends Component {
           <Right />
         </Header>
         <Content>
-          <Text>Profile</Text>
+          <Grid>
+            <Row
+              style={{
+                padding: 10,
+                borderBottomColor: 'black',
+                borderBottomWidth: 1,
+                borderTopColor: 'black',
+                borderTopWidth: 1,
+              }}>
+              <Grid>
+                <Col>
+                  <Text>Nama</Text>
+                </Col>
+                <Col>
+                  <Text>{this.state.name}</Text>
+                </Col>
+              </Grid>
+            </Row>
+            <Row
+              style={{
+                padding: 10,
+                borderBottomColor: 'black',
+                borderBottomWidth: 1,
+              }}>
+              <Grid>
+                <Col>
+                  <Text>Jenis Kelamin</Text>
+                </Col>
+                <Col>
+                  <Text>{this.state.gender}</Text>
+                </Col>
+              </Grid>
+            </Row>
+            <Row
+              style={{
+                padding: 10,
+                borderBottomColor: 'black',
+                borderBottomWidth: 1,
+              }}>
+              <Grid>
+                <Col>
+                  <Text>Tanggal Lahir</Text>
+                </Col>
+                <Col>
+                  <Text>{this.state.bornDate}</Text>
+                </Col>
+              </Grid>
+            </Row>
+            <Row
+              style={{
+                padding: 10,
+                borderBottomColor: 'black',
+                borderBottomWidth: 1,
+              }}>
+              <Grid>
+                <Col>
+                  <Text>Email</Text>
+                </Col>
+                <Col>
+                  <Text>{this.state.email}</Text>
+                </Col>
+              </Grid>
+            </Row>
+            <Row
+              style={{
+                padding: 10,
+                borderBottomColor: 'black',
+                borderBottomWidth: 1,
+              }}>
+              <Grid>
+                <Col>
+                  <Text>Alamat</Text>
+                </Col>
+                <Col>
+                  <Text>{this.state.address}</Text>
+                </Col>
+              </Grid>
+            </Row>
+            <Row style={{ flex: 1, justifyContent: 'center', marginTop: 30 }}>
+              <Button small onPress={() => this.props.nav.navigation.navigate(urls.edit_profile)}>
+                <Text>Ubah Data Profil</Text>
+              </Button>
+            </Row>
+          </Grid>
         </Content>
       </Container>
     );
