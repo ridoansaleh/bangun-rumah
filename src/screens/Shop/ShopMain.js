@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, AsyncStorage, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import {
   Button,
-  Container,
   Content,
   Header,
   Icon,
@@ -11,45 +10,140 @@ import {
   Body,
   Right,
   Title,
-  Form,
-  Item,
-  Input,
-  Text,
-  Label,
+  Spinner,
   View,
 } from 'native-base';
-import { Grid, Col } from 'react-native-easy-grid';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Authentication from '../../components/Authentication';
-import loginUser from '../../../assets/login-user.jpg';
-import { auth as authenticate, db } from '../../../firebase.config';
-import { urls } from '../../constant';
+import Shop from './Shop';
+import ShopForm from './ShopForm';
+import ToolBar from './ToolBar';
+import { db } from '../../../firebase.config';
 
 const { width, height } = Dimensions.get('window');
-// Forgot password link is not ready yet
 
 class ShopScreen extends Component {
   static propTypes = {
     nav: PropTypes.object,
+    user: PropTypes.object,
+  };
+
+  state = {
+    isDataFetched: false,
+    isUserHaveShop: false,
+    dataShop: {},
+    dataProducts: [],
+    isToolbarShow: false,
+  };
+
+  componentDidMount() {
+    this.checkUserHaveShop();
+  }
+
+  checkUserHaveShop = () => {
+    let data = [];
+    db.collection('toko')
+      .where('id_user', '==', this.props.user.id)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          data.push({
+            id_toko: doc.id,
+            ...doc.data(),
+          });
+        });
+        if (data.length === 1) {
+          this.getShopProducts(data);
+        } else {
+          this.setState({
+            isDataFetched: true,
+          });
+        }
+      })
+      .catch(error => {
+        console.error("Error getting shop's data \n", error);
+      });
+  };
+
+  getShopProducts = toko => {
+    let data = [];
+    db.collection('produk')
+      .where('id_toko', '==', toko[0].id_toko)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          data.push({
+            id_produk: doc.id,
+            ...doc.data(),
+          });
+        });
+        this.setState({
+          isDataFetched: true,
+          isUserHaveShop: true,
+          dataShop: toko[0],
+          dataProducts: data,
+        });
+      })
+      .catch(error => {
+        console.error('Error getting shop products data \n', error);
+      });
+  };
+
+  setLoading = val => {
+    this.setState({
+      isDataFetched: val,
+    });
+  };
+
+  handleBackBtn = () => {
+    if (this.state.isToolbarShow) {
+      this.setState({
+        isToolbarShow: false,
+      });
+    } else {
+      this.props.nav.navigation.goBack();
+    }
   };
 
   render() {
     return (
-      <Container>
+      <KeyboardAwareScrollView enableOnAndroid>
         <Header style={styles.header}>
           <Left>
-            <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
+            <Button transparent onPress={() => this.handleBackBtn()}>
               <Icon name="arrow-back" />
             </Button>
           </Left>
           <Body>
-            <Title>Toko</Title>
+            <Title>{!this.state.isToolbarShow ? 'Toko' : 'Toolbar'}</Title>
           </Body>
-          <Right />
+          <Right>
+            <Icon
+              name="more"
+              style={{ color: 'white' }}
+              onPress={() => this.setState({ isToolbarShow: true })}
+            />
+          </Right>
         </Header>
         <Content>
-          <Text>Toko</Text>
+          {!this.state.isDataFetched && (
+            <View style={styles.spin}>
+              <Spinner color="green" size="large" />
+            </View>
+          )}
+          {this.state.isDataFetched && !this.state.isToolbarShow && !this.state.isUserHaveShop && (
+            <ShopForm
+              {...this.props}
+              checkUserHaveShop={this.checkUserHaveShop}
+              setLoading={this.setLoading}
+            />
+          )}
+          {this.state.isDataFetched && !this.state.isToolbarShow && this.state.isUserHaveShop && (
+            <Shop {...this.props} shop={this.state.dataShop} products={this.state.dataProducts} />
+          )}
+          {this.state.isDataFetched && this.state.isToolbarShow && <ToolBar />}
         </Content>
-      </Container>
+      </KeyboardAwareScrollView>
     );
   }
 }
@@ -57,6 +151,15 @@ class ShopScreen extends Component {
 const styles = StyleSheet.create({
   header: {
     marginTop: 25,
+  },
+  spin: {
+    paddingVertical: 6,
+    width: width * 0.25,
+    height: height * 0.25,
+    marginLeft: (width * 0.75) / 2,
+    marginRight: (width * 0.75) / 2,
+    marginTop: (height * 0.75) / 2,
+    marginBottom: (height * 0.75) / 2,
   },
 });
 
