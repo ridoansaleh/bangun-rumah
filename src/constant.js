@@ -110,6 +110,7 @@ const nonAuthenticatedUrls = [
   urls.category,
   urls.search,
   urls.product,
+  urls.shop,
   urls.review,
   urls.discussion,
 ];

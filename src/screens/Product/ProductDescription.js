@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, FlatList } from 'react-native';
+import { View, FlatList, TouchableOpacity } from 'react-native';
 import { Text } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
 import { convertToCurrency } from '../../utils';
+import { urls } from '../../constant';
 class ProductDescription extends Component {
   static propTypes = {
     data: PropTypes.object,
   };
 
   state = {
+    shopId: this.props.data.id_toko,
     productName: this.props.data.nama,
     productPrice: this.props.data.harga,
     star: this.props.data.bintang,
@@ -35,6 +37,12 @@ class ProductDescription extends Component {
       }
     }
   }
+
+  shopNameClick = id => {
+    this.props.navigation.navigate(urls.shop, {
+      id_toko: id,
+    });
+  };
 
   render() {
     if (!this.state.isConstructed) {
@@ -62,7 +70,9 @@ class ProductDescription extends Component {
             </Col>
             <Col size={2} />
             <Col size={2}>
-              <Text style={{ fontWeight: 'bold' }}>{this.state.shopName}</Text>
+              <TouchableOpacity onPress={() => this.shopNameClick(this.state.shopId)}>
+                <Text style={{ fontWeight: 'bold' }}>{this.state.shopName}</Text>
+              </TouchableOpacity>
             </Col>
           </Row>
           <Row>
