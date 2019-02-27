@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Alert,
-  AsyncStorage,
   StyleSheet,
   Image,
   Dimensions,
@@ -13,9 +11,7 @@ import {
 import { Icon, Text, View, Button } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
-// import defaultImage from '../../../assets/default-product.jpg';
 import emptyResult from '../../../assets/empty_search_result.png';
-import { db } from '../../../firebase.config';
 import { urls } from '../../constant';
 import { convertToCurrency } from '../../utils';
 
@@ -48,11 +44,19 @@ class Shop extends Component {
             <Text>{this.props.shop.deskripsi}</Text>
           </Row>
           <Row style={{ borderColor: 'black', borderWidth: 1, padding: 5 }}>
-            <Col size={9}>
+            <Col size={19}>
               <Text>Daftar Produk</Text>
             </Col>
             <Col size={1}>
-              <Icon name="add" />
+              <TouchableOpacity
+                onPress={() =>
+                  this.props.nav.navigation.navigate(urls.product_form, {
+                    shop_id: this.props.shop.id_toko,
+                    shop_name: this.props.shop.nama,
+                  })
+                }>
+                <Icon name="add" style={{ fontSize: 23 }} />
+              </TouchableOpacity>
             </Col>
           </Row>
           <Row>

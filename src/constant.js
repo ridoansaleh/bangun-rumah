@@ -94,6 +94,7 @@ const urls = {
   edit_profile: 'EditProfile',
   order_history: 'OrderHistory',
   shop: 'Shop',
+  product_form: 'ProductForm',
   change_password: 'ChangePassword',
   logs: 'Logs',
   search: 'SearchProduct',
@@ -111,6 +112,7 @@ const nonAuthenticatedUrls = [
   urls.search,
   urls.product,
   urls.shop,
+  urls.product_form,
   urls.review,
   urls.discussion,
 ];

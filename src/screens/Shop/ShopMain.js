@@ -61,6 +61,13 @@ class ShopScreen extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.nav.navigation.getParam('add_product_succeed', false)) {
+      this.checkUserHaveShop();
+    }
+    return true;
+  }
+
   checkUserHaveShop = () => {
     let data = [];
     db.collection('toko')
@@ -150,11 +157,16 @@ class ShopScreen extends Component {
             <Title>{!this.state.isToolbarShow ? 'Toko' : 'Toolbar'}</Title>
           </Body>
           <Right>
-            <Icon
-              name="more"
-              style={{ color: 'white' }}
-              onPress={() => this.setState({ isToolbarShow: true })}
-            />
+            <Button transparent>
+              <Icon name="chatbubbles" style={{ color: 'white' }} />
+            </Button>
+            <Button transparent>
+              <Icon
+                name="more"
+                style={{ color: 'white' }}
+                onPress={() => this.setState({ isToolbarShow: true })}
+              />
+            </Button>
           </Right>
         </Header>
         <Content>
