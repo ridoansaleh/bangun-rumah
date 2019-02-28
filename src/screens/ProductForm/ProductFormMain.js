@@ -25,7 +25,7 @@ import { ImagePicker } from 'expo';
 import uuid from 'uuid';
 import Authentication from '../../components/Authentication';
 import loginUser from '../../../assets/default_upload.png';
-import { st as storageRef, auth, db } from '../../../firebase.config';
+import { st as storageRef, fbs, db } from '../../../firebase.config';
 import AllCategory from '../Category/Data';
 import initialState from './State';
 import { urls } from '../../constant';
@@ -39,12 +39,85 @@ class ProductFormScreen extends Component {
 
   state = {
     ...initialState,
-    categories: [],
   };
 
   componentDidMount() {
+    console.log('DID-MOUNT');
+    let product_id = this.props.nav.navigation.getParam('product_id', 0);
+    if (product_id !== 0) {
+      this.getDataProduct(product_id);
+    }
     this.getCategoriesData();
   }
+
+  getDataProduct = id => {
+    db.collection('produk')
+      .doc(id)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          console.log('Prodd : ', doc.data());
+          // this.setState({
+          //   dataProduct: doc.data(),
+          // });
+          const data = doc.data();
+          const photos = data.photo_produk;
+          const photoRefs = data.photo_refs;
+
+          let state = {
+            name: data.nama,
+            category: data.kategori,
+            price: data.harga,
+            unit: data.satuan,
+            stock: data.stok,
+            description: data.deskripsi,
+            specs: data.spesifikasi,
+            isNameValid: true,
+            isCategoryValid: true,
+            isPriceValid: true,
+            isUnitValid: true,
+            isStockValid: true,
+            isDescriptionValid: true,
+            isSpecsValid: true,
+            isNameChanged: true,
+            isCategoryChanged: true,
+            isPriceChanged: true,
+            isUnitChanged: true,
+            isStockChanged: true,
+            isDescriptionChanged: true,
+            isSpecsChanged: true,
+          };
+          if (photos.length === 1) {
+            state.photo1 = photos[0];
+            state.photo1Ref = photoRefs[0];
+            state.isPhotoOneUploaded = true;
+          } else if (photos.length === 2) {
+            state.photo1 = photos[0];
+            state.photo2 = photos[1];
+            state.photo1Ref = photoRefs[0];
+            state.photo2Ref = photoRefs[1];
+            state.isPhotoOneUploaded = true;
+            state.isPhotoTwoUploaded = true;
+          } else if (photos.length === 3) {
+            state.photo1 = photos[0];
+            state.photo2 = photos[1];
+            state.photo3 = photos[2];
+            state.photo1Ref = photoRefs[0];
+            state.photo2Ref = photoRefs[1];
+            state.photo3Ref = photoRefs[2];
+            state.isPhotoOneUploaded = true;
+            state.isPhotoTwoUploaded = true;
+            state.isPhotoThreeUploaded = true;
+          }
+          this.setState(state);
+        } else {
+          console.log('No such document!');
+        }
+      })
+      .catch(error => {
+        console.error(`Error getting product with id ${id} \n`, error);
+      });
+  };
 
   getCategoriesData = () => {
     let data = AllCategory.filter(data => data.status !== 'main');
@@ -55,10 +128,6 @@ class ProductFormScreen extends Component {
     this.setState({
       categories: data,
     });
-  };
-
-  handleRouteChange = url => {
-    this.props.navigation.navigate(url);
   };
 
   handleChangeField = (val, name) => {
@@ -136,14 +205,32 @@ class ProductFormScreen extends Component {
     return false;
   };
 
-  choosePhoto = async (field, status) => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: false,
-      aspect: [4, 3],
-    });
+  deletePhoto = photo => {
+    let myRef = fbs.ref();
+    var photoRef = myRef.child(this.state[photo + 'Ref']);
 
-    if (!result.cancelled) {
-      this.handleImagePicked(field, status, result);
+    // Delete the file
+    photoRef
+      .delete()
+      .then(function() {
+        console.log('Succeed deleted the photo');
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+  };
+
+  choosePhoto = async (field, status) => {
+    if (this.state[field]) {
+      this.deletePhoto(field);
+    } else {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: false,
+        aspect: [4, 3],
+      });
+      if (!result.cancelled) {
+        this.handleImagePicked(field, status, result);
+      }
     }
   };
 
@@ -151,8 +238,12 @@ class ProductFormScreen extends Component {
     try {
       // this.setState({ uploading: true });
       if (!pickerResult.cancelled) {
-        const uploadUrl = await this.uploadImageAsync(pickerResult.uri);
-        this.setState({ [f]: uploadUrl, [s]: true });
+        const result = await this.uploadImageAsync(pickerResult.uri, f);
+        this.setState({
+          [f]: result,
+          // [f + 'Ref']: result.fileRef,
+          [s]: true,
+        });
       }
     } catch (e) {
       console.log(e);
@@ -161,7 +252,7 @@ class ProductFormScreen extends Component {
     }
   };
 
-  uploadImageAsync = async uri => {
+  uploadImageAsync = async (uri, f) => {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function() {
@@ -176,7 +267,14 @@ class ProductFormScreen extends Component {
       xhr.send(null);
     });
 
-    const ref = storageRef.child(uuid.v4());
+    const u_id = uuid.v4();
+
+    const ref = storageRef.child(u_id);
+
+    this.setState({
+      [f + 'Ref']: u_id,
+    });
+
     const snapshot = await ref.put(blob);
 
     blob.close();
@@ -189,6 +287,9 @@ class ProductFormScreen extends Component {
       photo1,
       photo2,
       photo3,
+      photo1Ref,
+      photo2Ref,
+      photo3Ref,
       name,
       category,
       price,
@@ -199,14 +300,18 @@ class ProductFormScreen extends Component {
     } = this.state;
     this.setState({ isSpinnerLoading: true });
     let allPhotos = [];
+    let allPhotoRefs = [];
     if (photo1) {
       allPhotos.push(photo1);
+      allPhotoRefs.push(photo1Ref);
     }
     if (photo2) {
       allPhotos.push(photo2);
+      allPhotoRefs.push(photo2Ref);
     }
     if (photo3) {
       allPhotos.push(photo3);
+      allPhotoRefs.push(photo3Ref);
     }
     let shopId = this.props.nav.navigation.getParam('shop_id', 0);
     let shopName = this.props.nav.navigation.getParam('shop_name', null);
@@ -219,6 +324,7 @@ class ProductFormScreen extends Component {
         tanggal_posting: new Date(),
         nama: name,
         photo_produk: allPhotos,
+        photo_refs: allPhotoRefs,
         kategori: category,
         harga: price,
         satuan: unit,
@@ -290,6 +396,10 @@ class ProductFormScreen extends Component {
       isSpecsChanged,
     } = this.state;
 
+    console.log('_STATE : ', this.state);
+
+    // const productId = this.props.nav.navigation.getParam('product_id', 0);
+
     return (
       <KeyboardAwareScrollView enableOnAndroid>
         <Header style={styles.header}>
@@ -323,7 +433,7 @@ class ProductFormScreen extends Component {
                     dark
                     style={styles.upload}
                     onPress={() => this.choosePhoto('photo1', 'isPhotoOneUploaded')}>
-                    <Text>Upload</Text>
+                    <Text>{photo1 ? 'Hapus' : 'Upload'}</Text>
                   </Button>
                 </Col>
                 <Col style={{ margin: 5 }}>
@@ -333,9 +443,10 @@ class ProductFormScreen extends Component {
                     small
                     bordered
                     dark
+                    disabled={photo1 === ''}
                     style={styles.upload}
-                    onPress={() => this.choosePhoto('photo1', 'isPhotoOneUploaded')}>
-                    <Text>Upload</Text>
+                    onPress={() => this.choosePhoto('photo2', 'isPhotoTwoUploaded')}>
+                    <Text>{photo2 ? 'Hapus' : 'Upload'}</Text>
                   </Button>
                 </Col>
                 <Col style={{ margin: 5 }}>
@@ -345,9 +456,10 @@ class ProductFormScreen extends Component {
                     small
                     bordered
                     dark
+                    disabled={photo2 === ''}
                     style={styles.upload}
-                    onPress={() => this.choosePhoto('photo1', 'isPhotoOneUploaded')}>
-                    <Text>Upload</Text>
+                    onPress={() => this.choosePhoto('photo3', 'isPhotoThreeUploaded')}>
+                    <Text>{photo3 ? 'Hapus' : 'Upload'}</Text>
                   </Button>
                 </Col>
               </Row>

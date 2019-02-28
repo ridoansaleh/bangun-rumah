@@ -92,7 +92,15 @@ class Shop extends Component {
                               </Button>
                             </Col>
                             <Col>
-                              <Button small bordered warning>
+                              <Button
+                                small
+                                bordered
+                                warning
+                                onPress={() =>
+                                  this.props.nav.navigation.navigate(urls.product_form, {
+                                    product_id: item.id_produk,
+                                  })
+                                }>
                                 <Text>Edit</Text>
                               </Button>
                             </Col>
