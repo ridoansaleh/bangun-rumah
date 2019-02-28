@@ -198,12 +198,20 @@ class ProductFormScreen extends Component {
       specs,
     } = this.state;
     this.setState({ isSpinnerLoading: true });
-    let allPhotos = [photo1, photo2, photo3];
+    let allPhotos = [];
+    if (photo1) {
+      allPhotos.push(photo1);
+    }
+    if (photo2) {
+      allPhotos.push(photo2);
+    }
+    if (photo3) {
+      allPhotos.push(photo3);
+    }
     let shopId = this.props.nav.navigation.getParam('shop_id', 0);
     let shopName = this.props.nav.navigation.getParam('shop_name', null);
     db.collection('produk')
-      .doc()
-      .set({
+      .add({
         id_toko: shopId,
         nama_toko: shopName,
         bintang: 0,
