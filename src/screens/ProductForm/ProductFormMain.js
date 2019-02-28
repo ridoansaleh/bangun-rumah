@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, Picker, Image, TextInput } from 'react-native';
+import { Alert, StyleSheet, Dimensions, Picker, Image, TextInput } from 'react-native';
 import {
   Button,
   Content,
@@ -25,7 +25,7 @@ import { ImagePicker } from 'expo';
 import uuid from 'uuid';
 import Authentication from '../../components/Authentication';
 import loginUser from '../../../assets/default_upload.png';
-import { st as storageRef, auth, db } from '../../../firebase.config';
+import { st as storageRef, fbs, db } from '../../../firebase.config';
 import AllCategory from '../Category/Data';
 import initialState from './State';
 import { urls } from '../../constant';
@@ -39,12 +39,83 @@ class ProductFormScreen extends Component {
 
   state = {
     ...initialState,
-    categories: [],
   };
 
   componentDidMount() {
+    let product_id = this.props.nav.navigation.getParam('product_id', 0);
+    if (product_id !== 0) {
+      this.getDataProduct(product_id);
+    }
     this.getCategoriesData();
   }
+
+  getDataProduct = id => {
+    db.collection('produk')
+      .doc(id)
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          const photos = data.photo_produk;
+          const photoRefs = data.photo_refs;
+
+          let state = {
+            name: data.nama,
+            category: data.kategori,
+            price: data.harga,
+            unit: data.satuan,
+            stock: data.stok,
+            description: data.deskripsi,
+            specs: data.spesifikasi,
+            isNameValid: true,
+            isCategoryValid: true,
+            isPriceValid: true,
+            isUnitValid: true,
+            isStockValid: true,
+            isDescriptionValid: true,
+            isSpecsValid: true,
+            isNameChanged: true,
+            isCategoryChanged: true,
+            isPriceChanged: true,
+            isUnitChanged: true,
+            isStockChanged: true,
+            isDescriptionChanged: true,
+            isSpecsChanged: true,
+          };
+          if (photos.length === 1) {
+            state.photo1 = photos[0];
+            state.photo1Ref = photoRefs[0];
+            state.isPhotoOneUploaded = true;
+          } else if (photos.length === 2) {
+            state.photo1 = photos[0];
+            state.photo2 = photos[1];
+            state.photo1Ref = photoRefs[0];
+            state.photo2Ref = photoRefs[1];
+            state.isPhotoOneUploaded = true;
+            state.isPhotoTwoUploaded = true;
+          } else if (photos.length === 3) {
+            state.photo1 = photos[0];
+            state.photo2 = photos[1];
+            state.photo3 = photos[2];
+            state.photo1Ref = photoRefs[0];
+            state.photo2Ref = photoRefs[1];
+            state.photo3Ref = photoRefs[2];
+            state.isPhotoOneUploaded = true;
+            state.isPhotoTwoUploaded = true;
+            state.isPhotoThreeUploaded = true;
+          }
+          this.setState({
+            ...state,
+            prevValues: state,
+          });
+        } else {
+          console.log('No such document!');
+        }
+      })
+      .catch(error => {
+        console.error(`Error getting product with id ${id} \n`, error);
+      });
+  };
 
   getCategoriesData = () => {
     let data = AllCategory.filter(data => data.status !== 'main');
@@ -55,10 +126,6 @@ class ProductFormScreen extends Component {
     this.setState({
       categories: data,
     });
-  };
-
-  handleRouteChange = url => {
-    this.props.navigation.navigate(url);
   };
 
   handleChangeField = (val, name) => {
@@ -136,14 +203,46 @@ class ProductFormScreen extends Component {
     return false;
   };
 
-  choosePhoto = async (field, status) => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: false,
-      aspect: [4, 3],
-    });
+  deletePhoto = photo => {
+    let myRef = fbs.ref();
+    let photoRef = myRef.child(this.state[photo + 'Ref']);
+    photoRef
+      .delete()
+      .then(() => {
+        console.log('Succeed deleted the photo');
+        let status = 'isPhotoOneUploaded';
+        if (photo === 'photo2') {
+          status = 'isPhotoTwoUploaded';
+        } else if (photo === 'photo3') {
+          status = 'isPhotoThreeUploaded';
+        }
+        this.setState({
+          [photo]: '',
+          [photo + 'Ref']: '',
+          [status]: false,
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
 
-    if (!result.cancelled) {
-      this.handleImagePicked(field, status, result);
+  choosePhoto = async (field, status) => {
+    if (this.state[field]) {
+      Alert.alert(
+        'Peringatan',
+        'Apakah Anda yakin ingin menghapus photo ini ?',
+        [{ text: 'OK', onPress: () => this.deletePhoto(field) }],
+        { cancelable: true }
+      );
+    } else {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: false,
+        aspect: [4, 3],
+      });
+      if (!result.cancelled) {
+        this.handleImagePicked(field, status, result);
+      }
     }
   };
 
@@ -151,8 +250,12 @@ class ProductFormScreen extends Component {
     try {
       // this.setState({ uploading: true });
       if (!pickerResult.cancelled) {
-        const uploadUrl = await this.uploadImageAsync(pickerResult.uri);
-        this.setState({ [f]: uploadUrl, [s]: true });
+        const result = await this.uploadImageAsync(pickerResult.uri, f);
+        this.setState({
+          [f]: result,
+          // [f + 'Ref']: result.fileRef,
+          [s]: true,
+        });
       }
     } catch (e) {
       console.log(e);
@@ -161,7 +264,7 @@ class ProductFormScreen extends Component {
     }
   };
 
-  uploadImageAsync = async uri => {
+  uploadImageAsync = async (uri, f) => {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function() {
@@ -176,7 +279,14 @@ class ProductFormScreen extends Component {
       xhr.send(null);
     });
 
-    const ref = storageRef.child(uuid.v4());
+    const u_id = uuid.v4();
+
+    const ref = storageRef.child(u_id);
+
+    this.setState({
+      [f + 'Ref']: u_id,
+    });
+
     const snapshot = await ref.put(blob);
 
     blob.close();
@@ -189,6 +299,9 @@ class ProductFormScreen extends Component {
       photo1,
       photo2,
       photo3,
+      photo1Ref,
+      photo2Ref,
+      photo3Ref,
       name,
       category,
       price,
@@ -196,41 +309,115 @@ class ProductFormScreen extends Component {
       stock,
       description,
       specs,
+      prevValues,
     } = this.state;
-    this.setState({ isSpinnerLoading: true });
-    let allPhotos = [photo1, photo2, photo3];
+
+    let allPhotos = [];
+    let allPhotoRefs = [];
+    if (photo1) {
+      allPhotos.push(photo1);
+      allPhotoRefs.push(photo1Ref);
+    }
+    if (photo2) {
+      allPhotos.push(photo2);
+      allPhotoRefs.push(photo2Ref);
+    }
+    if (photo3) {
+      allPhotos.push(photo3);
+      allPhotoRefs.push(photo3Ref);
+    }
     let shopId = this.props.nav.navigation.getParam('shop_id', 0);
     let shopName = this.props.nav.navigation.getParam('shop_name', null);
-    db.collection('produk')
-      .doc()
-      .set({
-        id_toko: shopId,
-        nama_toko: shopName,
-        bintang: 0,
-        dibeli: 0,
-        tanggal_posting: new Date(),
-        nama: name,
-        photo_produk: allPhotos,
-        kategori: category,
-        harga: price,
-        satuan: unit,
-        stok: stock,
-        deskripsi: description,
-        spesifikasi: specs,
-      })
-      .then(() => {
-        console.log('Document successfully written!');
-        this.setState({ ...initialState, isSpinnerLoading: false });
-        this.showToastMessage('Kamu berhasil menambahkan produk baru');
-        setTimeout(() => {
-          this.props.nav.navigation.navigate(urls.shop, {
-            add_product_succeed: true,
+
+    const productId = this.props.nav.navigation.getParam('product_id', 0);
+
+    if (!productId) {
+      this.setState({ isSpinnerLoading: true });
+      db.collection('produk')
+        .add({
+          id_toko: shopId,
+          nama_toko: shopName,
+          bintang: 0,
+          dibeli: 0,
+          tanggal_posting: new Date(),
+          nama: name,
+          photo_produk: allPhotos,
+          photo_refs: allPhotoRefs,
+          kategori: category,
+          harga: price,
+          satuan: unit,
+          stok: stock,
+          deskripsi: description,
+          spesifikasi: specs,
+        })
+        .then(() => {
+          console.log('Document successfully written!');
+          this.setState({ ...initialState, isSpinnerLoading: false });
+          this.showToastMessage('Kamu berhasil menambahkan produk baru');
+          setTimeout(() => {
+            this.props.nav.navigation.navigate(urls.shop, {
+              add_product_succeed: true,
+            });
+          }, 1500);
+        })
+        .catch(error => {
+          console.error('Error writing document: ', error);
+        });
+    } else {
+      if (
+        (prevValues.photo1 !== undefined && prevValues.photo1 !== photo1) ||
+        (prevValues.photo2 !== undefined && prevValues.photo2 !== photo2) ||
+        (prevValues.photo3 !== undefined && prevValues.photo3 !== photo3) ||
+        prevValues.name !== name ||
+        prevValues.category !== category ||
+        prevValues.price !== price ||
+        prevValues.unit !== unit ||
+        prevValues.stock !== stock ||
+        prevValues.description !== description ||
+        prevValues.specs !== specs
+      ) {
+        this.setState({ isSpinnerLoading: true });
+        let docRef = db.collection('produk').doc(productId);
+        docRef
+          .get()
+          .then(doc => {
+            if (doc.exists) {
+              docRef.update({
+                nama_toko: shopName,
+                nama: name,
+                photo_produk: allPhotos,
+                photo_refs: allPhotoRefs,
+                kategori: category,
+                harga: price,
+                satuan: unit,
+                stok: stock,
+                deskripsi: description,
+                spesifikasi: specs,
+              });
+              console.log('Document successfully edited!');
+              this.setState({ ...initialState, isSpinnerLoading: false });
+              this.showToastMessage('Kamu berhasil mengubah produk');
+              setTimeout(() => {
+                this.props.nav.navigation.navigate(urls.shop, {
+                  add_product_succeed: true,
+                });
+              }, 1500);
+            } else {
+              console.log('No such document!');
+            }
+          })
+          .catch(error => {
+            console.error(`Error searching review with id ${productId} \n`, error);
           });
-        }, 1500);
-      })
-      .catch(error => {
-        console.error('Error writing document: ', error);
-      });
+      } else {
+        Alert.alert(
+          'Peringatan',
+          'Data masih sama dengan sebelumnya. Tidak ada perubahan.',
+          [{ text: 'OK', onPress: () => console.log('hello') }],
+          { cancelable: true }
+        );
+      }
+    }
   };
 
   showToastMessage = message => {
@@ -315,7 +502,7 @@ class ProductFormScreen extends Component {
                     dark
                     style={styles.upload}
                     onPress={() => this.choosePhoto('photo1', 'isPhotoOneUploaded')}>
-                    <Text>Upload</Text>
+                    <Text>{photo1 ? 'Hapus' : 'Upload'}</Text>
                   </Button>
                 </Col>
                 <Col style={{ margin: 5 }}>
@@ -325,9 +512,10 @@ class ProductFormScreen extends Component {
                     small
                     bordered
                     dark
+                    disabled={photo1 === ''}
                     style={styles.upload}
-                    onPress={() => this.choosePhoto('photo1', 'isPhotoOneUploaded')}>
-                    <Text>Upload</Text>
+                    onPress={() => this.choosePhoto('photo2', 'isPhotoTwoUploaded')}>
+                    <Text>{photo2 ? 'Hapus' : 'Upload'}</Text>
                   </Button>
                 </Col>
                 <Col style={{ margin: 5 }}>
@@ -337,9 +525,10 @@ class ProductFormScreen extends Component {
                     small
                     bordered
                     dark
+                    disabled={photo2 === ''}
                     style={styles.upload}
-                    onPress={() => this.choosePhoto('photo1', 'isPhotoOneUploaded')}>
-                    <Text>Upload</Text>
+                    onPress={() => this.choosePhoto('photo3', 'isPhotoThreeUploaded')}>
+                    <Text>{photo3 ? 'Hapus' : 'Upload'}</Text>
                   </Button>
                 </Col>
               </Row>

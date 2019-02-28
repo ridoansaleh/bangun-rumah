@@ -3,6 +3,9 @@ const state = {
   photo1: '',
   photo2: '',
   photo3: '',
+  photo1Ref: '',
+  photo2Ref: '',
+  photo3Ref: '',
   isPhotoOneUploaded: false,
   isPhotoTwoUploaded: false,
   isPhotoThreeUploaded: false,
@@ -27,6 +30,8 @@ const state = {
   isStockChanged: false,
   isDescriptionChanged: false,
   isSpecsChanged: false,
+  categories: [],
+  prevValues: {},
 };
 
 export default state;
