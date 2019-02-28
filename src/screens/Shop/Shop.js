@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Alert,
-  AsyncStorage,
   StyleSheet,
   Image,
   Dimensions,
@@ -10,12 +8,10 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { Icon, Text, View } from 'native-base';
+import { Icon, Text, View, Button } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
-// import defaultImage from '../../../assets/default-product.jpg';
 import emptyResult from '../../../assets/empty_search_result.png';
-import { db } from '../../../firebase.config';
 import { urls } from '../../constant';
 import { convertToCurrency } from '../../utils';
 
@@ -28,6 +24,7 @@ class Shop extends Component {
     nav: PropTypes.object,
     shop: PropTypes.object,
     products: PropTypes.array,
+    isUserOwnedThisShop: PropTypes.bool,
   };
 
   render() {
@@ -47,11 +44,19 @@ class Shop extends Component {
             <Text>{this.props.shop.deskripsi}</Text>
           </Row>
           <Row style={{ borderColor: 'black', borderWidth: 1, padding: 5 }}>
-            <Col size={9}>
+            <Col size={19}>
               <Text>Daftar Produk</Text>
             </Col>
             <Col size={1}>
-              <Icon name="add" />
+              <TouchableOpacity
+                onPress={() =>
+                  this.props.nav.navigation.navigate(urls.product_form, {
+                    shop_id: this.props.shop.id_toko,
+                    shop_name: this.props.shop.nama,
+                  })
+                }>
+                <Icon name="add" style={{ fontSize: 23 }} />
+              </TouchableOpacity>
             </Col>
           </Row>
           <Row>
@@ -66,16 +71,40 @@ class Shop extends Component {
                       })
                     }>
                     <View style={styles.itemContainer}>
-                      <Image source={{ uri: item.photo_produk[0] }} style={styles.productImage} />
-                      <Text>{item.nama}</Text>
-                      <StarRating
-                        disabled
-                        maxStars={5}
-                        rating={parseInt(item.bintang)}
-                        starSize={20}
-                        fullStarColor={'gold'}
-                      />
-                      <Text>Rp {convertToCurrency(parseInt(item.harga))}</Text>
+                      <View style={{ alignItems: 'center' }}>
+                        <Image source={{ uri: item.photo_produk[0] }} style={styles.productImage} />
+                        <Text>{item.nama}</Text>
+                        <StarRating
+                          disabled
+                          maxStars={5}
+                          rating={parseInt(item.bintang)}
+                          starSize={20}
+                          fullStarColor={'gold'}
+                        />
+                        <Text>Rp {convertToCurrency(parseInt(item.harga))}</Text>
+                      </View>
+                      <Grid style={{ marginTop: 15 }}>
+                        {this.props.isUserOwnedThisShop ? (
+                          <Row style={{ marginLeft: 0.1 * (0.5 * width - 20) }}>
+                            <Col>
+                              <Button small bordered danger>
+                                <Text>Hapus</Text>
+                              </Button>
+                            </Col>
+                            <Col>
+                              <Button small bordered warning>
+                                <Text>Edit</Text>
+                              </Button>
+                            </Col>
+                          </Row>
+                        ) : (
+                          <Row style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <Button small style={{ width: '90%', justifyContent: 'center' }}>
+                              <Text>Pesan</Text>
+                            </Button>
+                          </Row>
+                        )}
+                      </Grid>
                     </View>
                   </TouchableWithoutFeedback>
                 )}
@@ -101,10 +130,11 @@ const styles = StyleSheet.create({
     marginTop: 25,
   },
   itemContainer: {
-    width: halfWidth,
-    height: halfWidth,
-    margin: 3,
-    alignItems: 'center',
+    // backgroundColor: 'yellow',
+    width: halfWidth - 10,
+    height: 0.4 * height,
+    // margin: 3,
+    // alignItems: 'center',
   },
   productImage: {
     width: halfWidth * 0.7,

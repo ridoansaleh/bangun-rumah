@@ -1,18 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Image, Dimensions, ScrollView, Alert, Platform } from 'react-native';
-import {
-  Container,
-  Content,
-  Text,
-  Header,
-  Left,
-  Button,
-  Icon,
-  Title,
-  Body,
-  Spinner,
-} from 'native-base';
+import { Content, Text, Header, Left, Button, Icon, Title, Body, Spinner } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Authentication from '../../components/Authentication';
@@ -35,8 +24,26 @@ class ProductMainScreen extends Component {
   };
 
   componentDidMount() {
+    this.getProduct(this.state.idProduct);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    const prevVal = this.props.nav.navigation.getParam('product_id', 0);
+    const nextVal = nextProps.nav.navigation.getParam('product_id', 0);
+    if (prevVal !== nextVal) {
+      this.getProduct(nextVal);
+    }
+    return true;
+  }
+
+  getProduct = id => {
+    if (this.state.isDataFetched) {
+      this.setState({
+        isDataFetched: false,
+      });
+    }
     db.collection('produk')
-      .doc(this.state.idProduct)
+      .doc(id)
       .get()
       .then(doc => {
         if (doc.exists) {
@@ -51,7 +58,7 @@ class ProductMainScreen extends Component {
       .catch(function(error) {
         console.log(`Error getting product with id ${this.state.idProduct} \n`, error);
       });
-  }
+  };
 
   render() {
     let { isDataFetched, dataProduct } = this.state;
@@ -79,7 +86,7 @@ class ProductMainScreen extends Component {
                 {isDataFetched && (
                   <View>
                     <ProductPhoto data={dataProduct} />
-                    <ProductDescription data={dataProduct} />
+                    <ProductDescription data={dataProduct} {...this.props.nav} />
                     <Interactions
                       data={dataProduct}
                       idProduct={this.state.idProduct}

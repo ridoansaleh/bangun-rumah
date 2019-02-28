@@ -8,6 +8,7 @@ import ProfileScreen from './Profile/ProfileMain';
 import EditProfileScreen from './EditProfile/EditProfileMain';
 import OrderHistoryScreen from './OrderHistory/OrderHistoryMain';
 import ShopScreen from './Shop/ShopMain';
+import ProductFormScreen from './ProductForm/ProductFormMain';
 import ChangePasswordScreen from './ChangePassword/ChangePasswordMain';
 import LogScreen from './Logs/LogsMain';
 import SideBar from '../components/SideBar';
@@ -44,6 +45,7 @@ const AppNavigator = createStackNavigator(
     EditProfile: EditProfileScreen,
     OrderHistory: OrderHistoryScreen,
     Shop: ShopScreen,
+    ProductForm: ProductFormScreen,
     ChangePassword: ChangePasswordScreen,
     Logs: LogScreen,
   },

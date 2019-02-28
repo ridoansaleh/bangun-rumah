@@ -31,13 +31,41 @@ class ShopScreen extends Component {
   state = {
     isDataFetched: false,
     isUserHaveShop: false,
+    isUserOwnedThisShop: false,
     dataShop: {},
     dataProducts: [],
     isToolbarShow: false,
   };
 
   componentDidMount() {
-    this.checkUserHaveShop();
+    const shopId = this.props.nav.navigation.getParam('id_toko', 0);
+    if (shopId) {
+      const docRef = db.collection('toko').doc(shopId);
+      docRef
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            let data = [doc.data()];
+            data[0].id_toko = shopId;
+            const hasThisShop = data[0].id_user === this.props.user.id;
+            this.getShopProducts(data, true, hasThisShop);
+          } else {
+            console.log('No such document!');
+          }
+        })
+        .catch(error => {
+          console.error('Error getting shop document \n', error);
+        });
+    } else {
+      this.checkUserHaveShop();
+    }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.nav.navigation.getParam('add_product_succeed', false)) {
+      this.checkUserHaveShop();
+    }
+    return true;
   }
 
   checkUserHaveShop = () => {
@@ -65,7 +93,7 @@ class ShopScreen extends Component {
       });
   };
 
-  getShopProducts = toko => {
+  getShopProducts = (toko, ownership, status) => {
     let data = [];
     db.collection('produk')
       .where('id_toko', '==', toko[0].id_toko)
@@ -77,12 +105,23 @@ class ShopScreen extends Component {
             ...doc.data(),
           });
         });
-        this.setState({
-          isDataFetched: true,
-          isUserHaveShop: true,
-          dataShop: toko[0],
-          dataProducts: data,
-        });
+        if (ownership) {
+          this.setState({
+            isDataFetched: true,
+            isUserHaveShop: true,
+            isUserOwnedThisShop: status,
+            dataShop: toko[0],
+            dataProducts: data,
+          });
+        } else {
+          this.setState({
+            isDataFetched: true,
+            isUserHaveShop: true,
+            isUserOwnedThisShop: true,
+            dataShop: toko[0],
+            dataProducts: data,
+          });
+        }
       })
       .catch(error => {
         console.error('Error getting shop products data \n', error);
@@ -118,11 +157,16 @@ class ShopScreen extends Component {
             <Title>{!this.state.isToolbarShow ? 'Toko' : 'Toolbar'}</Title>
           </Body>
           <Right>
-            <Icon
-              name="more"
-              style={{ color: 'white' }}
-              onPress={() => this.setState({ isToolbarShow: true })}
-            />
+            <Button transparent>
+              <Icon name="chatbubbles" style={{ color: 'white' }} />
+            </Button>
+            <Button transparent>
+              <Icon
+                name="more"
+                style={{ color: 'white' }}
+                onPress={() => this.setState({ isToolbarShow: true })}
+              />
+            </Button>
           </Right>
         </Header>
         <Content>
@@ -139,7 +183,12 @@ class ShopScreen extends Component {
             />
           )}
           {this.state.isDataFetched && !this.state.isToolbarShow && this.state.isUserHaveShop && (
-            <Shop {...this.props} shop={this.state.dataShop} products={this.state.dataProducts} />
+            <Shop
+              {...this.props}
+              shop={this.state.dataShop}
+              products={this.state.dataProducts}
+              isUserOwnedThisShop={this.state.isUserOwnedThisShop}
+            />
           )}
           {this.state.isDataFetched && this.state.isToolbarShow && <ToolBar />}
         </Content>
