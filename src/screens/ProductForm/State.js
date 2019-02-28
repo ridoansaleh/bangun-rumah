@@ -31,6 +31,7 @@ const state = {
   isDescriptionChanged: false,
   isSpecsChanged: false,
   categories: [],
+  prevValues: {},
 };
 
 export default state;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, Picker, Image, TextInput } from 'react-native';
+import { Alert, StyleSheet, Dimensions, Picker, Image, TextInput } from 'react-native';
 import {
   Button,
   Content,
@@ -42,7 +42,6 @@ class ProductFormScreen extends Component {
   };
 
   componentDidMount() {
-    console.log('DID-MOUNT');
     let product_id = this.props.nav.navigation.getParam('product_id', 0);
     if (product_id !== 0) {
       this.getDataProduct(product_id);
@@ -56,10 +55,6 @@ class ProductFormScreen extends Component {
       .get()
       .then(doc => {
         if (doc.exists) {
-          console.log('Prodd : ', doc.data());
-          // this.setState({
-          //   dataProduct: doc.data(),
-          // });
           const data = doc.data();
           const photos = data.photo_produk;
           const photoRefs = data.photo_refs;
@@ -109,7 +104,10 @@ class ProductFormScreen extends Component {
             state.isPhotoTwoUploaded = true;
             state.isPhotoThreeUploaded = true;
           }
-          this.setState(state);
+          this.setState({
+            ...state,
+            prevValues: state,
+          });
         } else {
           console.log('No such document!');
         }
@@ -207,22 +205,36 @@ class ProductFormScreen extends Component {
 
   deletePhoto = photo => {
     let myRef = fbs.ref();
-    var photoRef = myRef.child(this.state[photo + 'Ref']);
-
-    // Delete the file
+    let photoRef = myRef.child(this.state[photo + 'Ref']);
     photoRef
       .delete()
-      .then(function() {
+      .then(() => {
         console.log('Succeed deleted the photo');
+        let status = 'isPhotoOneUploaded';
+        if (photo === 'photo2') {
+          status = 'isPhotoTwoUploaded';
+        } else if (photo === 'photo3') {
+          status = 'isPhotoThreeUploaded';
+        }
+        this.setState({
+          [photo]: '',
+          [photo + 'Ref']: '',
+          [status]: false,
+        });
       })
-      .catch(function(error) {
+      .catch(error => {
         console.error(error);
       });
   };
 
   choosePhoto = async (field, status) => {
     if (this.state[field]) {
-      this.deletePhoto(field);
+      Alert.alert(
+        'Peringatan',
+        'Apakah Anda yakin ingin menghapus photo ini ?',
+        [{ text: 'OK', onPress: () => this.deletePhoto(field) }],
+        { cancelable: true }
+      );
     } else {
       let result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: false,
@@ -297,8 +309,9 @@ class ProductFormScreen extends Component {
       stock,
       description,
       specs,
+      prevValues,
     } = this.state;
-    this.setState({ isSpinnerLoading: true });
+
     let allPhotos = [];
     let allPhotoRefs = [];
     if (photo1) {
@@ -315,36 +328,96 @@ class ProductFormScreen extends Component {
     }
     let shopId = this.props.nav.navigation.getParam('shop_id', 0);
     let shopName = this.props.nav.navigation.getParam('shop_name', null);
-    db.collection('produk')
-      .add({
-        id_toko: shopId,
-        nama_toko: shopName,
-        bintang: 0,
-        dibeli: 0,
-        tanggal_posting: new Date(),
-        nama: name,
-        photo_produk: allPhotos,
-        photo_refs: allPhotoRefs,
-        kategori: category,
-        harga: price,
-        satuan: unit,
-        stok: stock,
-        deskripsi: description,
-        spesifikasi: specs,
-      })
-      .then(() => {
-        console.log('Document successfully written!');
-        this.setState({ ...initialState, isSpinnerLoading: false });
-        this.showToastMessage('Kamu berhasil menambahkan produk baru');
-        setTimeout(() => {
-          this.props.nav.navigation.navigate(urls.shop, {
-            add_product_succeed: true,
+
+    const productId = this.props.nav.navigation.getParam('product_id', 0);
+
+    if (!productId) {
+      this.setState({ isSpinnerLoading: true });
+      db.collection('produk')
+        .add({
+          id_toko: shopId,
+          nama_toko: shopName,
+          bintang: 0,
+          dibeli: 0,
+          tanggal_posting: new Date(),
+          nama: name,
+          photo_produk: allPhotos,
+          photo_refs: allPhotoRefs,
+          kategori: category,
+          harga: price,
+          satuan: unit,
+          stok: stock,
+          deskripsi: description,
+          spesifikasi: specs,
+        })
+        .then(() => {
+          console.log('Document successfully written!');
+          this.setState({ ...initialState, isSpinnerLoading: false });
+          this.showToastMessage('Kamu berhasil menambahkan produk baru');
+          setTimeout(() => {
+            this.props.nav.navigation.navigate(urls.shop, {
+              add_product_succeed: true,
+            });
+          }, 1500);
+        })
+        .catch(error => {
+          console.error('Error writing document: ', error);
+        });
+    } else {
+      if (
+        (prevValues.photo1 !== undefined && prevValues.photo1 !== photo1) ||
+        (prevValues.photo2 !== undefined && prevValues.photo2 !== photo2) ||
+        (prevValues.photo3 !== undefined && prevValues.photo3 !== photo3) ||
+        prevValues.name !== name ||
+        prevValues.category !== category ||
+        prevValues.price !== price ||
+        prevValues.unit !== unit ||
+        prevValues.stock !== stock ||
+        prevValues.description !== description ||
+        prevValues.specs !== specs
+      ) {
+        this.setState({ isSpinnerLoading: true });
+        let docRef = db.collection('produk').doc(productId);
+        docRef
+          .get()
+          .then(doc => {
+            if (doc.exists) {
+              docRef.update({
+                nama_toko: shopName,
+                nama: name,
+                photo_produk: allPhotos,
+                photo_refs: allPhotoRefs,
+                kategori: category,
+                harga: price,
+                satuan: unit,
+                stok: stock,
+                deskripsi: description,
+                spesifikasi: specs,
+              });
+              console.log('Document successfully edited!');
+              this.setState({ ...initialState, isSpinnerLoading: false });
+              this.showToastMessage('Kamu berhasil mengubah produk');
+              setTimeout(() => {
+                this.props.nav.navigation.navigate(urls.shop, {
+                  add_product_succeed: true,
+                });
+              }, 1500);
+            } else {
+              console.log('No such document!');
+            }
+          })
+          .catch(error => {
+            console.error(`Error searching review with id ${productId} \n`, error);
           });
-        }, 1500);
-      })
-      .catch(error => {
-        console.error('Error writing document: ', error);
-      });
+      } else {
+        Alert.alert(
+          'Peringatan',
+          'Data masih sama dengan sebelumnya. Tidak ada perubahan.',
+          [{ text: 'OK', onPress: () => console.log('hello') }],
+          { cancelable: true }
+        );
+      }
+    }
   };
 
   showToastMessage = message => {
@@ -395,10 +468,6 @@ class ProductFormScreen extends Component {
       isDescriptionChanged,
       isSpecsChanged,
     } = this.state;
-
-    console.log('_STATE : ', this.state);
-
-    // const productId = this.props.nav.navigation.getParam('product_id', 0);
 
     return (
       <KeyboardAwareScrollView enableOnAndroid>
