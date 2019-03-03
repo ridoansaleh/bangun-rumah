@@ -132,7 +132,7 @@ class OrderHistoryScreen extends Component {
               <Image
                 source={sadImage}
                 style={{
-                  width: 0.35 * width,
+                  width: 0.4 * width,
                   height: 0.2 * height,
                 }}
               />
@@ -141,9 +141,9 @@ class OrderHistoryScreen extends Component {
                 small
                 bordered
                 style={{
-                  width: 0.25 * width,
-                  marginLeft: 0.375 * width,
-                  marginRight: 0.375 * width,
+                  width: 0.3 * width,
+                  marginLeft: 0.35 * width,
+                  marginRight: 0.35 * width,
                   marginTop: 20,
                 }}
                 onPress={() => this.props.nav.navigation.navigate(urls.home)}>
