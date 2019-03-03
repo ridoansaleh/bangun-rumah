@@ -281,7 +281,7 @@ class ReviewScreen extends Component {
                   numberOfLines={4}
                   onChangeText={val => this.changeFieldValue('text', val)}
                   value={this.state.text}
-                  style={{ borderColor: 'black', borderWidth: 1, width: 0.95 * width, padding: 5 }}
+                  style={{ borderColor: 'black', borderWidth: 1, width: -20 + width, padding: 5 }}
                 />
               </Row>
               {/* VALIDATION MESSAGE */}

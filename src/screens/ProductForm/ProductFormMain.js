@@ -350,8 +350,8 @@ class ProductFormScreen extends Component {
           deskripsi: description,
           spesifikasi: specs,
         })
-        .then(() => {
-          console.log('Document successfully written!');
+        .then(docRef => {
+          console.log('Document successfully written with id ', docRef.id);
           this.setState({ ...initialState, isSpinnerLoading: false });
           this.showToastMessage('Kamu berhasil menambahkan produk baru');
           setTimeout(() => {
@@ -502,7 +502,7 @@ class ProductFormScreen extends Component {
                     dark
                     style={styles.upload}
                     onPress={() => this.choosePhoto('photo1', 'isPhotoOneUploaded')}>
-                    <Text>{photo1 ? 'Hapus' : 'Upload'}</Text>
+                    <Text style={{ fontSize: 12 }}>{photo1 ? 'Hapus' : 'Upload'}</Text>
                   </Button>
                 </Col>
                 <Col style={{ margin: 5 }}>
@@ -515,7 +515,7 @@ class ProductFormScreen extends Component {
                     disabled={photo1 === ''}
                     style={styles.upload}
                     onPress={() => this.choosePhoto('photo2', 'isPhotoTwoUploaded')}>
-                    <Text>{photo2 ? 'Hapus' : 'Upload'}</Text>
+                    <Text style={{ fontSize: 12 }}>{photo2 ? 'Hapus' : 'Upload'}</Text>
                   </Button>
                 </Col>
                 <Col style={{ margin: 5 }}>
@@ -528,7 +528,7 @@ class ProductFormScreen extends Component {
                     disabled={photo2 === ''}
                     style={styles.upload}
                     onPress={() => this.choosePhoto('photo3', 'isPhotoThreeUploaded')}>
-                    <Text>{photo3 ? 'Hapus' : 'Upload'}</Text>
+                    <Text style={{ fontSize: 12 }}>{photo3 ? 'Hapus' : 'Upload'}</Text>
                   </Button>
                 </Col>
               </Row>

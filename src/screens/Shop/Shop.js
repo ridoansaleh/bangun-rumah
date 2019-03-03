@@ -88,7 +88,7 @@ class Shop extends Component {
                           <Row style={{ marginLeft: 0.1 * (0.5 * width - 20) }}>
                             <Col>
                               <Button small bordered danger>
-                                <Text>Hapus</Text>
+                                <Text style={{ fontSize: 13 }}>Hapus</Text>
                               </Button>
                             </Col>
                             <Col>
@@ -101,7 +101,7 @@ class Shop extends Component {
                                     product_id: item.id_produk,
                                   })
                                 }>
-                                <Text>Edit</Text>
+                                <Text style={{ fontSize: 13 }}>Edit</Text>
                               </Button>
                             </Col>
                           </Row>
@@ -116,7 +116,7 @@ class Shop extends Component {
                     </View>
                   </TouchableWithoutFeedback>
                 )}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.id_produk}
                 numColumns={numColumns}
               />
             )}

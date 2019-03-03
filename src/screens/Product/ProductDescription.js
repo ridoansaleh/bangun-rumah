@@ -68,10 +68,11 @@ class ProductDescription extends Component {
                 fullStarColor={'gold'}
               />
             </Col>
-            <Col size={2} />
-            <Col size={2}>
+            <Col size={4}>
               <TouchableOpacity onPress={() => this.shopNameClick(this.state.shopId)}>
-                <Text style={{ fontWeight: 'bold' }}>{this.state.shopName}</Text>
+                <Text style={{ fontWeight: 'bold', textAlign: 'right' }}>
+                  {this.state.shopName}
+                </Text>
               </TouchableOpacity>
             </Col>
           </Row>
@@ -84,7 +85,7 @@ class ProductDescription extends Component {
               renderItem={({ item, index }) => {
                 return (
                   <Text>
-                    {index + 1}. {item.text}
+                    {index + 1}. {item.text.trim()}
                   </Text>
                 );
               }}

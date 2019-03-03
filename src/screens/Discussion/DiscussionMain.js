@@ -126,7 +126,7 @@ class DiscussionScreen extends Component {
                       style={{
                         borderColor: 'black',
                         borderWidth: 1,
-                        width: 0.95 * width,
+                        width: -20 + width,
                         padding: 5,
                       }}
                     />
@@ -148,19 +148,19 @@ class DiscussionScreen extends Component {
             )}
             {this.state.isDataFetched && !this.props.isLogin && (
               <Row
-                size={10}
+                size={20}
                 style={{ borderColor: 'black', borderWidth: 1, padding: 5, marginBottom: 15 }}>
                 <Grid>
-                  <Row style={{ flex: 1, justifyContent: 'center' }}>
+                  <Row style={{ flex: 1, justifyContent: 'center', marginBottom: 10 }}>
                     <Text>Kamu belum bisa komentar karena belum login</Text>
                   </Row>
                   <Row>
                     <Button
                       small
                       style={{
-                        width: 0.2 * width,
-                        marginLeft: 0.4 * width,
-                        marginRight: 0.4 * width,
+                        width: 0.3 * width - 20,
+                        marginLeft: 0.35 * width - 20,
+                        marginRight: 0.35 * width - 20,
                       }}
                       onPress={() => this.props.nav.navigation.navigate(urls.login)}>
                       <Text>Login</Text>

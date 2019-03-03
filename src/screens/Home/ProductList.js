@@ -54,32 +54,34 @@ class ProductList extends Component {
     } else {
       if (dataProducts.length > 0) {
         return (
-          <FlatList
-            data={dataProducts}
-            renderItem={({ item }) => (
-              <TouchableWithoutFeedback
-                onPress={() =>
-                  this.props.navigation.navigate(urls.product, {
-                    product_id: item.id_produk,
-                  })
-                }>
-                <View style={styles.itemContainer}>
-                  <Image source={{ uri: item.photo_produk[0] }} style={styles.productImage} />
-                  <Text>{item.nama}</Text>
-                  <StarRating
-                    disabled
-                    maxStars={5}
-                    rating={parseInt(item.bintang)}
-                    starSize={20}
-                    fullStarColor={'gold'}
-                  />
-                  <Text>Rp {convertToCurrency(parseInt(item.harga))}</Text>
-                </View>
-              </TouchableWithoutFeedback>
-            )}
-            keyExtractor={item => item.id}
-            numColumns={numColumns}
-          />
+          <View style={{ marginBottom: 20 }}>
+            <FlatList
+              data={dataProducts}
+              renderItem={({ item }) => (
+                <TouchableWithoutFeedback
+                  onPress={() =>
+                    this.props.navigation.navigate(urls.product, {
+                      product_id: item.id_produk,
+                    })
+                  }>
+                  <View style={styles.itemContainer}>
+                    <Image source={{ uri: item.photo_produk[0] }} style={styles.productImage} />
+                    <Text>{item.nama}</Text>
+                    <StarRating
+                      disabled
+                      maxStars={5}
+                      rating={parseInt(item.bintang, 10)}
+                      starSize={15}
+                      fullStarColor={'gold'}
+                    />
+                    <Text>Rp {convertToCurrency(parseInt(item.harga, 10))}</Text>
+                  </View>
+                </TouchableWithoutFeedback>
+              )}
+              keyExtractor={item => item.id_produk}
+              numColumns={numColumns}
+            />
+          </View>
         );
       } else {
         return (
@@ -97,7 +99,6 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: halfWidth,
     height: halfWidth,
-    flex: 1,
     margin: 3,
     alignItems: 'center',
   },

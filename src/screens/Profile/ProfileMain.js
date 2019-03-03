@@ -60,10 +60,10 @@ class ProfileScreen extends Component {
           <Grid>
             <Row
               style={{
-                padding: 10,
-                borderBottomColor: 'black',
+                padding: 15,
+                borderBottomColor: '#EBE5E4',
                 borderBottomWidth: 1,
-                borderTopColor: 'black',
+                borderTopColor: '#EBE5E4',
                 borderTopWidth: 1,
               }}>
               <Grid>
@@ -77,8 +77,8 @@ class ProfileScreen extends Component {
             </Row>
             <Row
               style={{
-                padding: 10,
-                borderBottomColor: 'black',
+                padding: 15,
+                borderBottomColor: '#EBE5E4',
                 borderBottomWidth: 1,
               }}>
               <Grid>
@@ -92,8 +92,8 @@ class ProfileScreen extends Component {
             </Row>
             <Row
               style={{
-                padding: 10,
-                borderBottomColor: 'black',
+                padding: 15,
+                borderBottomColor: '#EBE5E4',
                 borderBottomWidth: 1,
               }}>
               <Grid>
@@ -107,8 +107,8 @@ class ProfileScreen extends Component {
             </Row>
             <Row
               style={{
-                padding: 10,
-                borderBottomColor: 'black',
+                padding: 15,
+                borderBottomColor: '#EBE5E4',
                 borderBottomWidth: 1,
               }}>
               <Grid>
@@ -122,8 +122,8 @@ class ProfileScreen extends Component {
             </Row>
             <Row
               style={{
-                padding: 10,
-                borderBottomColor: 'black',
+                padding: 15,
+                borderBottomColor: '#EBE5E4',
                 borderBottomWidth: 1,
               }}>
               <Grid>
