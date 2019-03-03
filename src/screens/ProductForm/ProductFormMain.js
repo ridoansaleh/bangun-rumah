@@ -350,8 +350,8 @@ class ProductFormScreen extends Component {
           deskripsi: description,
           spesifikasi: specs,
         })
-        .then(() => {
-          console.log('Document successfully written!');
+        .then(docRef => {
+          console.log('Document successfully written with id ', docRef.id);
           this.setState({ ...initialState, isSpinnerLoading: false });
           this.showToastMessage('Kamu berhasil menambahkan produk baru');
           setTimeout(() => {

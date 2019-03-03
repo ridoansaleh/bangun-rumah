@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, Image, Dimensions, ScrollView, Alert, Platform } from 'react-native';
+import { StyleSheet, View, Dimensions, ScrollView } from 'react-native';
 import { Content, Text, Header, Left, Button, Icon, Title, Body, Spinner } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -105,7 +105,7 @@ class ProductMainScreen extends Component {
               </Col>
               <Col size={2}>
                 <Button full style={{ height: '100%' }}>
-                  <Text>Pesan Sekarang</Text>
+                  <Text style={{ fontSize: 13 }}>Pesan Sekarang</Text>
                 </Button>
               </Col>
             </Row>

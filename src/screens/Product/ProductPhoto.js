@@ -51,21 +51,31 @@ class ProductPhoto extends Component {
             {images.map((val, i) => (
               <View key={i}>
                 <Grid>
-                  <Col style={{ width: width * 0.05, marginTop: height * 0.13 }}>
-                    <Icon name="arrow-dropleft-circle" onPress={() => this.prevImage(i)} />
+                  <Col style={styles.navIconContainer}>
+                    <Icon
+                      name="arrow-dropleft-circle"
+                      style={styles.navIcon}
+                      onPress={() => this.prevImage(i)}
+                    />
                   </Col>
                   <Col>
-                    <Image style={styles.image} source={{ uri: val }} key={i} />
+                    <Image style={styles.multipleImage} source={{ uri: val }} key={i} />
                   </Col>
-                  <Col style={{ width: width * 0.05, marginTop: height * 0.13 }}>
-                    <Icon name="arrow-dropright-circle" onPress={() => this.nextImage(i)} />
+                  <Col style={styles.navIconContainer}>
+                    <Icon
+                      name="arrow-dropright-circle"
+                      style={styles.navIcon}
+                      onPress={() => this.nextImage(i)}
+                    />
                   </Col>
                 </Grid>
               </View>
             ))}
           </ScrollView>
         ) : (
-          <Image style={styles.image} source={{ uri: images[0] }} />
+          <View style={{ paddingLeft: 10, paddingRight: 10 }}>
+            <Image style={styles.singleImage} source={{ uri: images[0] }} />
+          </View>
         )}
       </View>
     );
@@ -77,8 +87,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: height * 0.3,
   },
-  image: {
-    width: width * 0.9,
+  navIconContainer: {
+    width: width * 0.1,
+    marginTop: height * 0.13,
+  },
+  navIcon: {
+    width: 0.08 * width,
+    marginLeft: 0.01 * width,
+    marginRight: 0.01 * width,
+  },
+  multipleImage: {
+    width: width * 0.8,
+    height: height * 0.3,
+  },
+  singleImage: {
+    width: width - 20,
     height: height * 0.3,
   },
 });

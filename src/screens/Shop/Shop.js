@@ -116,7 +116,7 @@ class Shop extends Component {
                     </View>
                   </TouchableWithoutFeedback>
                 )}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.id_produk}
                 numColumns={numColumns}
               />
             )}
