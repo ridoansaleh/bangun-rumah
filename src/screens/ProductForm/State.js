@@ -1,5 +1,7 @@
 const state = {
   isSpinnerLoading: false,
+  allPhotos: [],
+  allPhotoRefs: [],
   photo1: '',
   photo2: '',
   photo3: '',

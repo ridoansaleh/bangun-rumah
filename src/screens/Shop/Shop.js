@@ -99,6 +99,7 @@ class Shop extends Component {
                                 onPress={() =>
                                   this.props.nav.navigation.navigate(urls.product_form, {
                                     product_id: item.id_produk,
+                                    shop_name: item.nama_toko,
                                   })
                                 }>
                                 <Text style={{ fontSize: 13 }}>Edit</Text>
