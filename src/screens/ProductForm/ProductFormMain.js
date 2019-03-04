@@ -60,6 +60,8 @@ class ProductFormScreen extends Component {
           const photoRefs = data.photo_refs;
 
           let state = {
+            allPhotos: photos,
+            allPhotoRefs: photoRefs,
             name: data.nama,
             category: data.kategori,
             price: data.harga,
@@ -120,7 +122,7 @@ class ProductFormScreen extends Component {
   getCategoriesData = () => {
     let data = AllCategory.filter(data => data.status !== 'main');
     data.unshift({
-      name: 'Kategori',
+      name: 'Pilih Kategori',
       status: 'default',
     });
     this.setState({
@@ -216,11 +218,34 @@ class ProductFormScreen extends Component {
         } else if (photo === 'photo3') {
           status = 'isPhotoThreeUploaded';
         }
-        this.setState({
-          [photo]: '',
-          [photo + 'Ref']: '',
-          [status]: false,
-        });
+        const productId = this.props.nav.navigation.getParam('product_id', 0);
+        let tempPhoto = [];
+        let tempRefs = [];
+        let lastCharacter = parseInt(photo.charAt(5), 10);
+        tempPhoto = this.state.allPhotos.splice(lastCharacter - 1, 1);
+        tempRefs = this.state.allPhotoRefs.splice(lastCharacter - 1, 1);
+        let docRef = db.collection('produk').doc(productId);
+        docRef
+          .get()
+          .then(doc => {
+            if (doc.exists) {
+              docRef.update({
+                photo_produk: tempPhoto,
+                photo_refs: tempRefs,
+              });
+              console.log('Document successfully edited!');
+              this.setState({
+                [photo]: '',
+                [photo + 'Ref']: '',
+                [status]: false,
+              });
+            } else {
+              console.log('No such document!');
+            }
+          })
+          .catch(error => {
+            console.error(`Error searching review with id ${productId} \n`, error);
+          });
       })
       .catch(error => {
         console.error(error);
@@ -413,7 +438,7 @@ class ProductFormScreen extends Component {
         Alert.alert(
           'Peringatan',
           'Data masih sama dengan sebelumnya. Tidak ada perubahan.',
-          [{ text: 'OK', onPress: () => console.log('hello') }],
+          [{ text: 'OK', onPress: () => console.log('Close the dialog') }],
           { cancelable: true }
         );
       }
@@ -542,6 +567,7 @@ class ProductFormScreen extends Component {
                 isNameChanged &&
                 this.showErrorMessage('Tidak boleh angka atau karakter spesial (min. 10 huruf)')}
               {/* end of name */}
+              <Text style={styles.customLabel}>Kategori</Text>
               <Picker
                 selectedValue={category}
                 style={styles.picker}
@@ -553,7 +579,7 @@ class ProductFormScreen extends Component {
                     <Picker.Item
                       key={i}
                       label={data.name}
-                      value={data.name !== 'Kategori' ? data.name : ''}
+                      value={data.name !== 'Pilih Kategori' ? data.name : ''}
                     />
                   );
                 })}
@@ -565,7 +591,7 @@ class ProductFormScreen extends Component {
               <Item
                 floatingLabel
                 error={!!(isPriceChanged && !isPriceValid)}
-                style={{ marginTop: -5 }}>
+                style={{ marginTop: 15 }}>
                 <Label>Harga</Label>
                 <Input value={price} onChangeText={val => this.handleChangeField(val, 'price')} />
               </Item>
@@ -573,11 +599,12 @@ class ProductFormScreen extends Component {
                 isPriceChanged &&
                 this.showErrorMessage('Hanya diperbolehkan angka')}
               {/* end of price */}
+              <Text style={styles.customLabel}>Satuan</Text>
               <Picker
                 selectedValue={unit}
                 style={styles.picker}
                 onValueChange={(itemValue, itemIndex) => this.handleChangeField(itemValue, 'unit')}>
-                <Picker.Item label={'Satuan'} value={'Satuan'} />
+                <Picker.Item label={'Pilih Satuan'} value={''} />
                 <Picker.Item label={'Lusin'} value={'Lusin'} />
                 <Picker.Item label={'Kg'} value={'Kg'} />
                 <Picker.Item label={'Karung'} value={'Karung'} />
@@ -588,7 +615,7 @@ class ProductFormScreen extends Component {
               <Item
                 floatingLabel
                 error={!!(isStockChanged && !isStockValid)}
-                style={{ marginTop: -5 }}>
+                style={{ marginTop: 15 }}>
                 <Label>Stok</Label>
                 <Input value={stock} onChangeText={val => this.handleChangeField(val, 'stock')} />
               </Item>
@@ -596,42 +623,28 @@ class ProductFormScreen extends Component {
                 isStockChanged &&
                 this.showErrorMessage('Hanya diperbolehkan angka')}
               {/* end of stock */}
-              <Item>
-                <TextInput
-                  multiline
-                  numberOfLines={4}
-                  onChangeText={val => this.handleChangeField(val, 'description')}
-                  value={description}
-                  placeholder={'Deskripsi'}
-                  style={{
-                    borderColor: 'black',
-                    marginTop: 20,
-                    borderWidth: 1,
-                    width: 0.9 * width,
-                    padding: 5,
-                  }}
-                />
-              </Item>
+              <Text style={styles.customLabel}>Deskripsi</Text>
+              <TextInput
+                multiline
+                numberOfLines={4}
+                onChangeText={val => this.handleChangeField(val, 'description')}
+                value={description}
+                placeholder={'Deskripsi'}
+                style={styles.textArea}
+              />
               {!isDescriptionValid &&
                 isDescriptionChanged &&
                 this.showErrorMessage('Tidak boleh kurang dari 10 karakter')}
               {/* end of description */}
-              <Item>
-                <TextInput
-                  multiline
-                  numberOfLines={4}
-                  onChangeText={val => this.handleChangeField(val, 'specs')}
-                  value={specs}
-                  placeholder={'Spesifikasi'}
-                  style={{
-                    borderColor: 'black',
-                    marginTop: 20,
-                    borderWidth: 1,
-                    width: 0.9 * width,
-                    padding: 5,
-                  }}
-                />
-              </Item>
+              <Text style={styles.customLabel}>Spesifikasi</Text>
+              <TextInput
+                multiline
+                numberOfLines={4}
+                onChangeText={val => this.handleChangeField(val, 'specs')}
+                value={specs}
+                placeholder={'Spesifikasi'}
+                style={styles.textArea}
+              />
               <Text style={{ fontSize: 12, fontStyle: 'italic', marginLeft: 15 }}>
                 *Pisah dengan koma
               </Text>
@@ -680,16 +693,26 @@ const styles = StyleSheet.create({
     width: '80%',
     marginLeft: '10%',
     marginRight: '10%',
-    // justifyContent: 'center',
+  },
+  customLabel: {
+    fontSize: 15,
+    color: 'grey',
+    marginLeft: 0.03 * width,
+    marginTop: 15,
+  },
+  textArea: {
+    borderColor: 'black',
+    borderWidth: 1,
+    width: 0.9 * width,
+    marginTop: 5,
+    marginLeft: 0.03 * width,
+    padding: 5,
   },
   picker: {
-    // backgroundColor: 'yellow',
-    marginTop: 15,
     marginLeft: 5,
-    height: 50,
+    height: 25,
     width: width * 0.98,
   },
-  textArea: {},
   date: {
     marginTop: 15,
     width: width * 0.95,
