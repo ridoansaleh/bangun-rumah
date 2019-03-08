@@ -194,8 +194,10 @@ class EditForm extends Component {
         let tempPhoto = [];
         let tempRefs = [];
         let lastCharacter = parseInt(photo.charAt(5), 10);
-        tempPhoto = this.state.allPhotos.splice(lastCharacter - 1, 1);
-        tempRefs = this.state.allPhotoRefs.splice(lastCharacter - 1, 1);
+        tempPhoto = this.state.allPhotos;
+        tempPhoto.splice(lastCharacter - 1, 1);
+        tempRefs = this.state.allPhotoRefs;
+        tempRefs.splice(lastCharacter - 1, 1);
         let docRef = db.collection('produk').doc(this.props.productId);
         docRef
           .get()
@@ -276,13 +278,6 @@ class EditForm extends Component {
     if (this.state[field]) {
       if (field === 'photo1') {
         this.deletePhoto(field, 1);
-        // let result = await ImagePicker.launchImageLibraryAsync({
-        //   allowsEditing: false,
-        //   aspect: [4, 3],
-        // });
-        // if (!result.cancelled) {
-        //   this.handleImagePicked(field, status, result, 1);
-        // }
       } else {
         Alert.alert(
           'Peringatan',
@@ -312,12 +307,7 @@ class EditForm extends Component {
             [status]: true,
           },
           () => {
-            // if (specialAction) {
-            //   this.deletePhoto(field);
-            //   this.savePhoto(field);
-            // } else {
             this.savePhoto(field);
-            // }
           }
         );
       }

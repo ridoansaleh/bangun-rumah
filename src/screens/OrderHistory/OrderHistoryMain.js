@@ -104,8 +104,8 @@ class OrderHistoryScreen extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col size={4} />
-                    <Col size={6}>
+                    <Col size={3} />
+                    <Col size={7}>
                       <Button
                         small
                         bordered
