@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
+  Alert,
   StyleSheet,
   Image,
   Dimensions,
@@ -14,6 +15,7 @@ import StarRating from 'react-native-star-rating';
 import emptyResult from '../../../assets/empty_search_result.png';
 import { urls } from '../../constant';
 import { convertToCurrency } from '../../utils';
+import { db } from '../../../firebase.config';
 
 const { width, height } = Dimensions.get('window');
 const numColumns = 2;
@@ -25,6 +27,55 @@ class Shop extends Component {
     shop: PropTypes.object,
     products: PropTypes.array,
     isUserOwnedThisShop: PropTypes.bool,
+    getShopProducts: PropTypes.func,
+  };
+
+  handleDeleteProduct = id => {
+    let data = [];
+    db.collection('pemesanan')
+      .where('id_produk', '==', id)
+      .where('status', '==', 'Menunggu Konfirmasi')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          data.push({
+            id_pemesanan: doc.id,
+            ...doc.data(),
+          });
+        });
+        if (data.length > 0) {
+          Alert.alert(
+            'Peringatan',
+            'Anda tidak bisa menghapus produk yang masih ada pemesanan.' +
+              'Segera terima atau tolak pemesanan tersebut.',
+            [{ text: 'OK', onPress: () => console.log('Close the alert') }],
+            { cancelable: true }
+          );
+        } else {
+          Alert.alert(
+            'Peringatan',
+            'Apakah Anda yakin ingin menghapus produk ini ?',
+            [{ text: 'OK', onPress: () => this.deleteProduct(id) }],
+            { cancelable: true }
+          );
+        }
+      })
+      .catch(error => {
+        console.error("Error getting pemesanan's data \n", error);
+      });
+  };
+
+  deleteProduct = id => {
+    db.collection('produk')
+      .doc(id)
+      .delete()
+      .then(() => {
+        console.log('Product successfully deleted!');
+        this.props.getShopProducts([{ id_toko: this.props.shop.id_toko }], true);
+      })
+      .catch(error => {
+        console.error('Error deleting product \n', error);
+      });
   };
 
   render() {
@@ -48,15 +99,17 @@ class Shop extends Component {
               <Text>Daftar Produk</Text>
             </Col>
             <Col size={1}>
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.nav.navigation.navigate(urls.product_form, {
-                    shop_id: this.props.shop.id_toko,
-                    shop_name: this.props.shop.nama,
-                  })
-                }>
-                <Icon name="add" style={{ fontSize: 23 }} />
-              </TouchableOpacity>
+              {this.props.isUserOwnedThisShop && (
+                <TouchableOpacity
+                  onPress={() =>
+                    this.props.nav.navigation.navigate(urls.product_form, {
+                      shop_id: this.props.shop.id_toko,
+                      shop_name: this.props.shop.nama,
+                    })
+                  }>
+                  <Icon name="add" style={{ fontSize: 23 }} />
+                </TouchableOpacity>
+              )}
             </Col>
           </Row>
           <Row>
@@ -77,17 +130,21 @@ class Shop extends Component {
                         <StarRating
                           disabled
                           maxStars={5}
-                          rating={parseInt(item.bintang)}
+                          rating={parseInt(item.bintang, 10)}
                           starSize={20}
                           fullStarColor={'gold'}
                         />
-                        <Text>Rp {convertToCurrency(parseInt(item.harga))}</Text>
+                        <Text>Rp {convertToCurrency(parseInt(item.harga, 10))}</Text>
                       </View>
                       <Grid style={{ marginTop: 15 }}>
                         {this.props.isUserOwnedThisShop ? (
                           <Row style={{ marginLeft: 0.1 * (0.5 * width - 20) }}>
                             <Col>
-                              <Button small bordered danger>
+                              <Button
+                                small
+                                bordered
+                                danger
+                                onPress={() => this.handleDeleteProduct(item.id_produk)}>
                                 <Text style={{ fontSize: 13 }}>Hapus</Text>
                               </Button>
                             </Col>
