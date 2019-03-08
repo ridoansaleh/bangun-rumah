@@ -48,7 +48,7 @@ class ShopScreen extends Component {
             let data = [doc.data()];
             data[0].id_toko = shopId;
             const hasThisShop = data[0].id_user === this.props.user.id;
-            this.getShopProducts(data, true, hasThisShop);
+            this.getShopProducts(data, hasThisShop);
           } else {
             console.log('No such document!');
           }
@@ -81,7 +81,7 @@ class ShopScreen extends Component {
           });
         });
         if (data.length === 1) {
-          this.getShopProducts(data);
+          this.getShopProducts(data, true);
         } else {
           this.setState({
             isDataFetched: true,
@@ -93,7 +93,7 @@ class ShopScreen extends Component {
       });
   };
 
-  getShopProducts = (toko, ownership, status) => {
+  getShopProducts = (toko, ownership) => {
     let data = [];
     db.collection('produk')
       .where('id_toko', '==', toko[0].id_toko)
@@ -105,23 +105,13 @@ class ShopScreen extends Component {
             ...doc.data(),
           });
         });
-        if (ownership) {
-          this.setState({
-            isDataFetched: true,
-            isUserHaveShop: true,
-            isUserOwnedThisShop: status,
-            dataShop: toko[0],
-            dataProducts: data,
-          });
-        } else {
-          this.setState({
-            isDataFetched: true,
-            isUserHaveShop: true,
-            isUserOwnedThisShop: true,
-            dataShop: toko[0],
-            dataProducts: data,
-          });
-        }
+        this.setState({
+          isDataFetched: true,
+          isUserHaveShop: true,
+          isUserOwnedThisShop: ownership,
+          dataShop: toko[0],
+          dataProducts: data,
+        });
       })
       .catch(error => {
         console.error('Error getting shop products data \n', error);
@@ -156,18 +146,20 @@ class ShopScreen extends Component {
           <Body>
             <Title>{!this.state.isToolbarShow ? 'Toko' : 'Toolbar'}</Title>
           </Body>
-          <Right>
-            <Button transparent>
-              <Icon name="chatbubbles" style={{ color: 'white' }} />
-            </Button>
-            <Button transparent>
-              <Icon
-                name="more"
-                style={{ color: 'white' }}
-                onPress={() => this.setState({ isToolbarShow: true })}
-              />
-            </Button>
-          </Right>
+          {this.state.isUserOwnedThisShop && (
+            <Right>
+              <Button transparent>
+                <Icon name="chatbubbles" style={{ color: 'white' }} />
+              </Button>
+              <Button transparent>
+                <Icon
+                  name="more"
+                  style={{ color: 'white' }}
+                  onPress={() => this.setState({ isToolbarShow: true })}
+                />
+              </Button>
+            </Right>
+          )}
         </Header>
         <Content>
           {!this.state.isDataFetched && (
@@ -188,6 +180,7 @@ class ShopScreen extends Component {
               shop={this.state.dataShop}
               products={this.state.dataProducts}
               isUserOwnedThisShop={this.state.isUserOwnedThisShop}
+              getShopProducts={this.getShopProducts}
             />
           )}
           {this.state.isDataFetched && this.state.isToolbarShow && <ToolBar />}
