@@ -16,6 +16,7 @@ import LoginScreen from './Login/LoginMain';
 import RegisterScreen from './Register/RegisterMain';
 import SearchProductScreen from './SearchProduct/SearchProductMain';
 import ProductScreen from './Product/ProductMain';
+import OrderScreen from './Order/OrderMain';
 import ReviewScreen from './Review/ReviewMain';
 import DiscussionScreen from './Discussion/DiscussionMain';
 
@@ -38,6 +39,7 @@ const AppNavigator = createStackNavigator(
     Drawer: DrawerNav,
     SearchProduct: SearchProductScreen,
     Product: ProductScreen,
+    Order: OrderScreen,
     Review: ReviewScreen,
     Discussion: DiscussionScreen,
     DashboardProfile: DashboardProfileScreen,

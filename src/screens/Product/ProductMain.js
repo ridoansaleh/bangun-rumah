@@ -214,7 +214,10 @@ class ProductMainScreen extends Component {
                     />
                   </Col>
                   <Col size={2}>
-                    <Button full style={{ height: '100%' }}>
+                    <Button
+                      full
+                      style={{ height: '100%' }}
+                      onPress={() => this.props.nav.navigation.navigate(urls.order)}>
                       <Text style={{ fontSize: 13 }}>Pesan Sekarang</Text>
                     </Button>
                   </Col>

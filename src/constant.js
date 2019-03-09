@@ -99,6 +99,7 @@ const urls = {
   logs: 'Logs',
   search: 'SearchProduct',
   product: 'Product',
+  order: 'Order',
   review: 'Review',
   discussion: 'Discussion',
 };
