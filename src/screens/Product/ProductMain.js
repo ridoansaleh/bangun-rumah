@@ -158,6 +158,12 @@ class ProductMainScreen extends Component {
     });
   };
 
+  orderProduct = () => {
+    this.props.nav.navigation.navigate(urls.order, {
+      products: [this.state.dataProduct.id_produk],
+    });
+  };
+
   render() {
     let { isDataFetched, dataProduct, shopOwnership, isModalVisible } = this.state;
     return (
@@ -214,10 +220,7 @@ class ProductMainScreen extends Component {
                     />
                   </Col>
                   <Col size={2}>
-                    <Button
-                      full
-                      style={{ height: '100%' }}
-                      onPress={() => this.props.nav.navigation.navigate(urls.order)}>
+                    <Button full style={{ height: '100%' }} onPress={() => this.orderProduct()}>
                       <Text style={{ fontSize: 13 }}>Pesan Sekarang</Text>
                     </Button>
                   </Col>
