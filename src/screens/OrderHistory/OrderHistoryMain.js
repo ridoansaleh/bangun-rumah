@@ -46,7 +46,10 @@ class OrderHistoryScreen extends Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
-          orders.push(doc.data());
+          orders.push({
+            id_pemesanan: doc.id,
+            ...doc.data(),
+          });
         });
         this.setState({
           isDataFetched: true,
@@ -60,6 +63,12 @@ class OrderHistoryScreen extends Component {
 
   printOrderNote = () => {
     // print order note
+  };
+
+  showAllProducts = index => {
+    this.setState({
+      ['showMore' + index]: !this.state['showMore' + index],
+    });
   };
 
   render() {
@@ -83,26 +92,69 @@ class OrderHistoryScreen extends Component {
             </View>
           )}
           {this.state.isDataFetched && this.state.dataOrders.length > 0 && (
-            <View style={{ borderColor: 'black', borderWidth: 1, padding: 10 }}>
+            <View>
               {this.state.dataOrders.map((data, i) => (
-                <Grid key={i}>
+                <Grid
+                  key={i}
+                  style={{ borderColor: 'black', borderWidth: 1, marginBottom: 15, padding: 5 }}>
                   <Row>
                     <Col>
                       <Image
-                        source={{ uri: data.photo_produk }}
+                        source={{ uri: data.produk[0].photo }}
                         style={{ width: 0.4 * width, height: 0.25 * height }}
                       />
                     </Col>
                     <Col>
-                      <Text style={{ fontWeight: 'bold' }}>{data.nama_produk}</Text>
-                      <Text>({data.nama_toko})</Text>
+                      <Text style={{ fontWeight: 'bold' }}>{data.produk[0].nama}</Text>
+                      <Text>({data.toko})</Text>
                       <Text style={{ fontSize: 12 }}>{data.waktu_pemesanan}</Text>
                       <Text style={{ marginTop: 25 }}>
-                        Rp {convertToCurrency(data.harga)} / {data.jumlah_produk} {data.satuan}
+                        Rp {convertToCurrency(data.produk[0].harga)}(
+                        {' ' + data.produk[0].jumlah + ' ' + data.produk[0].satuan})
                       </Text>
                       <Text>{data.status}</Text>
                     </Col>
                   </Row>
+                  {this.state['showMore' + (i + 1)] && data.produk.length >= 2 && (
+                    <Row style={{ marginTop: 8 }}>
+                      <Col>
+                        <Image
+                          source={{ uri: data.produk[1].photo }}
+                          style={{ width: 0.4 * width, height: 0.25 * height }}
+                        />
+                      </Col>
+                      <Col>
+                        <Text style={{ fontWeight: 'bold' }}>{data.produk[1].nama}</Text>
+                        <Text>({data.toko})</Text>
+                        <Text style={{ fontSize: 12 }}>{data.waktu_pemesanan}</Text>
+                        <Text style={{ marginTop: 25 }}>
+                          Rp {convertToCurrency(data.produk[1].harga)}(
+                          {' ' + data.produk[1].jumlah + ' ' + data.produk[1].satuan})
+                        </Text>
+                        <Text>{data.status}</Text>
+                      </Col>
+                    </Row>
+                  )}
+                  {this.state['showMore' + (i + 1)] && data.produk.length === 3 && (
+                    <Row style={{ marginTop: 8 }}>
+                      <Col>
+                        <Image
+                          source={{ uri: data.produk[2].photo }}
+                          style={{ width: 0.4 * width, height: 0.25 * height }}
+                        />
+                      </Col>
+                      <Col>
+                        <Text style={{ fontWeight: 'bold' }}>{data.produk[2].nama}</Text>
+                        <Text>({data.toko})</Text>
+                        <Text style={{ fontSize: 12 }}>{data.waktu_pemesanan}</Text>
+                        <Text style={{ marginTop: 25 }}>
+                          Rp {convertToCurrency(data.produk[2].harga)}(
+                          {' ' + data.produk[2].jumlah + ' ' + data.produk[2].satuan})
+                        </Text>
+                        <Text>{data.status}</Text>
+                      </Col>
+                    </Row>
+                  )}
                   <Row>
                     <Col size={3} />
                     <Col size={7}>
@@ -115,6 +167,15 @@ class OrderHistoryScreen extends Component {
                       </Button>
                     </Col>
                   </Row>
+                  {data.produk.length > 1 && (
+                    <Row style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10 }}>
+                      <Button small onPress={() => this.showAllProducts(i + 1)}>
+                        <Text>
+                          {!this.state['showMore' + (i + 1)] ? 'Lihat semuanya' : 'Tutup'}
+                        </Text>
+                      </Button>
+                    </Row>
+                  )}
                 </Grid>
               ))}
             </View>
