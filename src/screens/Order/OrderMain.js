@@ -9,14 +9,27 @@ import {
   Picker,
   TextInput,
 } from 'react-native';
-import { Content, Text, Header, Left, Button, Icon, Title, Body, Spinner } from 'native-base';
+import {
+  Content,
+  Text,
+  Header,
+  Left,
+  Button,
+  Icon,
+  Title,
+  Body,
+  Spinner,
+  Form,
+  Input,
+  Item,
+} from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Authentication from '../../components/Authentication';
 import thankYou from '../../../assets/thank-you.png';
 import { db } from '../../../firebase.config';
 import { convertToCurrency } from '../../utils';
-// import { urls } from '../../constant';
+import { urls } from '../../constant';
 
 const { height, width } = Dimensions.get('window');
 
@@ -42,6 +55,8 @@ class OrderMainScreen extends Component {
     isPromoValid: false,
     idPromo: '',
     isOrderSucceed: false,
+    address: this.props.user.alamat,
+    isAddressWidgetShown: false,
   };
 
   componentDidMount() {
@@ -67,13 +82,9 @@ class OrderMainScreen extends Component {
               step: step + 1,
             },
             () => {
-              console.log('STATE : ', this.state);
               if (this.state.step <= productIds.length) {
-                console.log('step : ', step);
-                console.log('productIds : ', productIds.length);
-                this.getProducts(productIds[step - 1]);
+                this.getProducts(productIds[this.state.step - 1]);
               } else {
-                console.log('ELSE');
                 this.setState({
                   isDataFetched: true,
                 });
@@ -89,8 +100,10 @@ class OrderMainScreen extends Component {
       });
   };
 
-  changeAddress = () => {
-    // do something
+  changeAddress = val => {
+    this.setState({
+      address: val,
+    });
   };
 
   calculateTotalPrice = () => {
@@ -111,10 +124,18 @@ class OrderMainScreen extends Component {
 
   handleChangeField = (val, name) => {
     if (name === 'description') {
-      if (val.length > 10) {
-        this.setState({ description: val, isDescriptionChanged: true, isDescriptionValid: true });
+      if (val) {
+        if (val.length > 10) {
+          this.setState({ description: val, isDescriptionChanged: true, isDescriptionValid: true });
+        } else {
+          this.setState({
+            description: val,
+            isDescriptionChanged: true,
+            isDescriptionValid: false,
+          });
+        }
       } else {
-        this.setState({ description: val, isDescriptionChanged: true, isDescriptionValid: false });
+        this.setState({ description: val, isDescriptionChanged: true, isDescriptionValid: true });
       }
     } else if (name === 'promo') {
       this.setState({ promo: val, isPromoChanged: false, isPromoValid: false });
@@ -185,10 +206,15 @@ class OrderMainScreen extends Component {
           : this.calculateTotalPrice(),
         status: 'Menunggu Konfirmasi',
         waktu_pemesanan: new Date(),
+        alamat_pengiriman: this.state.address ? this.state.address : this.props.user.alamat,
       })
       .then(docRef => {
         console.log('Successfully make an order with id ', docRef.id);
         this.setState({ isOrderSucceed: true });
+        const carts = this.props.nav.navigation.getParam('carts', []);
+        for (let i = 0; i < carts.length; i++) {
+          this.deleteProductFromCart(carts[i]);
+        }
       })
       .catch(error => {
         console.error('Error making an order \n', error);
@@ -203,8 +229,32 @@ class OrderMainScreen extends Component {
     }
   };
 
+  deleteProductFromCart = id => {
+    db.collection('keranjang')
+      .doc(id)
+      .delete()
+      .then(function() {
+        console.log('Document successfully deleted!');
+      })
+      .catch(function(error) {
+        console.error('Error removing document \n', error);
+      });
+  };
+
   render() {
-    const { isDataFetched, data, description, promo, isOrderSucceed } = this.state;
+    const {
+      isDataFetched,
+      data,
+      description,
+      isDescriptionChanged,
+      isDescriptionValid,
+      promo,
+      isPromoChanged,
+      isPromoValid,
+      isOrderSucceed,
+      address,
+      isAddressWidgetShown,
+    } = this.state;
     const options = Array.from(Array(100).keys());
     return (
       <KeyboardAwareScrollView enableOnAndroid>
@@ -220,11 +270,31 @@ class OrderMainScreen extends Component {
         </Header>
         <Content>
           {isOrderSucceed && (
-            <View style={{ padding: 10, backgroundColor: 'yellow', justifyContent: 'center' }}>
-              <Image source={thankYou} />
-              <Text style={{ fontSize: 20 }}>Terimakasih</Text>
-              <Text>Pemesanan Anda telah dikirimkan kepada Penjual.</Text>
-              <Text>Mohon tunggu konfirmasi dari Penjual.</Text>
+            <View
+              style={{
+                padding: 10,
+                height: 0.4 * height,
+                marginTop: 0.2 * height,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Image source={thankYou} style={{ width: 0.5 * width, height: 0.18 * height }} />
+              <Text
+                style={{
+                  textAlign: 'center',
+                  marginTop: 10,
+                }}>{`Pemesanan Anda telah dikirimkan kepada Penjual. Mohon tunggu konfirmasi dari Penjual.`}</Text>
+              <Button
+                small
+                style={{
+                  width: 0.3 * width,
+                  marginLeft: 0.35 * width,
+                  marginTop: 30,
+                  justifyContent: 'center',
+                }}
+                onPress={() => this.props.nav.navigation.navigate(urls.home)}>
+                <Text>Home</Text>
+              </Button>
             </View>
           )}
           {!isDataFetched && !isOrderSucceed && (
@@ -245,21 +315,38 @@ class OrderMainScreen extends Component {
                 </Row>
                 <Row style={{ marginBottom: 15 }}>
                   <Icon name="locate" />
-                  <Text style={{ marginLeft: 10 }}>{this.props.user.alamat}</Text>
+                  <Text style={{ marginLeft: 10 }}>{address}</Text>
                 </Row>
                 <Row>
-                  <TouchableHighlight onPress={() => this.changeAddress()}>
+                  <TouchableHighlight onPress={() => this.setState({ isAddressWidgetShown: true })}>
                     <Icon name="arrow-dropleft" />
                   </TouchableHighlight>
                   <TouchableHighlight
                     style={{ marginLeft: 10 }}
-                    onPress={() => this.changeAddress()}>
+                    onPress={() => this.setState({ isAddressWidgetShown: true })}>
                     <Text>Ganti Alamat Pengiriman</Text>
                   </TouchableHighlight>
                 </Row>
+                {isAddressWidgetShown && (
+                  <View>
+                    <Form style={{ marginBottom: 5 }}>
+                      <Item regular>
+                        <Input
+                          value={address}
+                          placeholder="Alamat"
+                          onChangeText={val => this.changeAddress(val)}
+                        />
+                      </Item>
+                    </Form>
+                    <Button small onPress={() => this.setState({ isAddressWidgetShown: false })}>
+                      <Text>Simpan</Text>
+                    </Button>
+                  </View>
+                )}
               </Grid>
-              <View style={{ padding: 5, backgroundColor: '#FFC300', marginBottom: 15 }}>
-                <Text>Total Harga : {this.calculateTotalPrice()}</Text>
+              <View
+                style={{ margin: 10, padding: 5, backgroundColor: '#FFC300', marginBottom: 15 }}>
+                <Text>Total Harga : Rp {convertToCurrency(this.calculateTotalPrice())}</Text>
               </View>
               {data.map((d, i) => (
                 <Grid key={i} style={{ padding: 10 }}>
@@ -320,6 +407,13 @@ class OrderMainScreen extends Component {
                     style={styles.textArea}
                   />
                 </Row>
+                <Row>
+                  {isDescriptionChanged && !isDescriptionValid && (
+                    <Text style={styles.errorMessage}>
+                      {'Deskripsi harus lebih dari 10 karakter atau kosong'}
+                    </Text>
+                  )}
+                </Row>
                 <Row style={{ marginTop: 5 }}>
                   <Text>Kode Promo</Text>
                 </Row>
@@ -329,6 +423,11 @@ class OrderMainScreen extends Component {
                     value={promo}
                     style={styles.promo}
                   />
+                </Row>
+                <Row>
+                  {isPromoChanged && !isPromoValid && (
+                    <Text style={styles.errorMessage}>{'Promo tidak valid'}</Text>
+                  )}
                 </Row>
                 <Row style={{ marginBottom: 30 }}>
                   <Button
@@ -382,6 +481,11 @@ const styles = StyleSheet.create({
     marginRight: (width * 0.75) / 2,
     marginTop: (height * 0.75) / 2,
     marginBottom: (height * 0.75) / 2,
+  },
+  errorMessage: {
+    fontSize: 12,
+    color: '#FF5733',
+    marginBottom: 10,
   },
 });
 

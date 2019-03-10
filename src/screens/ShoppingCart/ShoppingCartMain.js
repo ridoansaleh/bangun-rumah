@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Image, Dimensions, ScrollView, View, StyleSheet } from 'react-native';
+import {
+  Alert,
+  Image,
+  Dimensions,
+  ScrollView,
+  View,
+  StyleSheet,
+  TouchableHighlight,
+} from 'react-native';
 import { Container, Content, Text, CheckBox, Button, Spinner } from 'native-base';
 import { Row, Grid, Col } from 'react-native-easy-grid';
 import Header from '../../components/Header';
@@ -24,6 +32,8 @@ class ShoppingCartScreen extends Component {
     dataCart: [],
     isDataFetched: false,
     selectedProductsID: [],
+    selectedCartID: [],
+    isSelectAll: false,
   };
 
   componentDidMount() {
@@ -52,17 +62,34 @@ class ShoppingCartScreen extends Component {
       });
   };
 
-  checkProduct = id => {
-    if (this.state.selectedProductsID.indexOf(id) > -1) {
+  checkProduct = (cartId, productId) => {
+    // Cart
+    if (this.state.selectedCartID.indexOf(cartId) > -1) {
       this.setState(state => {
-        const data = state.selectedProductsID.filter(val => val !== id);
+        const data = state.selectedCartID.filter(val => val !== cartId);
+        return {
+          selectedCartID: data,
+        };
+      });
+    } else {
+      this.setState(state => {
+        const data = state.selectedCartID.concat(cartId);
+        return {
+          selectedCartID: data,
+        };
+      });
+    }
+    // Product
+    if (this.state.selectedProductsID.indexOf(productId) > -1) {
+      this.setState(state => {
+        const data = state.selectedProductsID.filter(val => val !== productId);
         return {
           selectedProductsID: data,
         };
       });
     } else {
       this.setState(state => {
-        const data = state.selectedProductsID.concat(id);
+        const data = state.selectedProductsID.concat(productId);
         return {
           selectedProductsID: data,
         };
@@ -70,22 +97,44 @@ class ShoppingCartScreen extends Component {
     }
   };
 
+  selectAll = () => {
+    let data1 = this.state.dataCart.map(d => {
+      return d.id_keranjang;
+    });
+    let data2 = this.state.dataCart.map(d => {
+      return d.id_produk;
+    });
+    if (this.state.isSelectAll) {
+      this.setState({
+        isSelectAll: false,
+        selectedCartID: [],
+        selectedProductsID: [],
+      });
+    } else {
+      this.setState({
+        isSelectAll: true,
+        selectedCartID: data1,
+        selectedProductsID: data2,
+      });
+    }
+  };
+
   removeProduct = () => {
-    if (this.state.selectedProductsID.length > 1) {
+    if (this.state.selectedCartID.length > 0) {
       this.setState({
         isDataFetched: false,
       });
-      for (let i = 0; i < this.state.selectedProductsID.length; i++) {
-        this.deleteProductFromCart(this.state.selectedProductsID[i]);
-        if (i === this.state.selectedProductsID.length - 1) {
+      for (let i = 0; i < this.state.selectedCartID.length; i++) {
+        this.deleteProductFromCart(this.state.selectedCartID[i]);
+        if (i === this.state.selectedCartID.length - 1) {
           this.getCartData();
         }
       }
-    } else if (this.state.selectedProductsID.length === 1) {
+    } else if (this.state.selectedCartID.length === 1) {
       this.setState({
         isDataFetched: false,
       });
-      this.deleteProductFromCart(this.state.selectedProductsID[0]);
+      this.deleteProductFromCart(this.state.selectedCartID[0]);
       this.getCartData();
     } else {
       Alert.alert(
@@ -95,6 +144,60 @@ class ShoppingCartScreen extends Component {
         { cancelable: true }
       );
       console.log('Nothing to delete');
+    }
+  };
+
+  orderProducts = () => {
+    const { selectedProductsID, selectedCartID, dataCart } = this.state;
+    if (selectedProductsID.length > 0) {
+      if (selectedProductsID.length > 3) {
+        Alert.alert(
+          'Info',
+          'Pemesanan maksimal 3 produk pada Toko yang sama.',
+          [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+          { cancelable: true }
+        );
+      } else {
+        this.setState({
+          isDataFetched: false,
+        });
+        let tempProduct = dataCart.map(d => {
+          if (selectedProductsID.indexOf(d.id_produk) > -1) {
+            return d;
+          }
+        });
+        let tempProductFinal = tempProduct.filter(d => d !== undefined);
+        let data = tempProductFinal.map(d => {
+          if (tempProductFinal[0].toko === d.toko) {
+            return d;
+          }
+        });
+        let dataFinal = data.filter(d => d !== undefined);
+        this.setState({
+          isDataFetched: true,
+        });
+        if (tempProductFinal.length === dataFinal.length) {
+          this.props.nav.navigation.navigate(urls.order, {
+            products: selectedProductsID,
+            carts: selectedCartID,
+          });
+        } else {
+          Alert.alert(
+            'Info',
+            'Pemesanan secara paralel hanya bisa dilakukan pada Toko yang sama dan maksimal 3 produk.',
+            [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+            { cancelable: true }
+          );
+        }
+      }
+    } else {
+      Alert.alert(
+        'Info',
+        'Belum ada produk yang dipilih untuk dipesan',
+        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+        { cancelable: true }
+      );
+      console.log('Nothing to order');
     }
   };
 
@@ -115,7 +218,7 @@ class ShoppingCartScreen extends Component {
   };
 
   render() {
-    const { isDataFetched, dataCart } = this.state;
+    const { isDataFetched, dataCart, isSelectAll } = this.state;
     return (
       <Container>
         <Header
@@ -138,8 +241,8 @@ class ShoppingCartScreen extends Component {
                     <Row style={{ marginBottom: 10 }} key={i}>
                       <Col size={1}>
                         <CheckBox
-                          checked={this.state.selectedProductsID.indexOf(data.id_keranjang) > -1}
-                          onPress={() => this.checkProduct(data.id_keranjang)}
+                          checked={this.state.selectedCartID.indexOf(data.id_keranjang) > -1}
+                          onPress={() => this.checkProduct(data.id_keranjang, data.id_produk)}
                           style={{ marginTop: width * 0.2 * 0.3 }}
                         />
                       </Col>
@@ -172,6 +275,7 @@ class ShoppingCartScreen extends Component {
                           })
                         }>
                         <Text>{data.nama}</Text>
+                        <Text style={{ fontSize: 12 }}>({data.toko})</Text>
                         <Text style={{ fontSize: 12 }}>
                           Rp {convertToCurrency(data.total_harga)}
                         </Text>
@@ -196,10 +300,12 @@ class ShoppingCartScreen extends Component {
                   borderTopWidth: 1,
                 }}>
                 <Col size={1}>
-                  <CheckBox checked={false} style={{ marginTop: 15 }} />
+                  <CheckBox checked={isSelectAll} style={{ marginTop: 15 }} />
                 </Col>
                 <Col size={3}>
-                  <Text style={{ marginTop: 15 }}>Semua</Text>
+                  <TouchableHighlight onPress={() => this.selectAll()}>
+                    <Text style={{ marginTop: 15 }}>Semua</Text>
+                  </TouchableHighlight>
                 </Col>
                 <Col size={3}>
                   <Button
@@ -212,7 +318,12 @@ class ShoppingCartScreen extends Component {
                   </Button>
                 </Col>
                 <Col size={3}>
-                  <Button small bordered dark style={{ marginTop: 10 }}>
+                  <Button
+                    small
+                    bordered
+                    dark
+                    style={{ marginTop: 10 }}
+                    onPress={() => this.orderProducts()}>
                     <Text>Pesan</Text>
                   </Button>
                 </Col>

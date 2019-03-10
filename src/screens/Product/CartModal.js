@@ -134,6 +134,7 @@ class CartModal extends Component {
           jumlah: totalProduct,
           nama: product.nama,
           photo: product.photo_produk[0],
+          toko: product.nama_toko,
           promo: '',
           satuan: product.satuan,
           total_harga: totalProduct * parseInt(product.harga, 10),
