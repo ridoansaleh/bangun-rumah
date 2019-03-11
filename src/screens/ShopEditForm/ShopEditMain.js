@@ -22,6 +22,7 @@ import {
 } from 'native-base';
 import { ImagePicker } from 'expo';
 import uuid from 'uuid';
+import Authentication from '../../components/Authentication';
 import defaultImage from '../../../assets/default-product.jpg';
 import { st as storageRef, db } from '../../../firebase.config';
 import { urls } from '../../constant';
@@ -31,7 +32,6 @@ const { width, height } = Dimensions.get('window');
 class ShopEditScreen extends Component {
   static propTypes = {
     nav: PropTypes.object,
-    setLoading: PropTypes.func,
   };
 
   state = {
@@ -226,7 +226,7 @@ class ShopEditScreen extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Pemesanan</Title>
+            <Title>Edit Toko</Title>
           </Body>
           <Right />
         </Header>
@@ -270,13 +270,7 @@ class ShopEditScreen extends Component {
                     onChangeText={val => this.handleChangeField(val, 'description')}
                     value={description}
                     placeholder={'Deskripsi Toko Anda'}
-                    style={{
-                      marginTop: 30,
-                      borderColor: 'black',
-                      borderWidth: 1,
-                      width: 0.95 * width,
-                      padding: 5,
-                    }}
+                    style={styles.description}
                   />
                 </Item>
                 {!isDescriptionValid &&
@@ -285,12 +279,12 @@ class ShopEditScreen extends Component {
                 {/* end of description */}
                 {this.validateForm() && (
                   <Button block success style={styles.btn} onPress={this.handleSubmit}>
-                    <Text>Buat Toko</Text>
+                    <Text>Simpan</Text>
                   </Button>
                 )}
                 {!this.validateForm() && (
                   <Button block disabled style={styles.btn}>
-                    <Text>Buat Toko</Text>
+                    <Text>Simpan</Text>
                   </Button>
                 )}
               </Form>
@@ -329,17 +323,18 @@ const styles = StyleSheet.create({
     marginRight: (width * 0.75) / 2,
     justifyContent: 'center',
   },
+  description: {
+    marginTop: 30,
+    borderColor: 'black',
+    borderWidth: 1,
+    width: 0.95 * width,
+    padding: 5,
+  },
   btn: {
     marginTop: 30,
     width: 0.95 * width,
     marginLeft: 0.025 * width,
     marginRight: 0.025 * width,
-  },
-  hasAccount: {
-    marginTop: 50,
-    marginBottom: 100,
-    flexDirection: 'row',
-    justifyContent: 'center',
   },
   errorBox: {
     borderBottomWidth: 0,
@@ -348,15 +343,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#FF5733',
   },
-  errorBorder: {
-    borderBottomColor: '#FF5733',
-    borderBottomWidth: 2,
-  },
-  errorDate: {
-    borderColor: '#FF5733',
-    width: '100%',
-    marginTop: 15,
-  },
 });
 
-export default ShopEditScreen;
+export default Authentication(ShopEditScreen);

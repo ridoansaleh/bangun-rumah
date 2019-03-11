@@ -197,13 +197,7 @@ class ShopForm extends Component {
               onChangeText={val => this.handleChangeField(val, 'description')}
               value={description}
               placeholder={'Deskripsi Toko Anda'}
-              style={{
-                marginTop: 30,
-                borderColor: 'black',
-                borderWidth: 1,
-                width: 0.95 * width,
-                padding: 5,
-              }}
+              style={styles.description}
             />
           </Item>
           {!isDescriptionValid &&
@@ -244,17 +238,18 @@ const styles = StyleSheet.create({
     marginRight: (width * 0.75) / 2,
     justifyContent: 'center',
   },
+  description: {
+    marginTop: 30,
+    borderColor: 'black',
+    borderWidth: 1,
+    width: 0.95 * width,
+    padding: 5,
+  },
   btn: {
     marginTop: 30,
     width: 0.95 * width,
     marginLeft: 0.025 * width,
     marginRight: 0.025 * width,
-  },
-  hasAccount: {
-    marginTop: 50,
-    marginBottom: 100,
-    flexDirection: 'row',
-    justifyContent: 'center',
   },
   errorBox: {
     borderBottomWidth: 0,
@@ -262,15 +257,6 @@ const styles = StyleSheet.create({
   errorMessage: {
     fontSize: 12,
     color: '#FF5733',
-  },
-  errorBorder: {
-    borderBottomColor: '#FF5733',
-    borderBottomWidth: 2,
-  },
-  errorDate: {
-    borderColor: '#FF5733',
-    width: '100%',
-    marginTop: 15,
   },
 });
 
