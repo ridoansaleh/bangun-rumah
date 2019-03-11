@@ -4,12 +4,6 @@ import { StyleSheet, Dimensions, Image, TextInput } from 'react-native';
 import {
   Container,
   Content,
-  Header,
-  Icon,
-  Left,
-  Body,
-  Right,
-  Title,
   Button,
   Form,
   Item,
@@ -18,11 +12,12 @@ import {
   Label,
   View,
   Toast,
-  Spinner,
 } from 'native-base';
 import { ImagePicker } from 'expo';
 import uuid from 'uuid';
 import Authentication from '../../components/Authentication';
+import Header from '../../components/PlainHeader';
+import Loading from '../../components/Loading';
 import defaultImage from '../../../assets/default-product.jpg';
 import { st as storageRef, db } from '../../../firebase.config';
 import { urls } from '../../constant';
@@ -219,23 +214,9 @@ class ShopEditScreen extends Component {
 
     return (
       <Container>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Edit Toko</Title>
-          </Body>
-          <Right />
-        </Header>
+        <Header {...this.props} title="Edit Toko" />
         <Content padder>
-          {this.state.isLoading && (
-            <View style={styles.spin}>
-              <Spinner color="green" size="large" />
-            </View>
-          )}
+          {this.state.isLoading && <Loading />}
           {!this.state.isLoading && (
             <View>
               {!isPhotoUploaded && <Image source={defaultImage} style={styles.image} />}
@@ -297,18 +278,6 @@ class ShopEditScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
-  },
   image: {
     marginTop: 20,
     width: width * 0.3,

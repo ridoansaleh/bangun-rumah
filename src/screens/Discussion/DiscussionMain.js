@@ -1,22 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Dimensions, TextInput, ScrollView } from 'react-native';
-import {
-  Container,
-  Content,
-  Text,
-  Header,
-  Left,
-  Right,
-  Button,
-  Icon,
-  Title,
-  Body,
-  Spinner,
-} from 'native-base';
+import { Container, Content, Text, Button } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { urls } from '../../constant';
 import Authentication from '../../components/Authentication';
+import Header from '../../components/PlainHeader';
+import Loading from '../../components/Loading';
 import { db } from '../../../firebase.config';
 
 const { width, height } = Dimensions.get('window');
@@ -95,23 +85,9 @@ class DiscussionScreen extends Component {
   render() {
     return (
       <Container>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Diskusi</Title>
-          </Body>
-          <Right />
-        </Header>
+        <Header {...this.props} title="Diskusi" />
         <Content style={{ padding: 10 }}>
-          {!this.state.isDataFetched && (
-            <View style={styles.spin}>
-              <Spinner color="green" size="large" />
-            </View>
-          )}
+          {!this.state.isDataFetched && <Loading />}
           <Grid style={{ height: height * 0.87 }}>
             {this.state.isDataFetched && this.props.isLogin && (
               <Row size={25}>
@@ -201,19 +177,6 @@ class DiscussionScreen extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
-  },
-});
+const styles = StyleSheet.create({});
 
 export default Authentication(DiscussionScreen);

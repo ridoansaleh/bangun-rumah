@@ -1,22 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Image, Dimensions } from 'react-native';
-import {
-  Button,
-  Container,
-  Content,
-  Header,
-  Icon,
-  Left,
-  Body,
-  Right,
-  Title,
-  Spinner,
-  Text,
-  View,
-} from 'native-base';
+import { Button, Container, Content, Text, View } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
+import Header from '../../components/PlainHeader';
+import Loading from '../../components/Loading';
 import sadImage from '../../../assets/sad_face.png';
 import { db } from '../../../firebase.config';
 import { urls } from '../../constant';
@@ -74,23 +63,9 @@ class OrderHistoryScreen extends Component {
   render() {
     return (
       <Container>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Pemesanan</Title>
-          </Body>
-          <Right />
-        </Header>
+        <Header {...this.props} title="Pemesanan" />
         <Content padder>
-          {!this.state.isDataFetched && (
-            <View style={styles.spin}>
-              <Spinner color="green" size="large" />
-            </View>
-          )}
+          {!this.state.isDataFetched && <Loading />}
           {this.state.isDataFetched && this.state.dataOrders.length > 0 && (
             <View>
               {this.state.dataOrders.map((data, i) => (
@@ -198,18 +173,6 @@ class OrderHistoryScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
-  },
   product: {
     borderColor: 'black',
     borderWidth: 1,

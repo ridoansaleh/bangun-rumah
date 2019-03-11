@@ -9,11 +9,12 @@ import {
   StyleSheet,
   TouchableHighlight,
 } from 'react-native';
-import { Container, Content, Text, CheckBox, Button, Spinner } from 'native-base';
+import { Container, Content, Text, CheckBox, Button } from 'native-base';
 import { Row, Grid, Col } from 'react-native-easy-grid';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
 import Authentication from '../../components/Authentication';
+import Header from '../../components/GrandHeader';
+import Footer from '../../components/Footer';
+import Loading from '../../components/Loading';
 import defaultImage from '../../../assets/default-product.jpg';
 import emptyResult from '../../../assets/empty_search_result.png';
 import { urls } from '../../constant';
@@ -228,11 +229,7 @@ class ShoppingCartScreen extends Component {
           search={false}
         />
         <Content>
-          {!isDataFetched && (
-            <View style={styles.spin}>
-              <Spinner color="green" size="large" />
-            </View>
-          )}
+          {!isDataFetched && <Loading />}
           {isDataFetched && dataCart.length > 0 && (
             <Grid style={{ height: height * 0.8 }}>
               <Row size={90} style={{ marginTop: 15 }}>
@@ -346,15 +343,6 @@ class ShoppingCartScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
-  },
   emptyContainer: {
     flex: 1,
     alignItems: 'center',

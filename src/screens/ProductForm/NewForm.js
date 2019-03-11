@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Dimensions, Picker, Image, TextInput } from 'react-native';
-import { Button, Content, Form, Item, Input, Text, Label, Spinner, View, Toast } from 'native-base';
+import { Button, Content, Form, Item, Input, Text, Label, View, Toast } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { ImagePicker } from 'expo';
 import uuid from 'uuid';
+import Loading from '../../components/Loading';
 import styles from './Styles';
 import loginUser from '../../../assets/default_upload.png';
 import { st as storageRef, fbs, db } from '../../../firebase.config';
@@ -314,9 +315,7 @@ class NewForm extends Component {
       <View>
         {isSpinnerLoading && (
           <Content>
-            <View style={styles.spin}>
-              <Spinner color="green" size="large" />
-            </View>
+            <Loading />
           </Content>
         )}
         {!isSpinnerLoading && (

@@ -1,27 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions, TouchableOpacity, Picker, Image } from 'react-native';
-import {
-  Button,
-  Content,
-  Header,
-  Icon,
-  Left,
-  Body,
-  Right,
-  Title,
-  Form,
-  Item,
-  Input,
-  Text,
-  Label,
-  View,
-  Toast,
-} from 'native-base';
+import { Button, Content, Form, Item, Input, Text, Label, View, Toast } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ImagePicker } from 'expo';
 import uuid from 'uuid';
+import Header from '../../components/PlainHeader';
 import loginUser from '../../../assets/default_upload.png';
 import { st as storageRef, auth, db } from '../../../firebase.config';
 import initialState from './State';
@@ -135,7 +120,6 @@ class RegisterView extends Component {
 
   handleSubmit = () => {
     let { userPhoto, name, email, password, address, gender, born_date } = this.state;
-    // this.setState({ isSpinnerLoading: true });
     auth
       .createUserWithEmailAndPassword(email, password)
       .then(res => {
@@ -159,7 +143,6 @@ class RegisterView extends Component {
         this.showToastMessage('Kamu berhasil signup, silahkan login!');
       })
       .catch(error => {
-        // this.setState({ isSpinnerLoading: false });
         if (error.code === 'auth/email-already-in-use') {
           this.showToastMessage('Email tersebut sudah digunakan akun lain');
         } else {
@@ -211,17 +194,7 @@ class RegisterView extends Component {
 
     return (
       <KeyboardAwareScrollView enableOnAndroid>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Daftar</Title>
-          </Body>
-          <Right />
-        </Header>
+        <Header nav={this.props} title="Daftar" />
         <Content padder>
           {!isPhotoUploaded && <Image source={loginUser} style={styles.image} />}
           {isPhotoUploaded && <Image source={{ uri: userPhoto }} style={styles.image} />}
@@ -331,9 +304,6 @@ class RegisterView extends Component {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
   image: {
     marginTop: 20,
     width: width * 0.3,

@@ -5,15 +5,6 @@ const styles = StyleSheet.create({
   header: {
     marginTop: 25,
   },
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
-  },
   image: {
     marginTop: 10,
     width: (width - 20) * 0.3,
@@ -52,27 +43,12 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 50,
   },
-  hasAccount: {
-    marginTop: 50,
-    marginBottom: 100,
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
   errorBox: {
     borderBottomWidth: 0,
   },
   errorMessage: {
     fontSize: 12,
     color: '#FF5733',
-  },
-  errorBorder: {
-    borderBottomColor: '#FF5733',
-    borderBottomWidth: 2,
-  },
-  errorDate: {
-    borderColor: '#FF5733',
-    width: '100%',
-    marginTop: 15,
   },
 });
 

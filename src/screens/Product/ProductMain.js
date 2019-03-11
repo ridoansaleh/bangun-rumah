@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Dimensions, ScrollView, Alert } from 'react-native';
-import { Content, Text, Header, Left, Button, Icon, Title, Body, Spinner } from 'native-base';
+import { Content, Text, Button, Icon } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Authentication from '../../components/Authentication';
+import Header from '../../components/PlainHeader';
+import Loading from '../../components/Loading';
 import ProductPhoto from './ProductPhoto';
 import ProductDescription from './ProductDescription';
 import Interactions from './Interactions';
@@ -168,25 +170,12 @@ class ProductMainScreen extends Component {
     let { isDataFetched, dataProduct, shopOwnership, isModalVisible } = this.state;
     return (
       <KeyboardAwareScrollView enableOnAndroid>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Detil Produk</Title>
-          </Body>
-        </Header>
+        <Header {...this.props} title="Detil Produk" />
         <Content>
           <Grid style={{ height: height * 0.88 }}>
             <Row size={93}>
               <ScrollView>
-                {!isDataFetched && (
-                  <View style={styles.spin}>
-                    <Spinner color="green" size="large" />
-                  </View>
-                )}
+                {!isDataFetched && <Loading />}
                 {isDataFetched && (
                   <View>
                     <ProductPhoto data={dataProduct} />
@@ -240,18 +229,6 @@ class ProductMainScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
-  },
   btnEdit: {
     height: '100%',
     width: '95%',

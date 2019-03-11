@@ -1,20 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
-import {
-  Button,
-  Container,
-  Content,
-  Header,
-  Icon,
-  Left,
-  Body,
-  Right,
-  Title,
-  Text,
-} from 'native-base';
+import { Button, Container, Content, Text } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
+import Header from '../../components/PlainHeader';
 import { urls } from '../../constant';
 
 class ProfileScreen extends Component {
@@ -45,17 +35,7 @@ class ProfileScreen extends Component {
   render() {
     return (
       <Container>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Profil</Title>
-          </Body>
-          <Right />
-        </Header>
+        <Header {...this.props} title="Profil" />
         <Content>
           <Grid>
             <Row
@@ -147,10 +127,6 @@ class ProfileScreen extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
-});
+const styles = StyleSheet.create({});
 
 export default Authentication(ProfileScreen);
