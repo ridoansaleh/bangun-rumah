@@ -183,7 +183,9 @@ class ShopScreen extends Component {
               getShopProducts={this.getShopProducts}
             />
           )}
-          {this.state.isDataFetched && this.state.isToolbarShow && <ToolBar />}
+          {this.state.isDataFetched && this.state.isToolbarShow && (
+            <ToolBar {...this.props} shopId={this.state.dataShop.id_toko} />
+          )}
         </Content>
       </KeyboardAwareScrollView>
     );

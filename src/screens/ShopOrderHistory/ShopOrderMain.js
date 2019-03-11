@@ -19,15 +19,13 @@ import { Grid, Col, Row } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
 import sadImage from '../../../assets/sad_face.png';
 import { db } from '../../../firebase.config';
-import { urls } from '../../constant';
 import { convertToCurrency } from '../../utils';
 
 const { width, height } = Dimensions.get('window');
 
-class OrderHistoryScreen extends Component {
+class ShopOrderScreen extends Component {
   static propTypes = {
     nav: PropTypes.object,
-    user: PropTypes.object,
   };
 
   state = {
@@ -41,8 +39,9 @@ class OrderHistoryScreen extends Component {
 
   getOrderHistoryData = () => {
     let orders = [];
+    const shopId = this.props.nav.navigation.getParam('id', null);
     db.collection('pemesanan')
-      .where('id_user', '==', this.props.user.id)
+      .where('id_toko', '==', shopId)
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
@@ -59,10 +58,6 @@ class OrderHistoryScreen extends Component {
       .catch(error => {
         console.error("Error getting order history's data \n", error);
       });
-  };
-
-  printOrderNote = () => {
-    // print order note
   };
 
   showAllProducts = index => {
@@ -93,6 +88,9 @@ class OrderHistoryScreen extends Component {
           )}
           {this.state.isDataFetched && this.state.dataOrders.length > 0 && (
             <View>
+              <View style={{ padding: 10, backgroundColor: 'green' }}>
+                <Text>Riwayat Pemesanan Toko</Text>
+              </View>
               {this.state.dataOrders.map((data, i) => (
                 <Grid key={i} style={styles.product}>
                   <Row>
@@ -153,18 +151,6 @@ class OrderHistoryScreen extends Component {
                       </Col>
                     </Row>
                   )}
-                  <Row>
-                    <Col size={3} />
-                    <Col size={7}>
-                      <Button
-                        small
-                        bordered
-                        style={{ marginTop: 15 }}
-                        onClick={() => this.printOrderNote()}>
-                        <Text>Cetak Bukti Pemesanan</Text>
-                      </Button>
-                    </Col>
-                  </Row>
                   {data.produk.length > 1 && (
                     <Row style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10 }}>
                       <Button small onPress={() => this.showAllProducts(i + 1)}>
@@ -181,14 +167,8 @@ class OrderHistoryScreen extends Component {
           {this.state.isDataFetched && this.state.dataOrders.length === 0 && (
             <View style={styles.emptyContainer}>
               <Image source={sadImage} style={styles.emptyIcon} />
-              <Text style={{ marginTop: 15 }}>Anda belum memiliki riwayat pemesanan</Text>
-              <Button
-                small
-                bordered
-                style={styles.shopBtn}
-                onPress={() => this.props.nav.navigation.navigate(urls.home)}>
-                <Text>Belanja</Text>
-              </Button>
+              <Text style={{ marginTop: 15 }}>Toko Anda belum memiliki riwayat pemesanan</Text>
+              <Text>Jual produk pertama Anda dengan memperbaiki deskripsi produk, photo dsb</Text>
             </View>
           )}
         </Content>
@@ -228,12 +208,6 @@ const styles = StyleSheet.create({
     width: 0.4 * width,
     height: 0.2 * height,
   },
-  shopBtn: {
-    width: 0.3 * width,
-    marginLeft: 0.35 * width,
-    marginRight: 0.35 * width,
-    marginTop: 20,
-  },
 });
 
-export default Authentication(OrderHistoryScreen);
+export default Authentication(ShopOrderScreen);

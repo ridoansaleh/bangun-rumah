@@ -1,5 +1,7 @@
 import React from 'react';
 import { createStackNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation';
+import dayjs from 'dayjs';
+import 'dayjs/locale/id';
 import HomeScreen from './Home/HomeMain';
 import CategoryScreen from './Category/CategoryMain';
 import ShoppingCartScreen from './ShoppingCart/ShoppingCartMain';
@@ -8,6 +10,9 @@ import ProfileScreen from './Profile/ProfileMain';
 import EditProfileScreen from './EditProfile/EditProfileMain';
 import OrderHistoryScreen from './OrderHistory/OrderHistoryMain';
 import ShopScreen from './Shop/ShopMain';
+import ShopOrderScreen from './ShopOrderHistory/ShopOrderMain';
+import ShopAnalyzeScreen from './ShopAnalyzes/ShopAnalyzesMain';
+import ShopEditScreen from './ShopEditForm/ShopEditMain';
 import ProductFormScreen from './ProductForm/ProductFormMain';
 import ChangePasswordScreen from './ChangePassword/ChangePasswordMain';
 import LogScreen from './Logs/LogsMain';
@@ -19,6 +24,8 @@ import ProductScreen from './Product/ProductMain';
 import OrderScreen from './Order/OrderMain';
 import ReviewScreen from './Review/ReviewMain';
 import DiscussionScreen from './Discussion/DiscussionMain';
+
+dayjs.locale('id');
 
 const DrawerNav = createDrawerNavigator(
   {
@@ -47,6 +54,9 @@ const AppNavigator = createStackNavigator(
     EditProfile: EditProfileScreen,
     OrderHistory: OrderHistoryScreen,
     Shop: ShopScreen,
+    ShopOrder: ShopOrderScreen,
+    ShopAnalyzes: ShopAnalyzeScreen,
+    ShopEdit: ShopEditScreen,
     ProductForm: ProductFormScreen,
     ChangePassword: ChangePasswordScreen,
     Logs: LogScreen,

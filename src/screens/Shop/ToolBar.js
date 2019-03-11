@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, TouchableHighlight } from 'react-native';
 import {
   Button,
   Content,
@@ -16,29 +16,52 @@ import {
   ListItem,
   Text,
 } from 'native-base';
-import { db } from '../../../firebase.config';
+// import { db } from '../../../firebase.config';
+import { urls } from '../../constant';
 
 // const { width, height } = Dimensions.get('window');
 
 class ToolBar extends Component {
+  static propTypes = {
+    nav: PropTypes.object,
+    shopId: PropTypes.string,
+  };
+
+  handleTouchItem = (url, param) => {
+    this.props.nav.navigation.navigate(url, param);
+  };
+
   render() {
     return (
       <View>
         <List>
           <ListItem>
-            <Text>Daftar Pemesanan</Text>
+            <TouchableHighlight
+              onPress={() => this.handleTouchItem(urls.shop_order, { id: this.props.shopId })}>
+              <Text>Daftar Pemesanan</Text>
+            </TouchableHighlight>
           </ListItem>
           <ListItem>
-            <Text>Analisa Toko</Text>
+            <TouchableHighlight
+              onPress={() => this.handleTouchItem(urls.shop_analyzes, { id: this.props.shopId })}>
+              <Text>Analisa Toko</Text>
+            </TouchableHighlight>
           </ListItem>
           <ListItem>
-            <Text>Edit Toko</Text>
+            <TouchableHighlight
+              onPress={() => this.handleTouchItem(urls.shop_edit, { id: this.props.shopId })}>
+              <Text>Edit Toko</Text>
+            </TouchableHighlight>
           </ListItem>
           <ListItem>
-            <Text>Non-aktifkan Toko</Text>
+            <TouchableHighlight>
+              <Text>Non-aktifkan Toko</Text>
+            </TouchableHighlight>
           </ListItem>
           <ListItem>
-            <Text>Hapus Toko</Text>
+            <TouchableHighlight>
+              <Text>Hapus Toko</Text>
+            </TouchableHighlight>
           </ListItem>
         </List>
       </View>
@@ -46,10 +69,10 @@ class ToolBar extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
-});
+// const styles = StyleSheet.create({
+//   header: {
+//     marginTop: 25,
+//   },
+// });
 
 export default ToolBar;
