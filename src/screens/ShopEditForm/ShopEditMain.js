@@ -22,7 +22,7 @@ import defaultImage from '../../../assets/default-product.jpg';
 import { st as storageRef, db } from '../../../firebase.config';
 import { urls } from '../../constant';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 class ShopEditScreen extends Component {
   static propTypes = {
@@ -41,6 +41,7 @@ class ShopEditScreen extends Component {
     isNameChanged: false,
     isAddressChanged: false,
     isDescriptionChanged: false,
+    prevValues: {},
   };
 
   componentDidMount() {
@@ -61,6 +62,13 @@ class ShopEditScreen extends Component {
             name: data.nama,
             address: data.alamat,
             description: data.deskripsi,
+            isNameChanged: true,
+            isNameValid: true,
+            isAddressChanged: true,
+            isAddressValid: true,
+            isDescriptionChanged: true,
+            isDescriptionValid: true,
+            prevValues: data,
           });
         } else {
           console.log('No such document!');
@@ -133,12 +141,9 @@ class ShopEditScreen extends Component {
       xhr.open('GET', uri, true);
       xhr.send(null);
     });
-
     const ref = storageRef.child(uuid.v4());
     const snapshot = await ref.put(blob);
-
     blob.close();
-
     return await snapshot.ref.getDownloadURL();
   };
 
@@ -190,9 +195,25 @@ class ShopEditScreen extends Component {
   };
 
   validateForm = () => {
-    const { isPhotoUploaded, isNameValid, isAddressValid, isDescriptionValid } = this.state;
-    if (isPhotoUploaded && isNameValid && isAddressValid && isDescriptionValid) {
-      return true;
+    const {
+      shopImage,
+      isNameValid,
+      isAddressValid,
+      isDescriptionValid,
+      name,
+      address,
+      description,
+      prevValues,
+    } = this.state;
+    if (shopImage && isNameValid && isAddressValid && isDescriptionValid) {
+      if (
+        prevValues.nama !== name ||
+        prevValues.alamat !== address ||
+        prevValues.deskripsi !== description
+      ) {
+        return true;
+      }
+      return false;
     }
     return false;
   };
@@ -215,10 +236,10 @@ class ShopEditScreen extends Component {
     return (
       <Container>
         <Header {...this.props} title="Edit Toko" />
-        <Content padder>
+        <Content style={{ padding: 10 }}>
           {this.state.isLoading && <Loading />}
           {!this.state.isLoading && (
-            <View>
+            <View style={{ width: width - 20 }}>
               {!isPhotoUploaded && <Image source={defaultImage} style={styles.image} />}
               {isPhotoUploaded && <Image source={{ uri: shopImage }} style={styles.image} />}
               <Button small bordered dark style={styles.upload} onPress={this.choosePhoto}>
@@ -296,7 +317,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     borderColor: 'black',
     borderWidth: 1,
-    width: 0.95 * width,
+    width: 0.9 * width,
     padding: 5,
   },
   btn: {
