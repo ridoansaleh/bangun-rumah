@@ -11,7 +11,7 @@ const PlainHeader = props => (
       </Button>
     </Left>
     <Body>
-      <Title>Review</Title>
+      <Title>{props.title}</Title>
     </Body>
   </Header>
 );

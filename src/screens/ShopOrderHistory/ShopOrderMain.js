@@ -118,14 +118,11 @@ class ShopOrderScreen extends Component {
   render() {
     return (
       <Container>
-        <Header {...this.props} title="Pemesanan" />
+        <Header {...this.props} title="Riwayat Pemesanan Toko" />
         <Content padder>
           {!this.state.isDataFetched && <Loading />}
           {this.state.isDataFetched && this.state.dataOrders.length > 0 && (
             <View>
-              <View style={{ padding: 10, backgroundColor: 'green' }}>
-                <Text>Riwayat Pemesanan Toko</Text>
-              </View>
               {this.state.dataOrders.map((data, i) => (
                 <Grid key={i} style={styles.product}>
                   <Row>
@@ -137,13 +134,12 @@ class ShopOrderScreen extends Component {
                     </Col>
                     <Col>
                       <Text style={{ fontWeight: 'bold' }}>{data.produk[0].nama}</Text>
-                      <Text>({data.toko})</Text>
+                      <Text>({data.pembeli})</Text>
                       <Text style={{ fontSize: 12 }}>{data.waktu_pemesanan}</Text>
                       <Text style={{ marginTop: 25 }}>
-                        Rp {convertToCurrency(data.produk[0].harga)}(
-                        {' ' + data.produk[0].jumlah + ' ' + data.produk[0].satuan})
+                        Rp {convertToCurrency(data.produk[0].harga)} (
+                        {data.produk[0].jumlah + ' ' + data.produk[0].satuan})
                       </Text>
-                      <Text>{data.status}</Text>
                     </Col>
                   </Row>
                   {this.state['showMore' + (i + 1)] && data.produk.length >= 2 && (
@@ -156,13 +152,10 @@ class ShopOrderScreen extends Component {
                       </Col>
                       <Col>
                         <Text style={{ fontWeight: 'bold' }}>{data.produk[1].nama}</Text>
-                        <Text>({data.toko})</Text>
-                        <Text style={{ fontSize: 12 }}>{data.waktu_pemesanan}</Text>
                         <Text style={{ marginTop: 25 }}>
-                          Rp {convertToCurrency(data.produk[1].harga)}(
-                          {' ' + data.produk[1].jumlah + ' ' + data.produk[1].satuan})
+                          Rp {convertToCurrency(data.produk[1].harga)} (
+                          {data.produk[1].jumlah + ' ' + data.produk[1].satuan})
                         </Text>
-                        <Text>{data.status}</Text>
                       </Col>
                     </Row>
                   )}
@@ -176,20 +169,21 @@ class ShopOrderScreen extends Component {
                       </Col>
                       <Col>
                         <Text style={{ fontWeight: 'bold' }}>{data.produk[2].nama}</Text>
-                        <Text>({data.toko})</Text>
-                        <Text style={{ fontSize: 12 }}>{data.waktu_pemesanan}</Text>
                         <Text style={{ marginTop: 25 }}>
-                          Rp {convertToCurrency(data.produk[2].harga)}(
-                          {' ' + data.produk[2].jumlah + ' ' + data.produk[2].satuan})
+                          Rp {convertToCurrency(data.produk[2].harga)} (
+                          {data.produk[2].jumlah + ' ' + data.produk[2].satuan})
                         </Text>
-                        <Text>{data.status}</Text>
                       </Col>
                     </Row>
                   )}
                   {data.status === 'Menunggu Konfirmasi' ? (
-                    <Row>
+                    <Row style={{ marginTop: 5 }}>
                       <Col>
-                        <Button small success onPress={() => this.acceptOrder(data.id_pemesanan)}>
+                        <Button
+                          small
+                          success
+                          style={{ width: 0.5 * width - 30, justifyContent: 'center' }}
+                          onPress={() => this.acceptOrder(data.id_pemesanan)}>
                           {this.state['isAcceptedLoading' + i] ? (
                             <Spinner color="green" />
                           ) : (
@@ -198,7 +192,11 @@ class ShopOrderScreen extends Component {
                         </Button>
                       </Col>
                       <Col>
-                        <Button small danger onPress={() => this.rejectOrder(data.id_pemesanan)}>
+                        <Button
+                          small
+                          danger
+                          style={{ width: 0.5 * width - 30, justifyContent: 'center' }}
+                          onPress={() => this.rejectOrder(data.id_pemesanan)}>
                           {this.state['isRejectedLoading' + i] ? (
                             <Spinner color="green" />
                           ) : (
@@ -210,12 +208,16 @@ class ShopOrderScreen extends Component {
                   ) : (
                     <Row>
                       {data.status === 'Diterima' ? (
-                        <View>
-                          <Text>Pemesanan telah diterima</Text>
+                        <View style={styles.acceptOrderMessage}>
+                          <Text style={{ textAlign: 'center', color: 'white' }}>
+                            Pemesanan telah diterima
+                          </Text>
                         </View>
                       ) : (
-                        <View>
-                          <Text>Pemesanan telah ditolak</Text>
+                        <View style={styles.rejectOrderMessage}>
+                          <Text style={{ textAlign: 'center', color: 'white' }}>
+                            Pemesanan telah ditolak
+                          </Text>
                         </View>
                       )}
                     </Row>
@@ -264,6 +266,18 @@ const styles = StyleSheet.create({
   emptyIcon: {
     width: 0.4 * width,
     height: 0.2 * height,
+  },
+  acceptOrderMessage: {
+    backgroundColor: '#1FCBE3',
+    padding: 5,
+    width: width - 30,
+    marginTop: 5,
+  },
+  rejectOrderMessage: {
+    backgroundColor: '#F13053',
+    padding: 5,
+    width: width - 30,
+    marginTop: 5,
   },
 });
 
