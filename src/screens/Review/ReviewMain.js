@@ -1,22 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Dimensions, TextInput, TouchableHighlight } from 'react-native';
-import {
-  Container,
-  Content,
-  Text,
-  Header,
-  Left,
-  Right,
-  Button,
-  Icon,
-  Title,
-  Body,
-  Spinner,
-} from 'native-base';
+import { Container, Button, Content, Text } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
 import Authentication from '../../components/Authentication';
+import Header from '../../components/PlainHeader';
+import Loading from '../../components/Loading';
 import { db } from '../../../firebase.config';
 
 const { width, height } = Dimensions.get('window');
@@ -233,23 +223,9 @@ class ReviewScreen extends Component {
   render() {
     return (
       <Container>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Review</Title>
-          </Body>
-          <Right />
-        </Header>
+        <Header {...this.props} title="Review" />
         <Content style={{ padding: 10 }}>
-          {!this.state.isDataFetched && (
-            <View style={styles.spin}>
-              <Spinner color="green" size="large" />
-            </View>
-          )}
+          {!this.state.isDataFetched && <Loading />}
           {/* USER _NOT_ ELIGIBLE TO REVIEW */}
           {this.state.isDataFetched && !this.state.isEligibleToReview && (
             <View style={{ backgroundColor: '#FFC300', padding: 10, marginBottom: 15 }}>
@@ -440,19 +416,6 @@ class ReviewScreen extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
-  },
-});
+const styles = StyleSheet.create({});
 
 export default Authentication(ReviewScreen);

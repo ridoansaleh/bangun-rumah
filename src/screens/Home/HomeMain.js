@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import { Container, Content, Text } from 'native-base';
 import { Row, Grid } from 'react-native-easy-grid';
-import Header from '../../components/Header';
+import Header from '../../components/GrandHeader';
 import Promo from './Promo';
 import ProductList from './ProductList';
 import Footer from '../../components/Footer';

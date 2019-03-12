@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Container, Content, Text, Separator, ListItem } from 'native-base';
-import Header from '../../components/Header';
+import Header from '../../components/GrandHeader';
 import Footer from '../../components/Footer';
 import Authentication from '../../components/Authentication';
 import { urls } from '../../constant';

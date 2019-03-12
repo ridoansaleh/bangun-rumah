@@ -1,29 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions, Picker, Image, AsyncStorage } from 'react-native';
-import {
-  Button,
-  Content,
-  Header,
-  Icon,
-  Left,
-  Body,
-  Right,
-  Title,
-  Form,
-  Item,
-  Input,
-  Text,
-  Label,
-  View,
-  Toast,
-  Spinner,
-} from 'native-base';
+import { Button, Content, Form, Item, Input, Text, Label, View, Toast } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ImagePicker } from 'expo';
 import uuid from 'uuid';
 import Authentication from '../../components/Authentication';
+import Header from '../../components/PlainHeader';
+import Loading from '../../components/Loading';
 // import loginUser from '../../../assets/default_upload.png';
 import { st as storageRef, auth, db } from '../../../firebase.config';
 
@@ -51,7 +36,6 @@ class EditProfileScreen extends Component {
     isAddressChanged: false,
     isGenderChanged: false,
     isDateChanged: false,
-    isPhotoChanged: false, // dunno if this useful
     isSubmit: false,
     showWarning: false,
   };
@@ -226,22 +210,8 @@ class EditProfileScreen extends Component {
 
     return (
       <KeyboardAwareScrollView enableOnAndroid>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Edit Profil</Title>
-          </Body>
-          <Right />
-        </Header>
-        {isSubmit && (
-          <View style={styles.spin}>
-            <Spinner color="green" size="large" />
-          </View>
-        )}
+        <Header {...this.props} title="Edit Profil" />
+        {isSubmit && <Loading />}
         {!isSubmit && (
           <Content padder>
             {/* {!isPhotoUploaded && <Image source={loginUser} style={styles.image} />} */}
@@ -326,18 +296,6 @@ class EditProfileScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
-  },
   image: {
     marginTop: 20,
     width: width * 0.3,

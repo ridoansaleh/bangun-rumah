@@ -1,22 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Image, FlatList, Dimensions, ScrollView, Alert } from 'react-native';
-import {
-  Container,
-  Content,
-  Text,
-  Header,
-  Left,
-  Button,
-  Icon,
-  Title,
-  Body,
-  Spinner,
-  ActionSheet,
-} from 'native-base';
+import { Container, Content, Text, Button, ActionSheet } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
 import Authentication from '../../components/Authentication';
+import Header from '../../components/PlainHeader';
+import Loading from '../../components/Loading';
 import emptyResult from '../../../assets/empty_search_result.png';
 import { db } from '../../../firebase.config';
 import { convertToCurrency } from '../../utils';
@@ -123,25 +113,12 @@ class SearchProductScreen extends Component {
     let { isDataFetched, dataProducts, category } = this.state;
     return (
       <Container>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>{this.state.category}</Title>
-          </Body>
-        </Header>
+        <Header {...this.props} title={this.state.category} />
         <Content>
           <Grid>
             <Row style={{ height: height * 0.8 }}>
               <ScrollView>
-                {!isDataFetched && (
-                  <View style={styles.spin}>
-                    <Spinner color="green" size="large" />
-                  </View>
-                )}
+                {!isDataFetched && <Loading />}
                 {isDataFetched && dataProducts.length > 0 && (
                   <FlatList
                     data={dataProducts}
@@ -172,16 +149,7 @@ class SearchProductScreen extends Component {
                 )}
               </ScrollView>
             </Row>
-            <Row
-              style={{
-                height: 0.1 * height,
-                padding: 5,
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderTopColor: 'black',
-                borderTopWidth: 1,
-              }}>
+            <Row style={styles.filterBtnContainer}>
               <Button
                 style={{ width: 0.9 * width, justifyContent: 'center' }}
                 onPress={this.showOptions}>
@@ -196,9 +164,6 @@ class SearchProductScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
   itemContainer: {
     width: halfWidth,
     height: halfWidth,
@@ -209,15 +174,6 @@ const styles = StyleSheet.create({
     width: halfWidth * 0.7,
     height: halfWidth * 0.6,
     marginTop: 15,
-  },
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
   },
   emptyContainer: {
     flex: 1,
@@ -233,6 +189,15 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 13,
+  },
+  filterBtnContainer: {
+    height: 0.1 * height,
+    padding: 5,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopColor: 'black',
+    borderTopWidth: 1,
   },
 });
 

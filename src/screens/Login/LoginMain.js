@@ -1,24 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Alert, AsyncStorage, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
-import {
-  Button,
-  Container,
-  Content,
-  Header,
-  Icon,
-  Left,
-  Body,
-  Right,
-  Title,
-  Form,
-  Item,
-  Input,
-  Text,
-  Label,
-  View,
-} from 'native-base';
+import { Button, Container, Content, Form, Item, Input, Text, Label, View } from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
+import Header from '../../components/PlainHeader';
 import loginUser from '../../../assets/login-user.jpg';
 import { auth as authenticate, db } from '../../../firebase.config';
 import { urls } from '../../constant';
@@ -178,17 +163,7 @@ class LoginView extends Component {
     const { email, password, isEmailValid, isPasswordValid } = this.state;
     return (
       <Container>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Login</Title>
-          </Body>
-          <Right />
-        </Header>
+        <Header nav={this.props} title="Login" />
         <Content padder style={styles.contentContainer}>
           <Image source={loginUser} style={styles.image} />
           <Form>
@@ -243,9 +218,6 @@ class LoginView extends Component {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
   contentContainer: {
     marginTop: height * 0.1,
   },

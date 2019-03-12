@@ -1,22 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Image, Dimensions } from 'react-native';
-import {
-  Button,
-  Container,
-  Content,
-  Header,
-  Icon,
-  Left,
-  Body,
-  Right,
-  Title,
-  Spinner,
-  Text,
-  View,
-} from 'native-base';
+import { Button, Container, Content, Text, View } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
+import Header from '../../components/PlainHeader';
+import Loading from '../../components/Loading';
 import sadImage from '../../../assets/sad_face.png';
 import { db } from '../../../firebase.config';
 import { urls } from '../../constant';
@@ -74,29 +63,13 @@ class OrderHistoryScreen extends Component {
   render() {
     return (
       <Container>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Pemesanan</Title>
-          </Body>
-          <Right />
-        </Header>
+        <Header {...this.props} title="Pemesanan" />
         <Content padder>
-          {!this.state.isDataFetched && (
-            <View style={styles.spin}>
-              <Spinner color="green" size="large" />
-            </View>
-          )}
+          {!this.state.isDataFetched && <Loading />}
           {this.state.isDataFetched && this.state.dataOrders.length > 0 && (
             <View>
               {this.state.dataOrders.map((data, i) => (
-                <Grid
-                  key={i}
-                  style={{ borderColor: 'black', borderWidth: 1, marginBottom: 15, padding: 5 }}>
+                <Grid key={i} style={styles.product}>
                   <Row>
                     <Col>
                       <Image
@@ -181,32 +154,13 @@ class OrderHistoryScreen extends Component {
             </View>
           )}
           {this.state.isDataFetched && this.state.dataOrders.length === 0 && (
-            <View
-              style={{
-                flex: 1,
-                height: 0.4 * height,
-                marginTop: 0.2 * height,
-                marginBottom: 0.2 * height,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Image
-                source={sadImage}
-                style={{
-                  width: 0.4 * width,
-                  height: 0.2 * height,
-                }}
-              />
+            <View style={styles.emptyContainer}>
+              <Image source={sadImage} style={styles.emptyIcon} />
               <Text style={{ marginTop: 15 }}>Anda belum memiliki riwayat pemesanan</Text>
               <Button
                 small
                 bordered
-                style={{
-                  width: 0.3 * width,
-                  marginLeft: 0.35 * width,
-                  marginRight: 0.35 * width,
-                  marginTop: 20,
-                }}
+                style={styles.shopBtn}
                 onPress={() => this.props.nav.navigation.navigate(urls.home)}>
                 <Text>Belanja</Text>
               </Button>
@@ -219,17 +173,29 @@ class OrderHistoryScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
+  product: {
+    borderColor: 'black',
+    borderWidth: 1,
+    marginBottom: 15,
+    padding: 5,
   },
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
+  emptyContainer: {
+    flex: 1,
+    height: 0.4 * height,
+    marginTop: 0.2 * height,
+    marginBottom: 0.2 * height,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyIcon: {
+    width: 0.4 * width,
+    height: 0.2 * height,
+  },
+  shopBtn: {
+    width: 0.3 * width,
+    marginLeft: 0.35 * width,
+    marginRight: 0.35 * width,
+    marginTop: 20,
   },
 });
 

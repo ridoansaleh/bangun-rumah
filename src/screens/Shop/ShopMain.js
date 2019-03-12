@@ -1,23 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions } from 'react-native';
-import {
-  Button,
-  Content,
-  Header,
-  Icon,
-  Left,
-  Body,
-  Right,
-  Title,
-  Spinner,
-  View,
-} from 'native-base';
+import { Button, Content, Header, Icon, Left, Body, Right, Title, View } from 'native-base';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Authentication from '../../components/Authentication';
 import Shop from './Shop';
 import ShopForm from './ShopForm';
 import ToolBar from './ToolBar';
+import Loading from '../../components/Loading';
 import { db } from '../../../firebase.config';
 
 const { width, height } = Dimensions.get('window');
@@ -162,11 +152,7 @@ class ShopScreen extends Component {
           )}
         </Header>
         <Content>
-          {!this.state.isDataFetched && (
-            <View style={styles.spin}>
-              <Spinner color="green" size="large" />
-            </View>
-          )}
+          {!this.state.isDataFetched && <Loading />}
           {this.state.isDataFetched && !this.state.isToolbarShow && !this.state.isUserHaveShop && (
             <ShopForm
               {...this.props}
@@ -183,7 +169,9 @@ class ShopScreen extends Component {
               getShopProducts={this.getShopProducts}
             />
           )}
-          {this.state.isDataFetched && this.state.isToolbarShow && <ToolBar />}
+          {this.state.isDataFetched && this.state.isToolbarShow && (
+            <ToolBar {...this.props} shopId={this.state.dataShop.id_toko} />
+          )}
         </Content>
       </KeyboardAwareScrollView>
     );
@@ -193,15 +181,6 @@ class ShopScreen extends Component {
 const styles = StyleSheet.create({
   header: {
     marginTop: 25,
-  },
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
   },
 });
 

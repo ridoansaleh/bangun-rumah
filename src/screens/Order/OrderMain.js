@@ -9,24 +9,13 @@ import {
   Picker,
   TextInput,
 } from 'react-native';
-import {
-  Content,
-  Text,
-  Header,
-  Left,
-  Button,
-  Icon,
-  Title,
-  Body,
-  Spinner,
-  Form,
-  Input,
-  Item,
-} from 'native-base';
+import { Content, Text, Button, Icon, Form, Input, Item } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import dayjs from 'dayjs';
 import Authentication from '../../components/Authentication';
+import Header from '../../components/PlainHeader';
+import Loading from '../../components/Loading';
 import thankYou from '../../../assets/thank-you.png';
 import { db } from '../../../firebase.config';
 import { convertToCurrency } from '../../utils';
@@ -259,16 +248,7 @@ class OrderMainScreen extends Component {
     const options = Array.from(Array(100).keys());
     return (
       <KeyboardAwareScrollView enableOnAndroid>
-        <Header style={styles.header}>
-          <Left>
-            <Button transparent onPress={() => this.props.nav.navigation.goBack()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Konfirmasi Pemesanan</Title>
-          </Body>
-        </Header>
+        <Header {...this.props} title="Konfirmasi Pemesanan" />
         <Content>
           {isOrderSucceed && (
             <View
@@ -298,11 +278,7 @@ class OrderMainScreen extends Component {
               </Button>
             </View>
           )}
-          {!isDataFetched && !isOrderSucceed && (
-            <View style={styles.spin}>
-              <Spinner color="green" size="large" />
-            </View>
-          )}
+          {!isDataFetched && !isOrderSucceed && <Loading />}
           {isDataFetched && !isOrderSucceed && (
             <View>
               <Grid style={styles.userDetail}>
@@ -450,9 +426,6 @@ class OrderMainScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    marginTop: 25,
-  },
   userDetail: {
     padding: 10,
     borderBottomWidth: 1,
@@ -473,15 +446,6 @@ const styles = StyleSheet.create({
     width: width - 20,
     marginBottom: 15,
     padding: 5,
-  },
-  spin: {
-    paddingVertical: 6,
-    width: width * 0.25,
-    height: height * 0.25,
-    marginLeft: (width * 0.75) / 2,
-    marginRight: (width * 0.75) / 2,
-    marginTop: (height * 0.75) / 2,
-    marginBottom: (height * 0.75) / 2,
   },
   errorMessage: {
     fontSize: 12,
