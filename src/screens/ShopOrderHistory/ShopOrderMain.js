@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Image, Dimensions } from 'react-native';
-import { Button, Container, Content, Text, View } from 'native-base';
+import { Alert, StyleSheet, Image, Dimensions } from 'react-native';
+import { Button, Container, Content, Text, View, Spinner } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
@@ -53,6 +53,66 @@ class ShopOrderScreen extends Component {
     this.setState({
       ['showMore' + index]: !this.state['showMore' + index],
     });
+  };
+
+  acceptOrder = (id, index) => {
+    Alert.alert(
+      'Peringatan',
+      'Aksi ini tidak bisa dibatalkan. Ingin menerima pesanan ?',
+      [{ text: 'OK', onPress: () => this.acceptOrderExecute(id, index) }],
+      { cancelable: true }
+    );
+  };
+
+  acceptOrderExecute = (id, index) => {
+    let docRef = db.collection('pemesanan').doc(id);
+    this.setState({ ['isAcceptedLoading' + index]: true });
+    docRef
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          docRef.update({
+            status: 'Diterima',
+          });
+          this.setState({ ['isAcceptedLoading' + index]: false });
+          this.getOrderHistoryData();
+        } else {
+          console.log('No such document!');
+        }
+      })
+      .catch(function(error) {
+        console.log(`Error searching pemesanan with id ${id} \n`, error);
+      });
+  };
+
+  rejectOrder = (id, index) => {
+    Alert.alert(
+      'Peringatan',
+      'Aksi ini tidak bisa dibatalkan. Ingin menolak pesanan ?',
+      [{ text: 'OK', onPress: () => this.rejectOrderExecute(id, index) }],
+      { cancelable: true }
+    );
+  };
+
+  rejectOrderExecute = (id, index) => {
+    let docRef = db.collection('pemesanan').doc(id);
+    this.setState({ ['isRejectedLoading' + index]: true });
+    docRef
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          docRef.update({
+            status: 'Ditolak',
+          });
+          this.setState({ ['isRejectedLoading' + index]: false });
+          this.getOrderHistoryData();
+        } else {
+          console.log('No such document!');
+        }
+      })
+      .catch(function(error) {
+        console.log(`Error searching pemesanan with id ${id} \n`, error);
+      });
   };
 
   render() {
@@ -124,6 +184,40 @@ class ShopOrderScreen extends Component {
                         </Text>
                         <Text>{data.status}</Text>
                       </Col>
+                    </Row>
+                  )}
+                  {data.status === 'Menunggu Konfirmasi' ? (
+                    <Row>
+                      <Col>
+                        <Button small success onPress={() => this.acceptOrder(data.id_pemesanan)}>
+                          {this.state['isAcceptedLoading' + i] ? (
+                            <Spinner color="green" />
+                          ) : (
+                            <Text>Terima</Text>
+                          )}
+                        </Button>
+                      </Col>
+                      <Col>
+                        <Button small danger onPress={() => this.rejectOrder(data.id_pemesanan)}>
+                          {this.state['isRejectedLoading' + i] ? (
+                            <Spinner color="green" />
+                          ) : (
+                            <Text>Tolak</Text>
+                          )}
+                        </Button>
+                      </Col>
+                    </Row>
+                  ) : (
+                    <Row>
+                      {data.status === 'Diterima' ? (
+                        <View>
+                          <Text>Pemesanan telah diterima</Text>
+                        </View>
+                      ) : (
+                        <View>
+                          <Text>Pemesanan telah ditolak</Text>
+                        </View>
+                      )}
                     </Row>
                   )}
                   {data.produk.length > 1 && (
