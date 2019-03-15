@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions } from 'react-native';
-import { Button, Container, Content, Text, View } from 'native-base';
-import { Grid, Col } from 'react-native-easy-grid';
+import { Container, Content } from 'native-base';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
+import UserVisit from './UserVIsitStatistic';
+import ProductsReport from './ProductsReport';
+import Selling from './SellingStatistic';
 import { db } from '../../../firebase.config';
 import { urls } from '../../constant';
-
-const { width, height } = Dimensions.get('window');
 
 class ShopAnalyzeScreen extends Component {
   static propTypes = {
@@ -20,13 +19,13 @@ class ShopAnalyzeScreen extends Component {
       <Container>
         <Header {...this.props} title="Analisa Toko" />
         <Content>
-          <Text>Shop Analyzes</Text>
+          <UserVisit {...this.props} />
+          <ProductsReport {...this.props} />
+          <Selling {...this.props} />
         </Content>
       </Container>
     );
   }
 }
-
-const styles = StyleSheet.create({});
 
 export default Authentication(ShopAnalyzeScreen);
