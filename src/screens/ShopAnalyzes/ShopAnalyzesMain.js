@@ -6,8 +6,8 @@ import Header from '../../components/PlainHeader';
 import UserVisit from './UserVIsitStatistic';
 import ProductsReport from './ProductsReport';
 import Selling from './SellingStatistic';
-import { db } from '../../../firebase.config';
-import { urls } from '../../constant';
+// import { db } from '../../../firebase.config';
+// import { urls } from '../../constant';
 
 class ShopAnalyzeScreen extends Component {
   static propTypes = {
@@ -15,11 +15,13 @@ class ShopAnalyzeScreen extends Component {
   };
 
   render() {
+    const shop_id = this.props.nav.navigation.getParam('id', undefined);
+    console.log('_ID Toko : ', shop_id);
     return (
       <Container>
         <Header {...this.props} title="Analisa Toko" />
         <Content>
-          <UserVisit {...this.props} />
+          <UserVisit {...this.props} shopId={shop_id} />
           <ProductsReport {...this.props} />
           <Selling {...this.props} />
         </Content>

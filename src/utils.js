@@ -29,44 +29,44 @@ const convertToCurrency = numb => {
   return result;
 };
 
-const getMonthName = val => {
+const getMonthName = (val, short) => {
   let res = '';
   switch (val) {
     case 0:
-      res = 'Januari';
+      res = short ? 'Jan' : 'Januari';
       break;
     case 1:
-      res = 'Februari';
+      res = short ? 'Feb' : 'Februari';
       break;
     case 2:
-      res = 'Maret';
+      res = short ? 'Mar' : 'Maret';
       break;
     case 3:
-      res = 'April';
+      res = short ? 'Apr' : 'April';
       break;
     case 4:
       res = 'Mei';
       break;
     case 5:
-      res = 'Juni';
+      res = short ? 'Jun' : 'Juni';
       break;
     case 6:
-      res = 'Juli';
+      res = short ? 'Jul' : 'Juli';
       break;
     case 7:
-      res = 'Agustus';
+      res = short ? 'Agu' : 'Agustus';
       break;
     case 8:
-      res = 'September';
+      res = short ? 'Sep' : 'September';
       break;
     case 9:
-      res = 'Oktober';
+      res = short ? 'Okt' : 'Oktober';
       break;
     case 10:
-      res = 'November';
+      res = short ? 'Nov' : 'November';
       break;
     case 11:
-      res = 'Desember';
+      res = short ? 'Des' : 'Desember';
       break;
   }
   return res;

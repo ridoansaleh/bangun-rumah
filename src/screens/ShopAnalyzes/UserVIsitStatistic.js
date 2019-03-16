@@ -1,24 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, Picker } from 'react-native';
-import { Button, Text, View, Spinner } from 'native-base';
+import { StyleSheet, Dimensions } from 'react-native';
+import { Text, View, Spinner } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import { LineChart } from 'react-native-chart-kit';
 import dayjs from 'dayjs';
 import { db } from '../../../firebase.config';
 import { getMonthName } from '../../utils';
-// import { urls } from '../../constant';
 
 const { width, height } = Dimensions.get('window');
 
 class UserVisitStatistic extends Component {
   static propTypes = {
     nav: PropTypes.object,
+    shopId: PropTypes.string,
   };
 
   state = {
     isDataFetched: false,
-    time: 'Minggu',
     months: [],
     dataVisit: [],
   };
@@ -30,29 +29,33 @@ class UserVisitStatistic extends Component {
   getUserVisitStats = () => {
     let data = [];
     const thisYear = dayjs().year();
-    const lastYear = thisYear - 1;
     const thisMonth = dayjs().month();
-    const sixMonthAgo = dayjs().subtract(6, 'month');
-    const sixMonthAgoShort = dayjs(sixMonthAgo).year();
+    const lastYear = dayjs()
+      .subtract(1, 'year')
+      .year();
+    const sixMonthAgoFull = dayjs().subtract(6, 'month');
+    const sixMonthAgoMonth = dayjs(sixMonthAgoFull).month() + 1;
+    const yearOfSixMonthAgo = dayjs(sixMonthAgoFull).year();
     let isSameYear = false;
     let sixLastMonths = [];
-    if (sixMonthAgoShort === thisYear) {
+    const isMonthShort = true;
+    if (yearOfSixMonthAgo === thisYear) {
       isSameYear = true;
     }
     if (isSameYear) {
-      for (let i = 0; i <= thisMonth.length; i++) {
-        sixLastMonths.push(getMonthName(i));
+      for (let i = 0; i <= thisMonth; i++) {
+        sixLastMonths.push(getMonthName(i, isMonthShort));
       }
     } else {
-      for (let j = sixMonthAgoShort; j <= 11; j++) {
-        sixLastMonths.push(getMonthName(j));
+      for (let j = sixMonthAgoMonth; j <= 11; j++) {
+        sixLastMonths.push(getMonthName(j, isMonthShort));
       }
-      for (let k = 0; k <= thisMonth.length; k++) {
-        sixLastMonths.push(getMonthName(k));
+      for (let k = 0; k <= thisMonth; k++) {
+        sixLastMonths.push(getMonthName(k, isMonthShort));
       }
     }
     db.collection('kunjungan')
-      .where('id_toko', '==', 0)
+      .where('id_toko', '==', this.props.shopId)
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
@@ -69,24 +72,28 @@ class UserVisitStatistic extends Component {
             }
           });
         } else {
-          let lastYearData = fiteredData.map(d => {
-            if (dayjs(d).year() === lastYear) {
-              return d;
-            }
-          });
-          let thisYearData = fiteredData.map(d => {
-            if (dayjs(d).year() === dayjs().year()) {
-              return d;
-            }
-          });
-          for (let l = sixMonthAgoShort; l <= 11; l++) {
+          let lastYearData = fiteredData
+            .map(d => {
+              if (dayjs(d.tanggal).year() === lastYear) {
+                return d;
+              }
+            })
+            .filter(r => r !== undefined);
+          let thisYearData = fiteredData
+            .map(d => {
+              if (dayjs(d.tanggal).year() === dayjs().year()) {
+                return d;
+              }
+            })
+            .filter(r => r !== undefined);
+          for (let l = sixMonthAgoMonth; l <= 11; l++) {
             lastYearData.map(d => {
               if (dayjs(d).month() === l) {
                 fiteredData.push(d);
               }
             });
           }
-          for (let m = 0; m <= thisMonth.length; m++) {
+          for (let m = 0; m <= thisMonth; m++) {
             thisYearData.map(d => {
               if (dayjs(d).month() === m) {
                 fiteredData.push(d);
@@ -94,12 +101,18 @@ class UserVisitStatistic extends Component {
             });
           }
         }
-        let month1 = fiteredData.filter(d => sixLastMonths[0] === dayjs(d.tanggal).month()).length;
-        let month2 = fiteredData.filter(d => sixLastMonths[1] === dayjs(d.tanggal).month()).length;
-        let month3 = fiteredData.filter(d => sixLastMonths[2] === dayjs(d.tanggal).month()).length;
-        let month4 = fiteredData.filter(d => sixLastMonths[3] === dayjs(d.tanggal).month()).length;
-        let month5 = fiteredData.filter(d => sixLastMonths[4] === dayjs(d.tanggal).month()).length;
-        let month6 = fiteredData.filter(d => sixLastMonths[5] === dayjs(d.tanggal).month()).length;
+        let month1 = fiteredData.filter(d => sixLastMonths[0] === dayjs(d.tanggal).format('MMM'))
+          .length;
+        let month2 = fiteredData.filter(d => sixLastMonths[1] === dayjs(d.tanggal).format('MMM'))
+          .length;
+        let month3 = fiteredData.filter(d => sixLastMonths[2] === dayjs(d.tanggal).format('MMM'))
+          .length;
+        let month4 = fiteredData.filter(d => sixLastMonths[3] === dayjs(d.tanggal).format('MMM'))
+          .length;
+        let month5 = fiteredData.filter(d => sixLastMonths[4] === dayjs(d.tanggal).format('MMM'))
+          .length;
+        let month6 = fiteredData.filter(d => sixLastMonths[5] === dayjs(d.tanggal).format('MMM'))
+          .length;
         let result = [month1, month2, month3, month4, month5, month6];
         this.setState({
           isDataFetched: true,
@@ -112,14 +125,6 @@ class UserVisitStatistic extends Component {
       });
   };
 
-  handleChangeTime = val => {
-    this.setState({ time: val });
-  };
-
-  printVisitStats = () => {
-    //
-  };
-
   render() {
     return (
       <View style={{ padding: 10 }}>
@@ -128,65 +133,40 @@ class UserVisitStatistic extends Component {
             <Spinner color="green" size="large" />
           </View>
         ) : (
-          <View>
-            <Grid>
-              <Row>
-                <Text>Grafik Kunjungan User</Text>
-              </Row>
-              <Row>
-                <LineChart
-                  data={{
-                    labels: this.state.months,
-                    datasets: [
-                      {
-                        data: this.state.dataVisit,
-                      },
-                    ],
-                  }}
-                  width={width - 20}
-                  height={0.25 * height}
-                  chartConfig={{
-                    backgroundColor: '#e26a00',
-                    backgroundGradientFrom: '#fb8c00',
-                    backgroundGradientTo: '#ffa726',
-                    decimalPlaces: 2, // optional, defaults to 2dp
-                    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                    style: {
-                      borderRadius: 16,
+          <Grid>
+            <Row>
+              <Text>Grafik Kunjungan User</Text>
+            </Row>
+            <Row>
+              <LineChart
+                data={{
+                  labels: this.state.months,
+                  datasets: [
+                    {
+                      data: this.state.dataVisit,
                     },
-                  }}
-                  bezier
-                  style={{
-                    marginVertical: 8,
+                  ],
+                }}
+                width={width - 20}
+                height={0.25 * height}
+                chartConfig={{
+                  backgroundColor: '#e26a00',
+                  backgroundGradientFrom: '#fb8c00',
+                  backgroundGradientTo: '#ffa726',
+                  decimalPlaces: 2, // optional, defaults to 2dp
+                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  style: {
                     borderRadius: 16,
-                  }}
-                />
-              </Row>
-            </Grid>
-            <Grid>
-              <Row>
-                <Col>
-                  <Picker
-                    selectedValue={this.state.time}
-                    style={{ width: 0.65 * width, height: 25 }}
-                    onValueChange={(itemValue, itemIndex) => this.handleChangeTime(itemValue)}>
-                    <Picker.Item label={'Minggu'} value={'Minggu'} />
-                    <Picker.Item label={'Bulan ini'} value={'Bulan ini'} />
-                    <Picker.Item label={'2 Bulan Terakhir'} value={'2 Bulan Terakhir'} />
-                    <Picker.Item label={'3 Bulan Terakhir'} value={'3 Bulan Terakhir'} />
-                    <Picker.Item label={'4 Bulan Terakhir'} value={'4 Bulan Terakhir'} />
-                    <Picker.Item label={'5 Bulan Terakhir'} value={'5 Bulan Terakhir'} />
-                    <Picker.Item label={'6 Bulan Terakhir'} value={'6 Bulan Terakhir'} />
-                  </Picker>
-                </Col>
-                <Col>
-                  <Button small>
-                    <Text>Cetak</Text>
-                  </Button>
-                </Col>
-              </Row>
-            </Grid>
-          </View>
+                  },
+                }}
+                bezier
+                style={{
+                  marginVertical: 8,
+                  borderRadius: 16,
+                }}
+              />
+            </Row>
+          </Grid>
         )}
       </View>
     );
