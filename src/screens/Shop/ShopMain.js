@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions } from 'react-native';
-import { Button, Content, Header, Icon, Left, Body, Right, Title, View } from 'native-base';
+import { StyleSheet } from 'react-native';
+import { Button, Content, Header, Icon, Left, Body, Right, Title } from 'native-base';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Authentication from '../../components/Authentication';
 import Shop from './Shop';
@@ -9,8 +9,6 @@ import ShopForm from './ShopForm';
 import ToolBar from './ToolBar';
 import Loading from '../../components/Loading';
 import { db } from '../../../firebase.config';
-
-const { width, height } = Dimensions.get('window');
 
 class ShopScreen extends Component {
   static propTypes = {
@@ -95,16 +93,42 @@ class ShopScreen extends Component {
             ...doc.data(),
           });
         });
+        if (ownership) {
+          this.setState({
+            isDataFetched: true,
+            isUserHaveShop: true,
+            isUserOwnedThisShop: ownership,
+            dataShop: toko[0],
+            dataProducts: data,
+          });
+        } else {
+          this.setUserVisitShop(ownership, toko[0], data);
+        }
+      })
+      .catch(error => {
+        console.error('Error getting shop products data \n', error);
+      });
+  };
+
+  setUserVisitShop = (ownership, shop, products) => {
+    db.collection('kunjungan')
+      .add({
+        id_toko: shop.id_toko,
+        id_user: this.props.user.id || 0,
+        tanggal: new Date(),
+      })
+      .then(docRef => {
+        console.log('Successfully added visiting data with id : ', docRef.id);
         this.setState({
           isDataFetched: true,
           isUserHaveShop: true,
           isUserOwnedThisShop: ownership,
-          dataShop: toko[0],
-          dataProducts: data,
+          dataShop: shop,
+          dataProducts: products,
         });
       })
       .catch(error => {
-        console.error('Error getting shop products data \n', error);
+        console.error('Error adding visiting data \n', error);
       });
   };
 

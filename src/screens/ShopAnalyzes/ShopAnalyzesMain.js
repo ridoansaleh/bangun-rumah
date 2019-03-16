@@ -6,8 +6,6 @@ import Header from '../../components/PlainHeader';
 import UserVisit from './UserVIsitStatistic';
 import ProductsReport from './ProductsReport';
 import Selling from './SellingStatistic';
-// import { db } from '../../../firebase.config';
-// import { urls } from '../../constant';
 
 class ShopAnalyzeScreen extends Component {
   static propTypes = {
@@ -22,8 +20,8 @@ class ShopAnalyzeScreen extends Component {
         <Header {...this.props} title="Analisa Toko" />
         <Content>
           <UserVisit {...this.props} shopId={shop_id} />
-          <ProductsReport {...this.props} />
-          <Selling {...this.props} />
+          <ProductsReport {...this.props} shopId={shop_id} />
+          <Selling {...this.props} shopId={shop_id} />
         </Content>
       </Container>
     );
