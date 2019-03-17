@@ -14,7 +14,6 @@ class ShopAnalyzeScreen extends Component {
 
   render() {
     const shop_id = this.props.nav.navigation.getParam('id', undefined);
-    console.log('_ID Toko : ', shop_id);
     return (
       <Container>
         <Header {...this.props} title="Analisa Toko" />

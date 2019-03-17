@@ -89,7 +89,6 @@ class ShopOrderScreen extends Component {
   };
 
   setProductsSellStats = data => {
-    console.log('data : ', data);
     for (let i = 0; i < data.produk.length; i++) {
       const id = data.produk[i].id_produk;
       let docRef = db.collection('produk').doc(id);
@@ -101,7 +100,6 @@ class ShopOrderScreen extends Component {
             docRef.update({
               dibeli: d.dibeli + parseInt(data.produk[i].jumlah, 10),
             });
-            console.log('D : ', d);
           } else {
             console.log('No such document!');
           }

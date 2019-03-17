@@ -145,7 +145,7 @@ class LoginView extends Component {
         {
           text: 'Tutup',
           onPress: () => {
-            console.log('Tutup diaglog');
+            console.log('Close alert diaglog');
           },
         },
         {
