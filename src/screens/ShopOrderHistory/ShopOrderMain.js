@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Alert, StyleSheet, Image, Dimensions } from 'react-native';
 import { Button, Container, Content, Text, View, Spinner } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
+import dayjs from 'dayjs';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
 import Loading from '../../components/Loading';
@@ -74,8 +75,10 @@ class ShopOrderScreen extends Component {
           docRef.update({
             status: 'Diterima',
           });
+          const data = doc.data();
           this.setState({ ['isAcceptedLoading' + index]: false });
           this.getOrderHistoryData();
+          this.setProductsSellStats(data);
         } else {
           console.log('No such document!');
         }
@@ -83,6 +86,28 @@ class ShopOrderScreen extends Component {
       .catch(function(error) {
         console.log(`Error searching pemesanan with id ${id} \n`, error);
       });
+  };
+
+  setProductsSellStats = data => {
+    for (let i = 0; i < data.produk.length; i++) {
+      const id = data.produk[i].id_produk;
+      let docRef = db.collection('produk').doc(id);
+      docRef
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            let d = doc.data();
+            docRef.update({
+              dibeli: d.dibeli + parseInt(data.produk[i].jumlah, 10),
+            });
+          } else {
+            console.log('No such document!');
+          }
+        })
+        .catch(function(error) {
+          console.log(`Error updating product with id : ${id} \n`, error);
+        });
+    }
   };
 
   rejectOrder = (id, index) => {
@@ -135,7 +160,9 @@ class ShopOrderScreen extends Component {
                     <Col>
                       <Text style={{ fontWeight: 'bold' }}>{data.produk[0].nama}</Text>
                       <Text>({data.pembeli})</Text>
-                      <Text style={{ fontSize: 12 }}>{data.waktu_pemesanan}</Text>
+                      <Text style={{ fontSize: 12 }}>
+                        {dayjs(data.waktu_pemesanan).format('dddd, D MMMM YYYY HH:m:s')}
+                      </Text>
                       <Text style={{ marginTop: 25 }}>
                         Rp {convertToCurrency(data.produk[0].harga)} (
                         {data.produk[0].jumlah + ' ' + data.produk[0].satuan})

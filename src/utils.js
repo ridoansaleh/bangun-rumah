@@ -29,4 +29,47 @@ const convertToCurrency = numb => {
   return result;
 };
 
-export { sliderWidth, slideHeight, itemWidth, IS_IOS, convertToCurrency };
+const getMonthName = (val, short) => {
+  let res = '';
+  switch (val) {
+    case 0:
+      res = short ? 'Jan' : 'Januari';
+      break;
+    case 1:
+      res = short ? 'Feb' : 'Februari';
+      break;
+    case 2:
+      res = short ? 'Mar' : 'Maret';
+      break;
+    case 3:
+      res = short ? 'Apr' : 'April';
+      break;
+    case 4:
+      res = 'Mei';
+      break;
+    case 5:
+      res = short ? 'Jun' : 'Juni';
+      break;
+    case 6:
+      res = short ? 'Jul' : 'Juli';
+      break;
+    case 7:
+      res = short ? 'Agu' : 'Agustus';
+      break;
+    case 8:
+      res = short ? 'Sep' : 'September';
+      break;
+    case 9:
+      res = short ? 'Okt' : 'Oktober';
+      break;
+    case 10:
+      res = short ? 'Nov' : 'November';
+      break;
+    case 11:
+      res = short ? 'Des' : 'Desember';
+      break;
+  }
+  return res;
+};
+
+export { sliderWidth, slideHeight, itemWidth, IS_IOS, convertToCurrency, getMonthName };
