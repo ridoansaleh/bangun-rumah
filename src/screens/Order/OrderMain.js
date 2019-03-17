@@ -12,7 +12,6 @@ import {
 import { Content, Text, Button, Icon, Form, Input, Item } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import dayjs from 'dayjs';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
 import Loading from '../../components/Loading';
@@ -195,7 +194,7 @@ class OrderMainScreen extends Component {
           ? (promoPercentage / 100) * this.calculateTotalPrice()
           : this.calculateTotalPrice(),
         status: 'Menunggu Konfirmasi',
-        waktu_pemesanan: dayjs().format('dddd (HH:m:s) D MMMM YYYY'),
+        waktu_pemesanan: new Date(),
         alamat_pengiriman: this.state.address ? this.state.address : this.props.user.alamat,
       })
       .then(docRef => {

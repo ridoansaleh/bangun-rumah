@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Alert, StyleSheet, Image, Dimensions } from 'react-native';
 import { Button, Container, Content, Text, View, Spinner } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
+import dayjs from 'dayjs';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
 import Loading from '../../components/Loading';
@@ -161,7 +162,9 @@ class ShopOrderScreen extends Component {
                     <Col>
                       <Text style={{ fontWeight: 'bold' }}>{data.produk[0].nama}</Text>
                       <Text>({data.pembeli})</Text>
-                      <Text style={{ fontSize: 12 }}>{data.waktu_pemesanan}</Text>
+                      <Text style={{ fontSize: 12 }}>
+                        {dayjs(data.waktu_pemesanan).format('dddd, D MMMM YYYY HH:m:s')}
+                      </Text>
                       <Text style={{ marginTop: 25 }}>
                         Rp {convertToCurrency(data.produk[0].harga)} (
                         {data.produk[0].jumlah + ' ' + data.produk[0].satuan})

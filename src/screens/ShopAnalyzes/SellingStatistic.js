@@ -74,14 +74,14 @@ class SellingStatistic extends Component {
         } else {
           let lastYearData = fiteredData
             .map(d => {
-              if (dayjs(d.tanggal).year() === lastYear) {
+              if (dayjs(d.waktu_pemesanan).year() === lastYear) {
                 return d;
               }
             })
             .filter(r => r !== undefined);
           let thisYearData = fiteredData
             .map(d => {
-              if (dayjs(d.tanggal).year() === dayjs().year()) {
+              if (dayjs(d.waktu_pemesanan).year() === dayjs().year()) {
                 return d;
               }
             })
@@ -101,18 +101,24 @@ class SellingStatistic extends Component {
             });
           }
         }
-        let month1 = fiteredData.filter(d => sixLastMonths[0] === dayjs(d.tanggal).format('MMM'))
-          .length;
-        let month2 = fiteredData.filter(d => sixLastMonths[1] === dayjs(d.tanggal).format('MMM'))
-          .length;
-        let month3 = fiteredData.filter(d => sixLastMonths[2] === dayjs(d.tanggal).format('MMM'))
-          .length;
-        let month4 = fiteredData.filter(d => sixLastMonths[3] === dayjs(d.tanggal).format('MMM'))
-          .length;
-        let month5 = fiteredData.filter(d => sixLastMonths[4] === dayjs(d.tanggal).format('MMM'))
-          .length;
-        let month6 = fiteredData.filter(d => sixLastMonths[5] === dayjs(d.tanggal).format('MMM'))
-          .length;
+        let month1 = fiteredData.filter(
+          d => sixLastMonths[0] === dayjs(d.waktu_pemesanan).format('MMM')
+        ).length;
+        let month2 = fiteredData.filter(
+          d => sixLastMonths[1] === dayjs(d.waktu_pemesanan).format('MMM')
+        ).length;
+        let month3 = fiteredData.filter(
+          d => sixLastMonths[2] === dayjs(d.waktu_pemesanan).format('MMM')
+        ).length;
+        let month4 = fiteredData.filter(
+          d => sixLastMonths[3] === dayjs(d.waktu_pemesanan).format('MMM')
+        ).length;
+        let month5 = fiteredData.filter(
+          d => sixLastMonths[4] === dayjs(d.waktu_pemesanan).format('MMM')
+        ).length;
+        let month6 = fiteredData.filter(
+          d => sixLastMonths[5] === dayjs(d.waktu_pemesanan).format('MMM')
+        ).length;
         let result = [month1, month2, month3, month4, month5, month6];
         this.setState({
           isDataFetched: true,
