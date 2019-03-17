@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions } from 'react-native';
 import { Text, View, Spinner } from 'native-base';
-import { Grid, Col, Row } from 'react-native-easy-grid';
+import { Grid, Row } from 'react-native-easy-grid';
 import { LineChart } from 'react-native-chart-kit';
 import dayjs from 'dayjs';
 import { db } from '../../../firebase.config';
@@ -12,7 +12,6 @@ const { width, height } = Dimensions.get('window');
 
 class SellingStatistic extends Component {
   static propTypes = {
-    nav: PropTypes.object,
     shopId: PropTypes.string,
   };
 
@@ -127,9 +126,10 @@ class SellingStatistic extends Component {
   };
 
   render() {
+    const { isDataFetched, months, dataOrders } = this.state;
     return (
       <View style={{ padding: 10 }}>
-        {!this.state.isDataFetched ? (
+        {!isDataFetched ? (
           <View style={styles.spin}>
             <Spinner color="green" size="large" />
           </View>
@@ -141,10 +141,10 @@ class SellingStatistic extends Component {
             <Row>
               <LineChart
                 data={{
-                  labels: this.state.months,
+                  labels: months,
                   datasets: [
                     {
-                      data: this.state.dataOrders,
+                      data: dataOrders,
                     },
                   ],
                 }}

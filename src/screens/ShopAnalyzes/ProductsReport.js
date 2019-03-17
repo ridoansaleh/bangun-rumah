@@ -10,25 +10,24 @@ const { width, height } = Dimensions.get('window');
 
 class ProductsReport extends Component {
   static propTypes = {
-    nav: PropTypes.object,
+    shopId: PropTypes.string,
   };
 
   state = {
     isDataFetched: false,
     tableHead: ['No', 'Nama', 'Tanggal Posting', 'Stok', 'Satuan', 'Terjual', 'Review'],
-    widthArr: [40, 260, 220, 100, 120, 140, 120, 100, 200],
+    widthArr: [40, 260, 220, 100, 120, 140, 200],
     dataProducts: [],
   };
 
   componentDidMount() {
-    const shopId = this.props.nav.navigation.getParam('shopId', undefined);
-    this.getProducts(shopId);
+    this.getProducts();
   }
 
-  getProducts = id => {
+  getProducts = () => {
     let data = [];
     db.collection('produk')
-      .where('id_toko', '==', id)
+      .where('id_toko', '==', this.props.shopId)
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
@@ -37,33 +36,67 @@ class ProductsReport extends Component {
             ...doc.data(),
           });
         });
-        const tableData = [];
-        for (let i = 0; i < data.length; i += 1) {
-          const rowData = [];
-          for (let j = 0; j < 7; j += 1) {
-            data[i].map((d, i) => {
-              rowData.push(i + 1);
-              if (d.nama) {
-                rowData.push(d.nama);
-              } else if (d.tanggal_posting) {
-                rowData.push(dayjs(d.tanggal_posting).format('DD-MM-YYYY'));
-              } else if (d.stok) {
-                rowData.push(d.stok);
-              } else if (d.satuan) {
-                rowData.push(d.satuan);
-              } else if (d.dibeli) {
-                rowData.push(d.dibeli);
-              } else if (d.bintang) {
-                rowData.push('Bintang ', d.bintang);
-              }
-            });
-          }
-          tableData.push(rowData);
+        let tableData = [];
+        let rowData = [];
+        let filteredRowData = [];
+        for (let i = 0; i < data.length; i++) {
+          rowData = Object.keys(data[i]).map(d => {
+            if (d === 'id_produk') {
+              return {
+                no: i + 1,
+              };
+            } else if (d === 'nama') {
+              return {
+                nama: data[i]['nama'],
+              };
+            } else if (d === 'tanggal_posting') {
+              return {
+                tanggal: dayjs(data[i]['tanggal_posting']).format('DD-MM-YYYY'),
+              };
+            } else if (d === 'stok') {
+              return {
+                stok: data[i]['stok'].toString(),
+              };
+            } else if (d === 'satuan') {
+              return {
+                satuan: data[i]['satuan'],
+              };
+            } else if (d === 'dibeli') {
+              return {
+                dibeli: data[i]['dibeli'],
+              };
+            } else if (d === 'bintang') {
+              return {
+                review: 'Bintang ' + data[i]['bintang'],
+              };
+            }
+          });
+          filteredRowData = rowData.filter(d => {
+            if (d !== undefined) {
+              return d;
+            }
+          });
+          const orderData = [
+            filteredRowData[0].no,
+            filteredRowData[3].nama,
+            filteredRowData[6].tanggal,
+            filteredRowData[5].stok,
+            filteredRowData[4].satuan,
+            filteredRowData[2].dibeli,
+            filteredRowData[1].review,
+          ];
+          tableData.push(orderData);
         }
-        this.setState({
-          isDataFetched: true,
-          dataProducts: tableData,
-        });
+        if (data.length > 0) {
+          this.setState({
+            isDataFetched: true,
+            dataProducts: tableData,
+          });
+        } else {
+          this.setState({
+            isDataFetched: true,
+          });
+        }
       })
       .catch(error => {
         console.error('Error getting shop products data \n', error);
@@ -71,10 +104,10 @@ class ProductsReport extends Component {
   };
 
   render() {
-    const { tableHead, widthArr, dataProducts } = this.state;
+    const { isDataFetched, tableHead, widthArr, dataProducts } = this.state;
     return (
       <View style={{ padding: 10 }}>
-        {!this.state.isDataFetched ? (
+        {!isDataFetched ? (
           <View style={styles.spin}>
             <Spinner color="green" size="large" />
           </View>
@@ -93,15 +126,21 @@ class ProductsReport extends Component {
                 </Table>
                 <ScrollView style={styles.dataWrapper}>
                   <Table borderStyle={{ borderColor: '#C1C0B9' }}>
-                    {dataProducts.map((rowData, index) => (
-                      <Row
-                        key={index}
-                        data={rowData}
-                        widthArr={widthArr}
-                        style={[styles.row, index % 2 && { backgroundColor: '#F7F6E7' }]}
-                        textStyle={styles.text}
-                      />
-                    ))}
+                    {dataProducts.length > 0 ? (
+                      dataProducts.map((rowData, index) => (
+                        <Row
+                          key={index}
+                          data={rowData}
+                          widthArr={widthArr}
+                          style={[styles.row, index % 2 && { backgroundColor: '#F7F6E7' }]}
+                          textStyle={styles.text}
+                        />
+                      ))
+                    ) : (
+                      <View style={{ width: 1 * width, justifyContent: 'center' }}>
+                        <Text>Belum ada produk</Text>
+                      </View>
+                    )}
                   </Table>
                 </ScrollView>
               </View>

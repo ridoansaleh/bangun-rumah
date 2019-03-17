@@ -74,8 +74,10 @@ class ShopOrderScreen extends Component {
           docRef.update({
             status: 'Diterima',
           });
+          const data = doc.data();
           this.setState({ ['isAcceptedLoading' + index]: false });
           this.getOrderHistoryData();
+          this.setProductsSellStats(data);
         } else {
           console.log('No such document!');
         }
@@ -83,6 +85,30 @@ class ShopOrderScreen extends Component {
       .catch(function(error) {
         console.log(`Error searching pemesanan with id ${id} \n`, error);
       });
+  };
+
+  setProductsSellStats = data => {
+    console.log('data : ', data);
+    for (let i = 0; i < data.produk.length; i++) {
+      const id = data.produk[i].id_produk;
+      let docRef = db.collection('produk').doc(id);
+      docRef
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            let d = doc.data();
+            docRef.update({
+              dibeli: d.dibeli + parseInt(data.produk[i].jumlah, 10),
+            });
+            console.log('D : ', d);
+          } else {
+            console.log('No such document!');
+          }
+        })
+        .catch(function(error) {
+          console.log(`Error updating product with id : ${id} \n`, error);
+        });
+    }
   };
 
   rejectOrder = (id, index) => {
