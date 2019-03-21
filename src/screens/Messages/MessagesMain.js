@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions, FlatList, TouchableWithoutFeedback, Image } from 'react-native';
-import { Button, Container, Content, Text, View } from 'native-base';
+import { Container, Content, Text } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
@@ -9,36 +9,36 @@ import Loading from '../../components/Loading';
 import { db } from '../../../firebase.config';
 import { urls } from '../../constant';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 class MessageScreen extends Component {
   static propTypes = {
     nav: PropTypes.object,
+    user: PropTypes.object,
   };
 
   state = {
     isDataFetched: false,
     shopId: this.props.nav.navigation.getParam('shopId', undefined),
-    userId: this.props.nav.navigation.getParam('userId', undefined),
+    shop: this.props.nav.navigation.getParam('shop', undefined),
+    chatType: this.props.nav.navigation.getParam('chatType', undefined),
     dataMessages: [],
   };
 
   componentDidMount() {
-    const { shopId, userId } = this.state;
-    let typeId = 'shop';
-    let finalId = shopId;
-    if (!shopId) {
-      typeId = 'user';
-      finalId = userId;
+    const { shopId, chatType } = this.state;
+    let id = shopId;
+
+    if (chatType !== 'shopChatting') {
+      id = this.props.user.id;
     }
-    this.getMessages(typeId, finalId);
+    this.getMessages(id);
   }
 
-  getMessages = (type, id) => {
+  getMessages = id => {
     let data = [];
-    let field = type === 'shop' ? 'id_toko' : 'id_user';
     db.collection('percakapan')
-      .where(field, '==', id)
+      .where('id_penerima', '==', id)
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
@@ -76,20 +76,25 @@ class MessageScreen extends Component {
               renderItem={({ item }) => (
                 <TouchableWithoutFeedback
                   onPress={() =>
-                    this.props.navigation.navigate(urls.product, {
-                      userReplyId: item.id_user,
-                      shopReplyId: item.id_toko,
+                    this.props.nav.navigation.navigate(urls.message_detail, {
                       shopId: this.state.shopId,
-                      userId: this.state.userId,
+                      shop: this.state.shop,
+                      userId: this.props.user.id,
+                      chatType: this.state.chatType,
+                      replyId: item.id_penerima,
                     })
                   }>
-                  <Grid style={{ width: width - 20 }}>
+                  <Grid
+                    style={{ width: width - 20, borderBottomColor: 'black', borderBottomWidth: 1 }}>
                     <Row>
                       <Text>{item.nama_pengguna}</Text>
                     </Row>
                     <Row>
-                      <Col>
-                        <Image source={{ uri: item.photo }} />
+                      <Col style={{ width: 0.3 * width }}>
+                        <Image
+                          source={{ uri: item.photo }}
+                          style={{ height: 50, width: 50, marginBottom: 5 }}
+                        />
                       </Col>
                       <Col>
                         <Text>{item.pesan}</Text>

@@ -168,6 +168,8 @@ class ShopScreen extends Component {
                 onPress={() =>
                   this.props.nav.navigation.navigate(urls.messages, {
                     shopId: this.state.dataShop.id_toko,
+                    shop: this.state.dataShop,
+                    chatType: 'shopChatting',
                   })
                 }>
                 <Icon name="chatbubbles" style={{ color: 'white' }} />

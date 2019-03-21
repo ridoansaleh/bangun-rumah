@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Button, Container, Content, Text, View, Form, Label, Item, Input } from 'native-base';
-// import { Grid, Col } from 'react-native-easy-grid';
+import { Grid, Row, Col } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
 import Loading from '../../components/Loading';
 import { db } from '../../../firebase.config';
-// import { urls } from '../../constant';
 
 const { width, height } = Dimensions.get('window');
 
 class MessageDetailScreen extends Component {
   static propTypes = {
     nav: PropTypes.object,
+    user: PropTypes.object,
   };
 
   state = {
@@ -22,33 +22,49 @@ class MessageDetailScreen extends Component {
     message: '',
     isMessageChanged: false,
     isMessageValid: false,
+    userId: this.props.nav.navigation.getParam('userId', undefined),
+    shopId: this.props.nav.navigation.getParam('shopId', undefined),
+    shop: this.props.nav.navigation.getParam('shop', undefined),
+    replyId: this.props.nav.navigation.getParam('replyId', undefined),
+    chatType: this.props.nav.navigation.getParam('chatType', undefined),
   };
 
   componentDidMount() {
-    let user = 'shop';
-    let type = 'id_toko';
-    let reply = 'user';
-    let replyType = 'id_user';
-    let userId = this.props.nav.navigation.getParam('userId', undefined);
-    let shopId = this.props.nav.navigation.getParam('shopId', undefined);
-    let userReplyId = this.props.nav.navigation.getParam('userReplyId', undefined);
-    let shopReplyId = this.props.nav.navigation.getParam('shopReplyId', undefined);
-    if (!shopId) {
-      user = userId;
-      type = 'id_user';
+    const { userId, shopId, replyId, chatType } = this.state;
+    let sender = shopId;
+    let receiver = replyId;
+
+    if (chatType !== 'shopChatting') {
+      sender = userId;
     }
-    if (!userReplyId) {
-      reply = shopReplyId;
-      replyType = 'id_toko';
-    }
-    this.getMessages(type, user, replyType, reply);
+    this.getMessageFromSender(sender, receiver);
   }
 
-  getMessages = (type1, user1, type2, user2) => {
+  getMessageFromSender = (user1, user2) => {
+    console.log('u1 : ', user1);
+    console.log('u2 : ', user2);
     let data = [];
     db.collection('percakapan')
-      .where(type1, '==', user1)
-      .where(type2, '==', user2)
+      .where('id_pengirim', '==', user1)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          data.push({
+            id_percakapan: doc.id,
+            ...doc.data(),
+          });
+        });
+        this.getMessageFromReceiver(data, user2);
+      })
+      .catch(error => {
+        console.error("Error searching messages's data \n", error);
+      });
+  };
+
+  getMessageFromReceiver = (res, receiver) => {
+    let data = [];
+    db.collection('percakapan')
+      .where('id_pengirim', '==', receiver)
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
@@ -60,11 +76,12 @@ class MessageDetailScreen extends Component {
         if (data.length > 0) {
           this.setState({
             isDataFetched: true,
-            dataMessages: data,
+            dataMessages: res.length > 0 ? [...res, ...data] : data,
           });
         } else {
           this.setState({
             isDataFetched: true,
+            dataMessages: res,
           });
         }
       })
@@ -92,15 +109,24 @@ class MessageDetailScreen extends Component {
   sendMessage = () => {
     db.collection('percakapan')
       .add({
-        id_user: this.props.user.id,
-        id_toko: this.state.data[0].id_toko,
+        id_pengirim: this.state.chatType === 'shopChatting' ? this.state.shopId : this.state.userId,
+        id_penerima: this.state.replyId,
         pesan: this.state.message,
-        photo: this.props.user.photo,
-        nama_pengguna: this.props.user.nama, // need to fix
+        photo:
+          this.state.chatType === 'shopChatting' ? this.state.shop.photo : this.props.user.photo,
+        nama_pengguna:
+          this.state.chatType === 'shopChatting' ? this.state.shop.nama : this.props.user.nama,
       })
       .then(docRef => {
         console.log('Successfully send message with id ', docRef.id);
-        this.getMessages();
+        const { userId, shopId, replyId, chatType } = this.state;
+        let sender = shopId;
+        let receiver = replyId;
+
+        if (chatType !== 'shopChatting') {
+          sender = userId;
+        }
+        this.getMessageFromSender(sender, receiver);
       })
       .catch(error => {
         console.error('Error sending message \n', error);
@@ -116,43 +142,59 @@ class MessageDetailScreen extends Component {
           {!this.state.isDataFetched ? (
             <Loading />
           ) : (
-            <View>
-              <View>
-                {this.state.dataMessages.length > 0 ? (
-                  this.state.dataMessages.map((d, i) => {
-                    if (d.id_user === this.props.user.id) {
-                      return (
-                        <Text key={i} style={{ textAlign: 'left' }}>
-                          {d.pesan}
-                        </Text>
-                      );
-                    } else {
-                      return (
-                        <Text key={i} style={{ textAlign: 'right' }}>
-                          {d.pesan}
-                        </Text>
-                      );
-                    }
-                  })
-                ) : (
-                  <Text>Tidak ada pesan</Text>
-                )}
-              </View>
-              <Form>
-                <Item floatingLabel error={isMessageChanged && !isMessageValid}>
-                  <Label>Pesan</Label>
-                  <Input value={message} onChangeText={val => this.handleChangeField(val)} />
-                </Item>
-                {isMessageChanged && !isMessageValid && (
-                  <Item style={styles.errorBox}>
-                    <Text style={styles.errorMessage}>{'Pesan tidak boleh kosong'}</Text>
+            <Grid>
+              <Row style={{ height: height * 0.7 }}>
+                <ScrollView>
+                  {this.state.dataMessages.length > 0 ? (
+                    this.state.dataMessages.map((d, i) => {
+                      if (d.id_user === this.props.user.id) {
+                        return (
+                          <Text key={i} style={{ textAlign: 'left' }}>
+                            {d.pesan}
+                          </Text>
+                        );
+                      } else {
+                        return (
+                          <Text key={i} style={{ textAlign: 'right' }}>
+                            {d.pesan}
+                          </Text>
+                        );
+                      }
+                    })
+                  ) : (
+                    <Text style={{ textAlign: 'center' }}>Tidak ada pesan</Text>
+                  )}
+                </ScrollView>
+              </Row>
+              <Row style={{ height: height * 0.2 }}>
+                <Form>
+                  <Item
+                    floatingLabel
+                    error={isMessageChanged && !isMessageValid}
+                    style={{ marginBottom: 15 }}>
+                    <Label>Pesan</Label>
+                    <Input value={message} onChangeText={val => this.handleChangeField(val)} />
                   </Item>
-                )}
-                <Button small style={{ width: width - 20 }} onPress={() => this.sendMessage()}>
-                  <Text>Kirim</Text>
-                </Button>
-              </Form>
-            </View>
+                  {isMessageChanged && !isMessageValid && (
+                    <Item style={styles.errorBox}>
+                      <Text style={styles.errorMessage}>{'Pesan tidak boleh kosong'}</Text>
+                    </Item>
+                  )}
+                  {isMessageValid ? (
+                    <Button
+                      small
+                      style={{ width: width - 20, justifyContent: 'center' }}
+                      onPress={() => this.sendMessage()}>
+                      <Text>Kirim</Text>
+                    </Button>
+                  ) : (
+                    <Button small style={{ width: width - 20, justifyContent: 'center' }} disabled>
+                      <Text>Kirim</Text>
+                    </Button>
+                  )}
+                </Form>
+              </Row>
+            </Grid>
           )}
         </Content>
       </Container>
