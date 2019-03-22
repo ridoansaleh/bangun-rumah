@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions, ScrollView } from 'react-native';
-import { Button, Container, Content, Text, View, Form, Label, Item, Input } from 'native-base';
-import { Grid, Row, Col } from 'react-native-easy-grid';
+import { Button, Content, Text, Form, Label, Item, Input } from 'native-base';
+import { Grid, Row } from 'react-native-easy-grid';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
 import Loading from '../../components/Loading';
@@ -41,8 +42,6 @@ class MessageDetailScreen extends Component {
   }
 
   getMessageFromSender = (user1, user2) => {
-    console.log('u1 : ', user1);
-    console.log('u2 : ', user2);
     let data = [];
     db.collection('percakapan')
       .where('id_pengirim', '==', user1)
@@ -74,9 +73,15 @@ class MessageDetailScreen extends Component {
           });
         });
         if (data.length > 0) {
+          let result = res.length > 0 ? [...res, ...data] : data;
+          result.sort(function(a, b) {
+            let c = new Date(a.waktu);
+            let d = new Date(b.waktu);
+            return c - d;
+          });
           this.setState({
             isDataFetched: true,
-            dataMessages: res.length > 0 ? [...res, ...data] : data,
+            dataMessages: result,
           });
         } else {
           this.setState({
@@ -134,9 +139,10 @@ class MessageDetailScreen extends Component {
   };
 
   render() {
-    const { message, isMessageChanged, isMessageValid } = this.state;
+    const { message, isMessageChanged, isMessageValid, chatType, userId, shopId } = this.state;
+    const idDiff = chatType === 'shopChatting' ? shopId : userId;
     return (
-      <Container>
+      <KeyboardAwareScrollView enableOnAndroid>
         <Header {...this.props} title="Pesan" />
         <Content style={{ padding: 10 }}>
           {!this.state.isDataFetched ? (
@@ -147,7 +153,7 @@ class MessageDetailScreen extends Component {
                 <ScrollView>
                   {this.state.dataMessages.length > 0 ? (
                     this.state.dataMessages.map((d, i) => {
-                      if (d.id_user === this.props.user.id) {
+                      if (d.id_penerima === idDiff) {
                         return (
                           <Text key={i} style={{ textAlign: 'left' }}>
                             {d.pesan}
@@ -197,7 +203,7 @@ class MessageDetailScreen extends Component {
             </Grid>
           )}
         </Content>
-      </Container>
+      </KeyboardAwareScrollView>
     );
   }
 }

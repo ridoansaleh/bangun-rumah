@@ -41,6 +41,8 @@ class MessageScreen extends Component {
       .where('id_penerima', '==', id)
       .get()
       .then(querySnapshot => {
+        const result = [];
+        const map = new Map();
         querySnapshot.forEach(doc => {
           data.push({
             id_percakapan: doc.id,
@@ -48,9 +50,15 @@ class MessageScreen extends Component {
           });
         });
         if (data.length > 0) {
+          for (const item of data) {
+            if (!map.has(item.id_penerima)) {
+              map.set(item.id_penerima, true);
+              result.push(item);
+            }
+          }
           this.setState({
             isDataFetched: true,
-            dataMessages: data,
+            dataMessages: result,
           });
         } else {
           this.setState({
@@ -81,7 +89,7 @@ class MessageScreen extends Component {
                       shop: this.state.shop,
                       userId: this.props.user.id,
                       chatType: this.state.chatType,
-                      replyId: item.id_penerima,
+                      replyId: item.id_pengirim,
                     })
                   }>
                   <Grid
