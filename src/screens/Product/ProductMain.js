@@ -149,7 +149,7 @@ class ProductMainScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error getting searching review's data \n", error);
+        console.error("Error searching cart's data \n", error);
       });
   };
 

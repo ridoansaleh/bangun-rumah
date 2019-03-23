@@ -9,6 +9,7 @@ import ShopForm from './ShopForm';
 import ToolBar from './ToolBar';
 import Loading from '../../components/Loading';
 import { db } from '../../../firebase.config';
+import { urls } from '../../constant';
 
 class ShopScreen extends Component {
   static propTypes = {
@@ -162,15 +163,19 @@ class ShopScreen extends Component {
           </Body>
           {this.state.isUserOwnedThisShop && (
             <Right>
-              <Button transparent>
+              <Button
+                transparent
+                onPress={() =>
+                  this.props.nav.navigation.navigate(urls.messages, {
+                    shopId: this.state.dataShop.id_toko,
+                    shop: this.state.dataShop,
+                    chatType: 'shopChatting',
+                  })
+                }>
                 <Icon name="chatbubbles" style={{ color: 'white' }} />
               </Button>
-              <Button transparent>
-                <Icon
-                  name="more"
-                  style={{ color: 'white' }}
-                  onPress={() => this.setState({ isToolbarShow: true })}
-                />
+              <Button transparent onPress={() => this.setState({ isToolbarShow: true })}>
+                <Icon name="more" style={{ color: 'white' }} />
               </Button>
             </Right>
           )}

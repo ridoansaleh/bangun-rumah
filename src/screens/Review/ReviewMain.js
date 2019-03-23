@@ -97,7 +97,7 @@ class ReviewScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error getting searching review's data \n", error);
+        console.error("Error searching review's data \n", error);
       });
   };
 
@@ -127,7 +127,7 @@ class ReviewScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error getting searching pemesanan's data \n", error);
+        console.error("Error searching pemesanan's data \n", error);
       });
   };
 

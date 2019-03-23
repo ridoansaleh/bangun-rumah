@@ -94,6 +94,8 @@ const urls = {
   edit_profile: 'EditProfile',
   order_history: 'OrderHistory',
   shop: 'Shop',
+  messages: 'Messages',
+  message_detail: 'MessageDetail',
   shop_order: 'ShopOrder',
   shop_analyzes: 'ShopAnalyzes',
   shop_edit: 'ShopEdit',

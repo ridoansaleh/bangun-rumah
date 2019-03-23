@@ -10,6 +10,8 @@ import ProfileScreen from './Profile/ProfileMain';
 import EditProfileScreen from './EditProfile/EditProfileMain';
 import OrderHistoryScreen from './OrderHistory/OrderHistoryMain';
 import ShopScreen from './Shop/ShopMain';
+import MessageScreen from './Messages/MessagesMain';
+import MessageDetailScreen from './MessageDetail/MessageDetailMain';
 import ShopOrderScreen from './ShopOrderHistory/ShopOrderMain';
 import ShopAnalyzeScreen from './ShopAnalyzes/ShopAnalyzesMain';
 import ShopEditScreen from './ShopEditForm/ShopEditMain';
@@ -54,6 +56,8 @@ const AppNavigator = createStackNavigator(
     EditProfile: EditProfileScreen,
     OrderHistory: OrderHistoryScreen,
     Shop: ShopScreen,
+    Messages: MessageScreen,
+    MessageDetail: MessageDetailScreen,
     ShopOrder: ShopOrderScreen,
     ShopAnalyzes: ShopAnalyzeScreen,
     ShopEdit: ShopEditScreen,

@@ -4,7 +4,7 @@ import { AsyncStorage, Dimensions, Platform, StyleSheet, View } from 'react-nati
 import { Content, Text, List, ListItem, Icon, Container, Left, Thumbnail } from 'native-base';
 import Authentication from '../components/Authentication';
 import defaultPhoto from '../../assets/default_profile.jpg';
-import { loginMenus, nonLoginMenus, user } from '../constant';
+import { loginMenus, nonLoginMenus, user, urls } from '../constant';
 import { auth } from '../../firebase.config';
 
 const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
@@ -54,7 +54,15 @@ class SideBar extends Component {
         })
         .catch(error => console.error('Error while perform logout \n', error));
     } else {
-      this.props.nav.navigation.navigate(route);
+      if (route === 'PersonalMessage') {
+        this.props.nav.navigation.navigate(urls.messages, {
+          shopId: null,
+          shop: null,
+          chatType: 'userChatting',
+        });
+      } else {
+        this.props.nav.navigation.navigate(route);
+      }
     }
   };
 

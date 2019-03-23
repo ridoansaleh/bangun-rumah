@@ -162,7 +162,7 @@ class OrderMainScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error getting searching promo's data \n", error);
+        console.error("Error searching promo's data \n", error);
       });
   };
 
