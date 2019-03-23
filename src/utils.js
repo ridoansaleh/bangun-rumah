@@ -29,6 +29,32 @@ const convertToCurrency = numb => {
   return result;
 };
 
+const convertToDate = val => {
+  let a = new Date(val.seconds * 1000);
+  let months = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
+  ];
+  let year = a.getFullYear();
+  let month = months[a.getMonth()];
+  let date = a.getDate();
+  let hour = a.getHours();
+  let min = a.getMinutes();
+  let sec = a.getSeconds();
+  let time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
+  return time;
+};
+
 const getMonthName = (val, short) => {
   let res = '';
   switch (val) {
@@ -72,4 +98,12 @@ const getMonthName = (val, short) => {
   return res;
 };
 
-export { sliderWidth, slideHeight, itemWidth, IS_IOS, convertToCurrency, getMonthName };
+export {
+  sliderWidth,
+  slideHeight,
+  itemWidth,
+  IS_IOS,
+  convertToCurrency,
+  getMonthName,
+  convertToDate,
+};

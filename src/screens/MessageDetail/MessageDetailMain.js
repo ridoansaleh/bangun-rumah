@@ -8,6 +8,7 @@ import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
 import Loading from '../../components/Loading';
 import { db } from '../../../firebase.config';
+import { convertToDate } from '../../utils';
 
 const { width, height } = Dimensions.get('window');
 
@@ -74,9 +75,9 @@ class MessageDetailScreen extends Component {
         });
         if (data.length > 0) {
           let result = res.length > 0 ? [...res, ...data] : data;
-          result.sort(function(a, b) {
-            let c = new Date(a.waktu);
-            let d = new Date(b.waktu);
+          result.sort((a, b) => {
+            let c = new Date(convertToDate(a.waktu));
+            let d = new Date(convertToDate(b.waktu));
             return c - d;
           });
           this.setState({
@@ -121,6 +122,7 @@ class MessageDetailScreen extends Component {
           this.state.chatType === 'shopChatting' ? this.state.shop.photo : this.props.user.photo,
         nama_pengguna:
           this.state.chatType === 'shopChatting' ? this.state.shop.nama : this.props.user.nama,
+        waktu: new Date(),
       })
       .then(docRef => {
         console.log('Successfully send message with id ', docRef.id);
@@ -132,6 +134,11 @@ class MessageDetailScreen extends Component {
           sender = userId;
         }
         this.getMessageFromSender(sender, receiver);
+        this.setState({
+          message: '',
+          isMessageChanged: false,
+          isMessageValid: false,
+        });
       })
       .catch(error => {
         console.error('Error sending message \n', error);
@@ -155,13 +162,13 @@ class MessageDetailScreen extends Component {
                     this.state.dataMessages.map((d, i) => {
                       if (d.id_penerima === idDiff) {
                         return (
-                          <Text key={i} style={{ textAlign: 'left' }}>
+                          <Text key={i} style={{ textAlign: 'left', marginBottom: 15 }}>
                             {d.pesan}
                           </Text>
                         );
                       } else {
                         return (
-                          <Text key={i} style={{ textAlign: 'right' }}>
+                          <Text key={i} style={{ textAlign: 'right', marginBottom: 15 }}>
                             {d.pesan}
                           </Text>
                         );
@@ -172,7 +179,7 @@ class MessageDetailScreen extends Component {
                   )}
                 </ScrollView>
               </Row>
-              <Row style={{ height: height * 0.2 }}>
+              <Row style={{ height: height * 0.2, marginBottom: 25 }}>
                 <Form>
                   <Item
                     floatingLabel
@@ -187,14 +194,11 @@ class MessageDetailScreen extends Component {
                     </Item>
                   )}
                   {isMessageValid ? (
-                    <Button
-                      small
-                      style={{ width: width - 20, justifyContent: 'center' }}
-                      onPress={() => this.sendMessage()}>
+                    <Button small style={styles.submitBtn} onPress={() => this.sendMessage()}>
                       <Text>Kirim</Text>
                     </Button>
                   ) : (
-                    <Button small style={{ width: width - 20, justifyContent: 'center' }} disabled>
+                    <Button small style={styles.submitBtn} disabled>
                       <Text>Kirim</Text>
                     </Button>
                   )}
@@ -215,6 +219,10 @@ const styles = StyleSheet.create({
   errorMessage: {
     fontSize: 12,
     color: '#FF5733',
+  },
+  submitBtn: {
+    width: width - 20,
+    justifyContent: 'center',
   },
 });
 

@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions, FlatList, TouchableWithoutFeedback, Image } from 'react-native';
-import { Container, Content, Text } from 'native-base';
+import { Container, Content, Text, View } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
 import Loading from '../../components/Loading';
 import { db } from '../../../firebase.config';
+import NoMessage from '../../../assets/no_message.png';
 import { urls } from '../../constant';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 class MessageScreen extends Component {
   static propTypes = {
@@ -78,7 +79,7 @@ class MessageScreen extends Component {
         <Content style={{ padding: 10 }}>
           {!this.state.isDataFetched ? (
             <Loading />
-          ) : (
+          ) : this.state.dataMessages.length > 0 ? (
             <FlatList
               data={this.state.dataMessages}
               renderItem={({ item }) => (
@@ -114,6 +115,11 @@ class MessageScreen extends Component {
               keyExtractor={item => item.id_percakapan}
               numColumns={1}
             />
+          ) : (
+            <View style={{ marginTop: 0.25 * height }}>
+              <Image source={NoMessage} style={styles.noMessage} />
+              <Text style={{ textAlign: 'center' }}>Belum ada riwayat Pesan</Text>
+            </View>
           )}
         </Content>
       </Container>
@@ -121,6 +127,13 @@ class MessageScreen extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  noMessage: {
+    height: 0.25 * height,
+    width: 0.5 * width,
+    marginBottom: 15,
+    marginLeft: 0.25 * width,
+  },
+});
 
 export default Authentication(MessageScreen);
