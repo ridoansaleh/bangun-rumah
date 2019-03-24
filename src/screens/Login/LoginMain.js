@@ -1,6 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, AsyncStorage, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { Constants, Location, Permissions } from 'expo';
+import {
+  Alert,
+  AsyncStorage,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import { Button, Container, Content, Form, Item, Input, Text, Label, View } from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
 import Header from '../../components/PlainHeader';
@@ -21,6 +30,39 @@ class LoginView extends Component {
     password: '',
     isEmailValid: true,
     isPasswordValid: true,
+    location: '-',
+  };
+
+  componentDidMount() {
+    this.checkUserPermission();
+  }
+
+  checkUserPermission = () => {
+    if (Platform.OS === 'android' && !Constants.isDevice) {
+      console.info(
+        'Oops, this will not work on Sketch in an Android emulator. Try it on your device!'
+      );
+      // this.setState({
+      //   errorMessage:
+      //     'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+      // });
+    } else {
+      this._getLocationAsync();
+    }
+  };
+
+  _getLocationAsync = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      console.info('Permission to access location was denied');
+      // this.setState({
+      //   errorMessage: 'Permission to access location was denied',
+      // });
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    console.info('Your location : ', location);
+    // this.setState({ location });
   };
 
   handleChangeField = (val, name) => {
@@ -207,7 +249,7 @@ class LoginView extends Component {
           </Form>
           <View style={styles.forgotPassword}>
             <Text>Anda lupa password? Klik di </Text>
-            <TouchableOpacity onPress={() => this.handleRouteChange('Home')}>
+            <TouchableOpacity onPress={() => this.handleRouteChange(urls.change_password)}>
               <Text>sini</Text>
             </TouchableOpacity>
           </View>

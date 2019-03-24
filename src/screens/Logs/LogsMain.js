@@ -6,7 +6,7 @@ import { Grid, Col } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
 import loginUser from '../../../assets/login-user.jpg';
-import { auth as authenticate, db } from '../../../firebase.config';
+import { db } from '../../../firebase.config';
 import { urls } from '../../constant';
 
 const { width, height } = Dimensions.get('window');
