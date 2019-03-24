@@ -3,6 +3,8 @@ import { createStackNavigator, createAppContainer, createDrawerNavigator } from 
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import HomeScreen from './Home/HomeMain';
+import ReviewListScreen from './ReviewList/ReviewListMain';
+import DiscussionListScreen from './DiscussionList/DiscussionListMain';
 import CategoryScreen from './Category/CategoryMain';
 import ShoppingCartScreen from './ShoppingCart/ShoppingCartMain';
 import DashboardProfileScreen from './DashboardProfile/DashboardProfileMain';
@@ -32,6 +34,8 @@ dayjs.locale('id');
 const DrawerNav = createDrawerNavigator(
   {
     Home: HomeScreen,
+    ReviewList: ReviewListScreen,
+    DiscussionList: DiscussionListScreen,
     Login: LoginScreen,
     Register: RegisterScreen,
     Category: CategoryScreen,
