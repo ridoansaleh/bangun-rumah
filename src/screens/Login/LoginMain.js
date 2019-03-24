@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, AsyncStorage, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { Constants, Location, Permissions } from 'expo';
+import {
+  Alert,
+  AsyncStorage,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import { Button, Container, Content, Form, Item, Input, Text, Label, View } from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
+import dayjs from 'dayjs';
 import Header from '../../components/PlainHeader';
 import loginUser from '../../../assets/login-user.jpg';
 import { auth as authenticate, db } from '../../../firebase.config';
@@ -21,6 +31,45 @@ class LoginView extends Component {
     password: '',
     isEmailValid: true,
     isPasswordValid: true,
+    location: '-',
+    device: '-',
+    time: '-',
+  };
+
+  componentDidMount() {
+    this.checkUserPermission();
+  }
+
+  checkUserPermission = () => {
+    let state = {
+      time: dayjs().format('DD MMMM YYYY HH:mm:ss'),
+      device: `${Constants.deviceName} - ${JSON.stringify(Constants.platform)}`,
+    };
+    if (Platform.OS === 'android' && !Constants.isDevice) {
+      console.info(
+        'Oops, this will not work on Sketch in an Android emulator. Try it on your device!'
+      );
+      this.setState(...state);
+    } else {
+      this._getLocationAsync(state);
+    }
+  };
+
+  _getLocationAsync = async state => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      console.info('Permission to access location was denied');
+    }
+    let location = await Location.getCurrentPositionAsync({});
+    if (Object.keys(location).length > 0) {
+      let completeLoc = await Location.reverseGeocodeAsync(location.coords);
+      this.setState({
+        ...state,
+        location: `${completeLoc[0].city}, ${completeLoc[0].region} / ${completeLoc[0].country}`,
+      });
+    } else {
+      this.setState(...state);
+    }
   };
 
   handleChangeField = (val, name) => {
@@ -67,6 +116,24 @@ class LoginView extends Component {
     }
   };
 
+  saveUserLog = uid => {
+    const { location, device, time } = this.state;
+    db.collection('log_user')
+      .add({
+        id_user: uid,
+        terakhir_login: time,
+        lokasi: location,
+        perangkat: device,
+      })
+      .then(docRef => {
+        console.log('Successfully save user logs with id ', docRef.id);
+        this.handleRouteChange(urls.home);
+      })
+      .catch(error => {
+        console.error('Error saving user logs \n', error);
+      });
+  };
+
   login = (e, p) => {
     authenticate
       .signInWithEmailAndPassword(e, p)
@@ -95,7 +162,7 @@ class LoginView extends Component {
                       isPasswordValid: true,
                     },
                     () => {
-                      this.handleRouteChange(urls.home);
+                      this.saveUserLog(user.uid);
                     }
                   );
                 } else {
@@ -207,7 +274,7 @@ class LoginView extends Component {
           </Form>
           <View style={styles.forgotPassword}>
             <Text>Anda lupa password? Klik di </Text>
-            <TouchableOpacity onPress={() => this.handleRouteChange('Home')}>
+            <TouchableOpacity onPress={() => this.handleRouteChange(urls.change_password)}>
               <Text>sini</Text>
             </TouchableOpacity>
           </View>
