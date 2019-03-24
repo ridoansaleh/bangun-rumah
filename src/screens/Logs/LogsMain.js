@@ -40,7 +40,7 @@ class LogScreen extends Component {
             let perangkat = original[1].split('"').indexOf('android') > -1 ? 'Android' : 'iOS';
             return {
               title: `Terakhir login pada ${d.terakhir_login}`,
-              content: `Peragkat : ${perangkat} \nLokasi: ${d.lokasi}`,
+              content: `Perangkat : ${perangkat} \nLokasi: ${d.lokasi}`,
             };
           });
         }
