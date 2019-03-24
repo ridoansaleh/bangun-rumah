@@ -1,3 +1,58 @@
+let user = [
+  '_id',
+  '_nama',
+  '_alamat',
+  '_email',
+  '_jenisKelamin',
+  '_tanggalLahir',
+  '_photo',
+  '_verfikasiEmail',
+];
+
+const urls = {
+  drawer: 'Drawer',
+  home: 'Home',
+  review_list: 'ReviewList',
+  discussion_list: 'DiscussionList',
+  login: 'Login',
+  logout: 'Logout',
+  register: 'Register',
+  category: 'Category',
+  cart: 'ShoppingCart',
+  dashboard_profile: 'DashboardProfile',
+  profile: 'Profile',
+  edit_profile: 'EditProfile',
+  order_history: 'OrderHistory',
+  shop: 'Shop',
+  messages: 'Messages',
+  message_detail: 'MessageDetail',
+  shop_order: 'ShopOrder',
+  shop_analyzes: 'ShopAnalyzes',
+  shop_edit: 'ShopEdit',
+  product_form: 'ProductForm',
+  change_password: 'ChangePassword',
+  logs: 'Logs',
+  search: 'SearchProduct',
+  product: 'Product',
+  order: 'Order',
+  review: 'Review',
+  discussion: 'Discussion',
+};
+
+const nonAuthenticatedUrls = [
+  urls.drawer,
+  urls.home,
+  urls.register,
+  urls.login,
+  urls.category,
+  urls.search,
+  urls.product,
+  urls.shop,
+  urls.product_form,
+  urls.review,
+  urls.discussion,
+];
+
 let loginMenus = [
   {
     name: 'Riwayat Pemesanan',
@@ -13,13 +68,13 @@ let loginMenus = [
   },
   {
     name: 'Diskusi',
-    route: 'Discussion',
+    route: urls.discussion_list,
     icon: 'chatboxes',
     bg: '#DA4437',
   },
   {
     name: 'Review',
-    route: 'PersonalReview',
+    route: urls.review_list,
     icon: 'repeat',
     bg: '#C5F442',
   },
@@ -68,59 +123,6 @@ let nonLoginMenus = [
     icon: 'log-in',
     bg: '#DA4437',
   },
-];
-
-let user = [
-  '_id',
-  '_nama',
-  '_alamat',
-  '_email',
-  '_jenisKelamin',
-  '_tanggalLahir',
-  '_photo',
-  '_verfikasiEmail',
-];
-
-const urls = {
-  drawer: 'Drawer',
-  home: 'Home',
-  login: 'Login',
-  logout: 'Logout',
-  register: 'Register',
-  category: 'Category',
-  cart: 'ShoppingCart',
-  dashboard_profile: 'DashboardProfile',
-  profile: 'Profile',
-  edit_profile: 'EditProfile',
-  order_history: 'OrderHistory',
-  shop: 'Shop',
-  messages: 'Messages',
-  message_detail: 'MessageDetail',
-  shop_order: 'ShopOrder',
-  shop_analyzes: 'ShopAnalyzes',
-  shop_edit: 'ShopEdit',
-  product_form: 'ProductForm',
-  change_password: 'ChangePassword',
-  logs: 'Logs',
-  search: 'SearchProduct',
-  product: 'Product',
-  order: 'Order',
-  review: 'Review',
-  discussion: 'Discussion',
-};
-
-const nonAuthenticatedUrls = [
-  urls.drawer,
-  urls.home,
-  urls.register,
-  urls.login,
-  urls.category,
-  urls.search,
-  urls.product,
-  urls.shop,
-  urls.product_form,
-  urls.review,
-  urls.discussion,
 ];
 
 export { loginMenus, nonLoginMenus, user, urls, nonAuthenticatedUrls };
