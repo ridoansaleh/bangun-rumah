@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Button, Container, Content, Form, Item, Input, Text, Label, View } from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
+import dayjs from 'dayjs';
 import Header from '../../components/PlainHeader';
 import loginUser from '../../../assets/login-user.jpg';
 import { auth as authenticate, db } from '../../../firebase.config';
@@ -31,6 +32,8 @@ class LoginView extends Component {
     isEmailValid: true,
     isPasswordValid: true,
     location: '-',
+    device: '-',
+    time: '-',
   };
 
   componentDidMount() {
@@ -38,31 +41,35 @@ class LoginView extends Component {
   }
 
   checkUserPermission = () => {
+    let state = {
+      time: dayjs().format('DD MMMM YYYY HH:mm:ss'),
+      device: `${Constants.deviceName} - ${JSON.stringify(Constants.platform)}`,
+    };
     if (Platform.OS === 'android' && !Constants.isDevice) {
       console.info(
         'Oops, this will not work on Sketch in an Android emulator. Try it on your device!'
       );
-      // this.setState({
-      //   errorMessage:
-      //     'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-      // });
+      this.setState(...state);
     } else {
-      this._getLocationAsync();
+      this._getLocationAsync(state);
     }
   };
 
-  _getLocationAsync = async () => {
+  _getLocationAsync = async state => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
       console.info('Permission to access location was denied');
-      // this.setState({
-      //   errorMessage: 'Permission to access location was denied',
-      // });
     }
-
     let location = await Location.getCurrentPositionAsync({});
-    console.info('Your location : ', location);
-    // this.setState({ location });
+    if (Object.keys(location).length > 0) {
+      let completeLoc = await Location.reverseGeocodeAsync(location.coords);
+      this.setState({
+        ...state,
+        location: `${completeLoc[0].city}, ${completeLoc[0].region} / ${completeLoc[0].country}`,
+      });
+    } else {
+      this.setState(...state);
+    }
   };
 
   handleChangeField = (val, name) => {
@@ -109,6 +116,24 @@ class LoginView extends Component {
     }
   };
 
+  saveUserLog = uid => {
+    const { location, device, time } = this.state;
+    db.collection('log_user')
+      .add({
+        id_user: uid,
+        terakhir_login: time,
+        lokasi: location,
+        perangkat: device,
+      })
+      .then(docRef => {
+        console.log('Successfully save user logs with id ', docRef.id);
+        this.handleRouteChange(urls.home);
+      })
+      .catch(error => {
+        console.error('Error saving user logs \n', error);
+      });
+  };
+
   login = (e, p) => {
     authenticate
       .signInWithEmailAndPassword(e, p)
@@ -137,7 +162,7 @@ class LoginView extends Component {
                       isPasswordValid: true,
                     },
                     () => {
-                      this.handleRouteChange(urls.home);
+                      this.saveUserLog(user.uid);
                     }
                   );
                 } else {
