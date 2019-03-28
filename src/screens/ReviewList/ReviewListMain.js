@@ -66,7 +66,7 @@ class ReviewListScreen extends Component {
   render() {
     return (
       <Container>
-        <Header {...this.props} title="Review List" />
+        <Header {...this.props} title="Riwayat Review" />
         <Content style={{ padding: 10 }}>
           {!this.state.isDataFetched ? (
             <Loading />

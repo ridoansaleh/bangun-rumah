@@ -14,6 +14,8 @@ const urls = {
   home: 'Home',
   review_list: 'ReviewList',
   discussion_list: 'DiscussionList',
+  terms_and_condition: 'TermsAndCondition',
+  faq: 'Faq',
   login: 'Login',
   logout: 'Logout',
   register: 'Register',
@@ -51,18 +53,20 @@ const nonAuthenticatedUrls = [
   urls.product_form,
   urls.review,
   urls.discussion,
+  urls.terms_and_condition,
+  urls.faq,
 ];
 
 let loginMenus = [
   {
     name: 'Riwayat Pemesanan',
-    route: 'OrderHistory',
+    route: urls.order_history,
     icon: 'paper',
     bg: '#C5F442',
   },
   {
     name: 'Pesan',
-    route: 'PersonalMessage',
+    route: urls.messages,
     icon: 'mail',
     bg: '#477EEA',
   },
@@ -80,19 +84,19 @@ let loginMenus = [
   },
   {
     name: 'Syarat dan Ketentuan',
-    route: 'Terms',
+    route: urls.terms_and_condition,
     icon: 'book',
     bg: '#477EEA',
   },
   {
     name: 'FAQ',
-    route: 'Faq',
+    route: urls.faq,
     icon: 'help-circle-outline',
     bg: '#DA4437',
   },
   {
     name: 'Keluar',
-    route: 'Logout',
+    route: urls.logout,
     icon: 'log-out',
     bg: '#C5F442',
   },
@@ -101,25 +105,25 @@ let loginMenus = [
 let nonLoginMenus = [
   {
     name: 'Syarat dan Ketentuan',
-    route: 'Terms',
+    route: urls.terms_and_condition,
     icon: 'book',
     bg: '#477EEA',
   },
   {
     name: 'FAQ',
-    route: 'Faq',
+    route: urls.faq,
     icon: 'help-circle-outline',
     bg: '#DA4437',
   },
   {
     name: 'Daftar',
-    route: 'Register',
+    route: urls.register,
     icon: 'person-add',
     bg: '#DA4437',
   },
   {
     name: 'Login',
-    route: 'Login',
+    route: urls.login,
     icon: 'log-in',
     bg: '#DA4437',
   },

@@ -54,7 +54,7 @@ class SideBar extends Component {
         })
         .catch(error => console.error('Error while perform logout \n', error));
     } else {
-      if (route === 'PersonalMessage') {
+      if (route === urls.messages) {
         this.props.nav.navigation.navigate(urls.messages, {
           shopId: null,
           shop: null,
