@@ -39,6 +39,7 @@ const urls = {
   order: 'Order',
   review: 'Review',
   discussion: 'Discussion',
+  notification: 'Notification',
 };
 
 const nonAuthenticatedUrls = [
