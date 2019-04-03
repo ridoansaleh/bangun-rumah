@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
   },
   listChild: {
     marginLeft: 15,
+    marginBottom: 8,
   },
   listChildText: {
     marginLeft: 5,
