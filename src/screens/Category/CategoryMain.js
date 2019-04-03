@@ -24,7 +24,7 @@ class CategoryScreen extends Component {
           openDrawer={() => this.props.nav.navigation.openDrawer()}
           title
           titleText="Kategori Produk"
-          search={false}
+          displaySearchIcon={false}
         />
         <Content>
           {categories.map((data, i) => {
