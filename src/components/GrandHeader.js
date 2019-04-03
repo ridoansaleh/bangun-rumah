@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions } from 'react-native';
 import { Header, Button, Body, Title, Icon, Left, Right, Input, Item, Text } from 'native-base';
-import { Grid, Row, Col } from 'react-native-easy-grid';
 import { urls } from '../constant';
 
 const { width } = Dimensions.get('window');
@@ -15,7 +14,7 @@ class GrandHeader extends Component {
     titleText: PropTypes.string,
     displaySearchIcon: PropTypes.bool,
     isSearching: PropTypes.bool,
-    setSearchingValue: PropTypes.func,
+    setSearchValue: PropTypes.func,
   };
 
   state = {
@@ -35,32 +34,25 @@ class GrandHeader extends Component {
     if (this.props.isSearching) {
       return (
         <Header noShadow style={styles.header}>
-          <Body>
-            <Grid>
-              <Row>
-                <Col style={{ width: 0.7 * width }}>
-                  <Item regular>
-                    <Input
-                      placeholder="Tulis Produk"
-                      value={this.state.searchText}
-                      onChangeText={val => {
-                        this.setState({
-                          searchText: val,
-                        });
-                      }}
-                    />
-                  </Item>
-                </Col>
-                <Col>
-                  <Button transparent onPress={() => this.findProduct()}>
-                    <Text>Cari</Text>
-                  </Button>
-                </Col>
-              </Row>
-            </Grid>
+          <Body style={{ marginRight: 5 }}>
+            <Item regular style={{ width: 0.67 * width }}>
+              <Input
+                placeholder="Tulis Produk"
+                value={this.state.searchText}
+                style={{ backgroundColor: 'white', height: '100%' }}
+                onChangeText={val => {
+                  this.setState({
+                    searchText: val,
+                  });
+                }}
+              />
+            </Item>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.props.setSearchingValue(false)}>
+            <Button transparent onPress={() => this.findProduct()}>
+              <Text>Cari</Text>
+            </Button>
+            <Button transparent onPress={() => this.props.setSearchValue(false)}>
               <Icon name="close-circle-outline" />
             </Button>
           </Right>
@@ -81,7 +73,7 @@ class GrandHeader extends Component {
         )}
         <Right>
           {this.props.displaySearchIcon && (
-            <Button transparent onPress={() => this.props.setSearchingValue(true)}>
+            <Button transparent onPress={() => this.props.setSearchValue(true)}>
               <Icon name="search" />
             </Button>
           )}

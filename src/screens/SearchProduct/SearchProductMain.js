@@ -31,7 +31,7 @@ class SearchProductScreen extends Component {
   };
 
   state = {
-    category: this.props.nav.navigation.getParam('cat', 'Kategori Produk'),
+    category: this.props.nav.navigation.getParam('cat', null),
     productName: this.props.nav.navigation.getParam('productName', null),
     isDataFetched: false,
     dataProducts: [],
@@ -74,11 +74,11 @@ class SearchProductScreen extends Component {
           products.push(doc.data());
         });
         let result = [];
-        let extractName = name.split('');
-        result = products.map(d => {
+        let extractName = name.split(' ');
+        result = products.filter(d => {
           for (let i = 0; i < extractName.length; i++) {
             let meet = false;
-            if (d.nama.split('').indexOf(extractName[i]) > -1) {
+            if (d.nama.split(' ').indexOf(extractName[i]) > -1) {
               meet = true;
               return d;
             }
@@ -154,7 +154,10 @@ class SearchProductScreen extends Component {
     let { isDataFetched, dataProducts, category, productName } = this.state;
     return (
       <Container>
-        <Header {...this.props} title={this.state.category} />
+        <Header
+          {...this.props}
+          title={this.state.category === 'all' ? 'Cari Produk' : this.state.category}
+        />
         <Content>
           <Grid>
             <Row style={{ height: height * 0.8 }}>
@@ -170,7 +173,7 @@ class SearchProductScreen extends Component {
                         <StarRating
                           disabled
                           maxStars={5}
-                          rating={parseInt(item.bintang)}
+                          rating={parseInt(item.bintang, 10)}
                           starSize={20}
                           fullStarColor={'gold'}
                         />
@@ -185,7 +188,7 @@ class SearchProductScreen extends Component {
                   <View style={styles.emptyContainer}>
                     <Image source={emptyResult} style={styles.emptyLogo} />
                     <Text style={styles.emptyText}>Tidak ditemukan produk dengan</Text>
-                    {this.state.category !== null ? (
+                    {this.state.category !== 'all' ? (
                       <Text style={styles.emptyText}>kategori {category}</Text>
                     ) : (
                       <Text style={styles.emptyText}>nama {productName}</Text>
