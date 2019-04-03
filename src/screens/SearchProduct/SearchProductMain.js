@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Image, FlatList, Dimensions, ScrollView, Alert } from 'react-native';
 import { Container, Content, Text, Button, ActionSheet } from 'native-base';
-import { Grid, Row, Col } from 'react-native-easy-grid';
+import { Grid, Row } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
@@ -31,13 +31,22 @@ class SearchProductScreen extends Component {
   };
 
   state = {
-    category: this.props.nav.navigation.getParam('cat', 'Kategori Produk'),
+    category: this.props.nav.navigation.getParam('cat', null),
+    productName: this.props.nav.navigation.getParam('productName', null),
     isDataFetched: false,
     dataProducts: [],
     clicked: 0,
   };
 
   componentDidMount() {
+    if (this.state.category === 'all') {
+      this.searchProductByName(this.state.productName);
+    } else {
+      this.getProductByCategory();
+    }
+  }
+
+  getProductByCategory = () => {
     let products = [];
     db.collection('produk')
       .where('kategori', '==', this.state.category)
@@ -54,7 +63,39 @@ class SearchProductScreen extends Component {
       .catch(error => {
         console.log(`Error getting products with category ${this.state.category} \n`, error);
       });
-  }
+  };
+
+  searchProductByName = name => {
+    let products = [];
+    db.collection('produk')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(function(doc) {
+          products.push(doc.data());
+        });
+        let result = [];
+        let extractName = name.split(' ');
+        result = products.filter(d => {
+          for (let i = 0; i < extractName.length; i++) {
+            let meet = false;
+            if (d.nama.split(' ').indexOf(extractName[i]) > -1) {
+              meet = true;
+              return d;
+            }
+            if (meet) {
+              break;
+            }
+          }
+        });
+        this.setState({
+          isDataFetched: true,
+          dataProducts: result,
+        });
+      })
+      .catch(error => {
+        console.log(`Error getting products with name ${name} \n`, error);
+      });
+  };
 
   orderProducts = (field, status) => {
     let products = [];
@@ -110,10 +151,13 @@ class SearchProductScreen extends Component {
   };
 
   render() {
-    let { isDataFetched, dataProducts, category } = this.state;
+    let { isDataFetched, dataProducts, category, productName } = this.state;
     return (
       <Container>
-        <Header {...this.props} title={this.state.category} />
+        <Header
+          {...this.props}
+          title={this.state.category === 'all' ? 'Cari Produk' : this.state.category}
+        />
         <Content>
           <Grid>
             <Row style={{ height: height * 0.8 }}>
@@ -129,11 +173,11 @@ class SearchProductScreen extends Component {
                         <StarRating
                           disabled
                           maxStars={5}
-                          rating={parseInt(item.bintang)}
+                          rating={parseInt(item.bintang, 10)}
                           starSize={20}
                           fullStarColor={'gold'}
                         />
-                        <Text>Rp {convertToCurrency(parseInt(item.harga))}</Text>
+                        <Text>Rp {convertToCurrency(parseInt(item.harga, 10))}</Text>
                       </View>
                     )}
                     keyExtractor={item => item.id}
@@ -144,7 +188,11 @@ class SearchProductScreen extends Component {
                   <View style={styles.emptyContainer}>
                     <Image source={emptyResult} style={styles.emptyLogo} />
                     <Text style={styles.emptyText}>Tidak ditemukan produk dengan</Text>
-                    <Text style={styles.emptyText}>kategori {category}</Text>
+                    {this.state.category !== 'all' ? (
+                      <Text style={styles.emptyText}>kategori {category}</Text>
+                    ) : (
+                      <Text style={styles.emptyText}>nama {productName}</Text>
+                    )}
                   </View>
                 )}
               </ScrollView>

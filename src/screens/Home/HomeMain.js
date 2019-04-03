@@ -21,8 +21,15 @@ class HomeScreen extends Component {
 
     this.state = {
       isLogin: Object.keys(props.user).length > 0,
+      isSearchingProduct: false,
     };
   }
+
+  setSearchValue = val => {
+    this.setState({
+      isSearchingProduct: val,
+    });
+  };
 
   render() {
     return (
@@ -30,7 +37,10 @@ class HomeScreen extends Component {
         <Header
           openDrawer={() => this.props.nav.navigation.openDrawer()}
           isLogin={this.state.isLogin}
-          search
+          displaySearchIcon
+          isSearching={this.state.isSearchingProduct}
+          setSearchValue={this.setSearchValue}
+          {...this.props}
         />
         <Content>
           <Grid>

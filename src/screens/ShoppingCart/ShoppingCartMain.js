@@ -226,7 +226,7 @@ class ShoppingCartScreen extends Component {
           openDrawer={() => this.props.nav.navigation.openDrawer()}
           title
           titleText="Keranjang"
-          search={false}
+          displaySearchIcon={false}
         />
         <Content>
           {!isDataFetched && <Loading />}
