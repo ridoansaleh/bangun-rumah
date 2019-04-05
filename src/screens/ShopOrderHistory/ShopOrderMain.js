@@ -56,17 +56,17 @@ class ShopOrderScreen extends Component {
     });
   };
 
-  acceptOrder = (id, index) => {
+  acceptOrder = (data, index) => {
     Alert.alert(
       'Peringatan',
       'Aksi ini tidak bisa dibatalkan. Ingin menerima pesanan ?',
-      [{ text: 'OK', onPress: () => this.acceptOrderExecute(id, index) }],
+      [{ text: 'OK', onPress: () => this.acceptOrderExecute(data, index) }],
       { cancelable: true }
     );
   };
 
-  acceptOrderExecute = (id, index) => {
-    let docRef = db.collection('pemesanan').doc(id);
+  acceptOrderExecute = (data, index) => {
+    let docRef = db.collection('pemesanan').doc(data.id_pemesanan);
     this.setState({ ['isAcceptedLoading' + index]: true });
     docRef
       .get()
@@ -79,12 +79,31 @@ class ShopOrderScreen extends Component {
           this.setState({ ['isAcceptedLoading' + index]: false });
           this.getOrderHistoryData();
           this.setProductsSellStats(data);
+          this.sendNotification(data, 'menerima');
         } else {
           console.log('No such document!');
         }
       })
       .catch(function(error) {
-        console.log(`Error searching pemesanan with id ${id} \n`, error);
+        console.log(`Error searching pemesanan with id ${data.id_pemesanan} \n`, error);
+      });
+  };
+
+  sendNotification = (data, word) => {
+    db.collection('notifikasi')
+      .add({
+        penerima: data.id_user,
+        id_produk: data.produk[0].id_produk,
+        jenis: 'Pesanan',
+        status: 'Belum dibaca',
+        teks: `${this.props.user.nama} telah ${word} pesanan Anda`,
+        waktu: new Date(),
+      })
+      .then(docRef => {
+        console.log('Successfully send a notification');
+      })
+      .catch(error => {
+        console.error('Error send a notification \n', error);
       });
   };
 
@@ -110,17 +129,17 @@ class ShopOrderScreen extends Component {
     }
   };
 
-  rejectOrder = (id, index) => {
+  rejectOrder = (data, index) => {
     Alert.alert(
       'Peringatan',
       'Aksi ini tidak bisa dibatalkan. Ingin menolak pesanan ?',
-      [{ text: 'OK', onPress: () => this.rejectOrderExecute(id, index) }],
+      [{ text: 'OK', onPress: () => this.rejectOrderExecute(data, index) }],
       { cancelable: true }
     );
   };
 
-  rejectOrderExecute = (id, index) => {
-    let docRef = db.collection('pemesanan').doc(id);
+  rejectOrderExecute = (data, index) => {
+    let docRef = db.collection('pemesanan').doc(data.id_pemesanan);
     this.setState({ ['isRejectedLoading' + index]: true });
     docRef
       .get()
@@ -131,12 +150,13 @@ class ShopOrderScreen extends Component {
           });
           this.setState({ ['isRejectedLoading' + index]: false });
           this.getOrderHistoryData();
+          this.sendNotification(data, 'menolak');
         } else {
           console.log('No such document!');
         }
       })
       .catch(function(error) {
-        console.log(`Error searching pemesanan with id ${id} \n`, error);
+        console.log(`Error searching pemesanan with id ${data.id_pemesanan} \n`, error);
       });
   };
 
@@ -210,7 +230,7 @@ class ShopOrderScreen extends Component {
                           small
                           success
                           style={{ width: 0.5 * width - 30, justifyContent: 'center' }}
-                          onPress={() => this.acceptOrder(data.id_pemesanan)}>
+                          onPress={() => this.acceptOrder(data, i)}>
                           {this.state['isAcceptedLoading' + i] ? (
                             <Spinner color="green" />
                           ) : (
@@ -223,7 +243,7 @@ class ShopOrderScreen extends Component {
                           small
                           danger
                           style={{ width: 0.5 * width - 30, justifyContent: 'center' }}
-                          onPress={() => this.rejectOrder(data.id_pemesanan)}>
+                          onPress={() => this.rejectOrder(data, i)}>
                           {this.state['isRejectedLoading' + i] ? (
                             <Spinner color="green" />
                           ) : (

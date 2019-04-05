@@ -46,6 +46,7 @@ class OrderMainScreen extends Component {
     isOrderSucceed: false,
     address: this.props.user.alamat,
     isAddressWidgetShown: false,
+    receiverId: '',
   };
 
   componentDidMount() {
@@ -77,6 +78,7 @@ class OrderMainScreen extends Component {
                 this.setState({
                   isDataFetched: true,
                 });
+                this.getReceiverUserId();
               }
             }
           );
@@ -204,9 +206,50 @@ class OrderMainScreen extends Component {
         for (let i = 0; i < carts.length; i++) {
           this.deleteProductFromCart(carts[i]);
         }
+        this.sendNotification();
       })
       .catch(error => {
         console.error('Error making an order \n', error);
+      });
+  };
+
+  sendNotification = () => {
+    db.collection('notifikasi')
+      .add({
+        penerima: this.state.receiverId,
+        id_produk: this.state.data[0].id_produk,
+        jenis: 'Pemesanan',
+        status: 'Belum dibaca',
+        teks: `${this.props.user.nama} memesan ${this.state.data[0].nama} ${this.state.data.length >
+          0 && 'dan lain-lain'}`,
+        waktu: new Date(),
+      })
+      .then(docRef => {
+        console.log('Successfully send a notification');
+      })
+      .catch(error => {
+        console.error('Error send a notification \n', error);
+      });
+  };
+
+  getReceiverUserId = () => {
+    const { data } = this.state;
+    let docRef = db.collection('toko').doc(data[0].id_toko);
+    docRef
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          console.log('shop : ', doc.data()); // need to remove
+          let data = doc.data();
+          this.setState({
+            receiverId: data.id_user,
+          });
+        } else {
+          console.log('The shop is not found');
+        }
+      })
+      .catch(error => {
+        console.error(`Error searching shop with id ${data[0].id_toko} \n`, error);
       });
   };
 

@@ -6,8 +6,10 @@ import { Grid, Row } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
 import Header from '../../components/PlainHeader';
 import Loading from '../../components/Loading';
-import EmptyNotification from '../../../assets/sad_face.png';
+import EmptyNotification from '../../../assets/no_message.png';
 import { db } from '../../../firebase.config';
+import { urls } from '../../constant';
+import { convertToDate } from '../../utils';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,6 +32,7 @@ class NotificationScreen extends Component {
     let data = [];
     db.collection('notifikasi')
       .where('penerima', '==', id)
+      .where('status', '==', 'Belum dibaca')
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
@@ -48,6 +51,79 @@ class NotificationScreen extends Component {
       });
   };
 
+  notificationClick = data => {
+    let docRef = db.collection('notifikasi').doc(data.id_notifikasi);
+    docRef
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          docRef.update({
+            status: 'Telah dibaca',
+          });
+          console.log('Notification successfully read!');
+          this.checkUserHaveShop(data);
+        } else {
+          console.log('No such document!');
+        }
+      })
+      .catch(error => {
+        console.error(`Error searching notification with product_id ${data.id_produk} \n`, error);
+      });
+  };
+
+  checkUserHaveShop = param => {
+    let data = [];
+    db.collection('toko')
+      .where('id_user', '==', this.props.user.id)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          data.push({
+            id_toko: doc.id,
+            ...doc.data(),
+          });
+        });
+        if (data.length === 1) {
+          this.checkIsProductYours(data[0].id_toko, param.id_produk);
+        } else {
+          this.props.nav.navigation.navigate(urls.product, {
+            product_id: param.id_produk,
+          });
+        }
+      })
+      .catch(error => {
+        console.error("Error getting shop's data \n", error);
+      });
+  };
+
+  checkIsProductYours = (shopId, productId) => {
+    const { navigation } = this.props.nav;
+    let docRef = db.collection('produk').doc(productId);
+    docRef
+      .get()
+      .then(doc => {
+        if (doc.exists) {
+          let data = doc.data();
+          if (data.id_produk === productId) {
+            navigation.navigate(urls.shop_order, {
+              id: shopId,
+            });
+          } else {
+            navigation.navigate(urls.product, {
+              product_id: productId,
+            });
+          }
+        } else {
+          navigation.navigate(urls.product, {
+            product_id: productId,
+          });
+        }
+      })
+      .catch(error => {
+        console.error(`Error searching product in a Shop with id ${productId} \n`, error);
+      });
+  };
+
   render() {
     return (
       <Container>
@@ -59,7 +135,7 @@ class NotificationScreen extends Component {
             <FlatList
               data={this.state.dataNotification}
               renderItem={({ item }) => (
-                <TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => this.notificationClick(item)}>
                   <Grid
                     style={{ width: width - 20, borderBottomColor: 'black', borderBottomWidth: 1 }}>
                     <Row>
@@ -68,11 +144,11 @@ class NotificationScreen extends Component {
                     <Row>
                       <Text>{item.teks}</Text>
                     </Row>
-                    <Text style={{ textAlign: 'right' }}>{item.waktu}</Text>
+                    <Text style={{ textAlign: 'right' }}>{convertToDate(item.waktu)}</Text>
                   </Grid>
                 </TouchableWithoutFeedback>
               )}
-              keyExtractor={item => item.id_diskusi}
+              keyExtractor={item => item.id_notifikasi}
               numColumns={1}
             />
           ) : (

@@ -44,6 +44,7 @@ class GrandHeader extends Component {
     let data = [];
     db.collection('notifikasi')
       .where('penerima', '==', id)
+      .where('status', '==', 'Belum dibaca')
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
@@ -118,13 +119,12 @@ class GrandHeader extends Component {
             </Button>
           )}
           <Button transparent onPress={() => this.props.nav.navigation.navigate(urls.notification)}>
-            <Icon name="notifications-outline">
-              {this.state.totalNotification > 0 && (
-                <Badge>
-                  <Text>{this.state.totalNotification}</Text>
-                </Badge>
-              )}
-            </Icon>
+            <Icon name="notifications-outline" />
+            {this.state.totalNotification > 0 && (
+              <Badge style={{ width: 20, height: 20 }}>
+                <Text style={{ fontSize: 8 }}>{this.state.totalNotification}</Text>
+              </Badge>
+            )}
           </Button>
         </Right>
       </Header>
