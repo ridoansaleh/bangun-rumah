@@ -1,8 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions } from 'react-native';
-import { Header, Button, Body, Title, Icon, Left, Right, Input, Item, Text } from 'native-base';
+import {
+  Header,
+  Button,
+  Body,
+  Title,
+  Icon,
+  Left,
+  Right,
+  Input,
+  Item,
+  Text,
+  Badge,
+} from 'native-base';
 import { urls } from '../constant';
+import { db } from '../../firebase.config';
 
 const { width } = Dimensions.get('window');
 
@@ -10,6 +23,7 @@ class GrandHeader extends Component {
   static propTypes = {
     openDrawer: PropTypes.func,
     nav: PropTypes.object,
+    user: PropTypes.object,
     title: PropTypes.bool,
     titleText: PropTypes.string,
     displaySearchIcon: PropTypes.bool,
@@ -19,6 +33,33 @@ class GrandHeader extends Component {
 
   state = {
     searchText: '',
+    totalNotification: 0,
+  };
+
+  componentDidMount() {
+    this.countTotalNotification(this.props.user.id);
+  }
+
+  countTotalNotification = id => {
+    let data = [];
+    db.collection('notifikasi')
+      .where('penerima', '==', id)
+      .where('status', '==', 'Belum dibaca')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          data.push({
+            id_notifikasi: doc.id,
+            ...doc.data(),
+          });
+        });
+        this.setState({
+          totalNotification: data.length,
+        });
+      })
+      .catch(error => {
+        console.error("Error searching notification's data \n", error);
+      });
   };
 
   findProduct = () => {
@@ -77,8 +118,13 @@ class GrandHeader extends Component {
               <Icon name="search" />
             </Button>
           )}
-          <Button transparent>
+          <Button transparent onPress={() => this.props.nav.navigation.navigate(urls.notification)}>
             <Icon name="notifications-outline" />
+            {this.state.totalNotification > 0 && (
+              <Badge style={{ width: 20, height: 20 }}>
+                <Text style={{ fontSize: 8 }}>{this.state.totalNotification}</Text>
+              </Badge>
+            )}
           </Button>
         </Right>
       </Header>

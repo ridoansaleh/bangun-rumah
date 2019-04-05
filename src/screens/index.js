@@ -30,6 +30,7 @@ import ProductScreen from './Product/ProductMain';
 import OrderScreen from './Order/OrderMain';
 import ReviewScreen from './Review/ReviewMain';
 import DiscussionScreen from './Discussion/DiscussionMain';
+import NotificationScreen from './Notifications/NotificationsMain';
 
 dayjs.locale('id');
 
@@ -72,6 +73,7 @@ const AppNavigator = createStackNavigator(
     ProductForm: ProductFormScreen,
     ChangePassword: ChangePasswordScreen,
     Logs: LogScreen,
+    Notification: NotificationScreen,
   },
   {
     initialRouteName: 'Drawer',
