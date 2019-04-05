@@ -239,7 +239,6 @@ class OrderMainScreen extends Component {
       .get()
       .then(doc => {
         if (doc.exists) {
-          console.log('shop : ', doc.data()); // need to remove
           let data = doc.data();
           this.setState({
             receiverId: data.id_user,
