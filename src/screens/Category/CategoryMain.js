@@ -25,6 +25,7 @@ class CategoryScreen extends Component {
           title
           titleText="Kategori Produk"
           displaySearchIcon={false}
+          {...this.props}
         />
         <Content>
           {categories.map((data, i) => {

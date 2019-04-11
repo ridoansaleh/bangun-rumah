@@ -25,7 +25,9 @@ class NotificationScreen extends Component {
   };
 
   componentDidMount() {
-    this.getNotifications(this.props.user.id);
+    if (this.props.isLogin) {
+      this.getNotifications(this.props.user.id);
+    }
   }
 
   getNotifications = id => {

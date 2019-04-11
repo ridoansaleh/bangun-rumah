@@ -227,6 +227,7 @@ class ShoppingCartScreen extends Component {
           title
           titleText="Keranjang"
           displaySearchIcon={false}
+          {...this.props}
         />
         <Content>
           {!isDataFetched && <Loading />}

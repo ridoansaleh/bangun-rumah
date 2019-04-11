@@ -49,7 +49,7 @@ class LoginView extends Component {
       console.info(
         'Oops, this will not work on Sketch in an Android emulator. Try it on your device!'
       );
-      this.setState(...state);
+      this.setState({ ...state });
     } else {
       this._getLocationAsync(state);
     }
@@ -64,11 +64,14 @@ class LoginView extends Component {
     if (Object.keys(location).length > 0) {
       let completeLoc = await Location.reverseGeocodeAsync(location.coords);
       this.setState({
-        ...state,
+        time: state.time,
+        device: state.device,
         location: `${completeLoc[0].city}, ${completeLoc[0].region} / ${completeLoc[0].country}`,
       });
     } else {
-      this.setState(...state);
+      this.setState({
+        ...state,
+      });
     }
   };
 
