@@ -37,7 +37,9 @@ class GrandHeader extends Component {
   };
 
   componentDidMount() {
-    this.countTotalNotification(this.props.user.id);
+    if (this.props.isLogin) {
+      this.countTotalNotification(this.props.user.id);
+    }
   }
 
   countTotalNotification = id => {
