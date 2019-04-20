@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Text, View, Spinner } from 'native-base';
 import { Table, Row } from 'react-native-table-component';
-import dayjs from 'dayjs';
+import { convertToDate } from '../../utils';
 import { db } from '../../../firebase.config';
 
 const { width, height } = Dimensions.get('window');
@@ -51,7 +51,7 @@ class ProductsReport extends Component {
               };
             } else if (d === 'tanggal_posting') {
               return {
-                tanggal: dayjs(data[i]['tanggal_posting']).format('DD-MM-YYYY'),
+                tanggal: convertToDate(data[i]['tanggal_posting']),
               };
             } else if (d === 'stok') {
               return {
