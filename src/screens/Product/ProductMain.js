@@ -27,6 +27,8 @@ class ProductMainScreen extends Component {
     idProduct: this.props.nav.navigation.getParam('product_id', 0),
     isDataFetched: false,
     dataProduct: {},
+    shopId: '',
+    shopName: '',
     shopOwnership: false,
     isModalVisible: false,
   };
@@ -84,11 +86,14 @@ class ProductMainScreen extends Component {
       .get()
       .then(doc => {
         if (doc.exists) {
+          const res = doc.data();
           this.setState(
             {
               dataProduct: {
                 id_produk: doc.id,
-                ...doc.data(),
+                shopId: res.id_toko,
+                shopName: res.nama_toko,
+                ...res,
               },
             },
             () => {
@@ -166,6 +171,16 @@ class ProductMainScreen extends Component {
     });
   };
 
+  openShopChatting = () => {
+    this.props.nav.navigation.navigate(urls.message_detail, {
+      shopId: this.state.shopId,
+      shop: this.state.shopName,
+      userId: this.props.user.id,
+      chatType: 'userChatting',
+      replyId: this.state.shopId,
+    });
+  };
+
   render() {
     let { isDataFetched, dataProduct, shopOwnership, isModalVisible } = this.state;
     return (
@@ -199,7 +214,11 @@ class ProductMainScreen extends Component {
               ) : (
                 <Row size={7} style={{ borderTopColor: 'black', borderTopWidth: 1 }}>
                   <Col size={0.5} style={{ marginTop: 8 }}>
-                    <Icon name="chatboxes" style={{ paddingLeft: width * 0.05 }} />
+                    <Icon
+                      name="chatboxes"
+                      style={{ paddingLeft: width * 0.05 }}
+                      onPress={() => this.openShopChatting()}
+                    />
                   </Col>
                   <Col size={2.5} style={{ marginTop: 8 }}>
                     <Icon

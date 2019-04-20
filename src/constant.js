@@ -52,6 +52,7 @@ const nonAuthenticatedUrls = [
   urls.product,
   urls.shop,
   urls.product_form,
+  urls.change_password,
   urls.review,
   urls.discussion,
   urls.terms_and_condition,

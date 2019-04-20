@@ -10,7 +10,18 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-import { Button, Container, Content, Form, Item, Input, Text, Label, View } from 'native-base';
+import {
+  Button,
+  Container,
+  Content,
+  Form,
+  Item,
+  Input,
+  Text,
+  Label,
+  View,
+  Spinner,
+} from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
 import dayjs from 'dayjs';
 import Header from '../../components/PlainHeader';
@@ -19,7 +30,6 @@ import { auth as authenticate, db } from '../../../firebase.config';
 import { urls } from '../../constant';
 
 const { width, height } = Dimensions.get('window');
-// Forgot password link is not ready yet
 
 class LoginView extends Component {
   static propTypes = {
@@ -34,6 +44,7 @@ class LoginView extends Component {
     location: '-',
     device: '-',
     time: '-',
+    isFormSubmitting: false,
   };
 
   componentDidMount() {
@@ -91,8 +102,8 @@ class LoginView extends Component {
     }
   };
 
-  handleRouteChange = url => {
-    this.props.navigation.navigate(url);
+  handleRouteChange = (url, param) => {
+    this.props.navigation.navigate(url, { origin: param });
   };
 
   handleSubmit = () => {
@@ -115,6 +126,9 @@ class LoginView extends Component {
         });
       }
     } else {
+      this.setState({
+        isFormSubmitting: true,
+      });
       this.login(email, password);
     }
   };
@@ -163,6 +177,7 @@ class LoginView extends Component {
                       password: '',
                       isEmailValid: true,
                       isPasswordValid: true,
+                      isFormSubmitting: false,
                     },
                     () => {
                       this.saveUserLog(user.uid);
@@ -185,6 +200,7 @@ class LoginView extends Component {
             password: '',
             isEmailValid: true,
             isPasswordValid: true,
+            isFormSubmitting: false,
           },
           () => {
             if (error.code === 'auth/wrong-password') {
@@ -230,7 +246,7 @@ class LoginView extends Component {
   };
 
   render() {
-    const { email, password, isEmailValid, isPasswordValid } = this.state;
+    const { email, password, isEmailValid, isPasswordValid, isFormSubmitting } = this.state;
     return (
       <Container>
         <Header nav={this.props} title="Login" />
@@ -264,20 +280,20 @@ class LoginView extends Component {
                 <Button
                   danger
                   style={styles.btn}
-                  onPress={() => this.handleRouteChange('Register')}>
+                  onPress={() => this.handleRouteChange(urls.register)}>
                   <Text>Daftar</Text>
                 </Button>
               </Col>
               <Col style={styles.block}>
                 <Button success style={styles.btn} onPress={this.handleSubmit}>
-                  <Text>Login</Text>
+                  {isFormSubmitting ? <Spinner color="white" /> : <Text>Login</Text>}
                 </Button>
               </Col>
             </Grid>
           </Form>
           <View style={styles.forgotPassword}>
             <Text>Anda lupa password? Klik di </Text>
-            <TouchableOpacity onPress={() => this.handleRouteChange(urls.change_password)}>
+            <TouchableOpacity onPress={() => this.handleRouteChange(urls.change_password, 'login')}>
               <Text>sini</Text>
             </TouchableOpacity>
           </View>
