@@ -5,7 +5,6 @@ import { Container, Content, Text, Thumbnail, Icon } from 'native-base';
 import { Row, Grid, Col } from 'react-native-easy-grid';
 import Footer from '../../components/Footer';
 import Authentication from '../../components/Authentication';
-// import defaultPhoto from '../../../assets/default_profile.jpg';
 import { urls, user } from '../../constant';
 import { auth } from '../../../firebase.config';
 
