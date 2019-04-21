@@ -12,10 +12,10 @@ import {
 import { Icon, Text, View, Button } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
-import emptyResult from '../../../assets/empty_search_result.png';
-import { urls } from '../../constant';
-import { convertToCurrency } from '../../utils';
-import { db } from '../../../firebase.config';
+import emptyResult from '../../../../assets/empty_search_result.png';
+import { urls } from '../../../constant';
+import { convertToCurrency } from '../../../utils';
+import { db } from '../../../../firebase.config';
 
 const { width, height } = Dimensions.get('window');
 const numColumns = 2;

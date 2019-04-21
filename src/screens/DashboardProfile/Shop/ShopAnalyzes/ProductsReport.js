@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Text, View, Spinner } from 'native-base';
 import { Table, Row } from 'react-native-table-component';
-import { convertToDate } from '../../utils';
-import { db } from '../../../firebase.config';
+import { convertToDate } from '../../../../utils';
+import { db } from '../../../../../firebase.config';
 
 const { width, height } = Dimensions.get('window');
 

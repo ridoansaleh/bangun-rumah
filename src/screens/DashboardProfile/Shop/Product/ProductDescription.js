@@ -4,8 +4,9 @@ import { View, FlatList, TouchableOpacity } from 'react-native';
 import { Text } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
-import { convertToCurrency } from '../../utils';
-import { urls } from '../../constant';
+import { convertToCurrency } from '../../../../utils';
+import { urls } from '../../../../constant';
+
 class ProductDescription extends Component {
   static propTypes = {
     data: PropTypes.object,

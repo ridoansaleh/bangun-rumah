@@ -4,15 +4,15 @@ import { StyleSheet, View, Dimensions, ScrollView, Alert } from 'react-native';
 import { Content, Text, Button, Icon } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Authentication from '../../../components/Authentication';
-import Header from '../../../components/PlainHeader';
-import Loading from '../../../components/Loading';
+import Authentication from '../../../../components/Authentication';
+import Header from '../../../../components/PlainHeader';
+import Loading from '../../../../components/Loading';
 import ProductPhoto from './ProductPhoto';
 import ProductDescription from './ProductDescription';
 import Interactions from './Interactions';
 import CartModal from './CartModal';
-import { urls } from '../../../constant';
-import { db } from '../../../../firebase.config';
+import { urls } from '../../../../constant';
+import { db } from '../../../../../firebase.config';
 
 const { width, height } = Dimensions.get('window');
 

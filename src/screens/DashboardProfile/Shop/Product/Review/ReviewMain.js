@@ -4,10 +4,10 @@ import { StyleSheet, View, Dimensions, TextInput, TouchableHighlight } from 'rea
 import { Container, Button, Content, Text } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
-import Authentication from '../../../components/Authentication';
-import Header from '../../../components/PlainHeader';
-import Loading from '../../../components/Loading';
-import { db } from '../../../../firebase.config';
+import Authentication from '../../../../../components/Authentication';
+import Header from '../../../../../components/PlainHeader';
+import Loading from '../../../../../components/Loading';
+import { db } from '../../../../../../firebase.config';
 
 const { width } = Dimensions.get('window');
 

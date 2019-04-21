@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions, FlatList, TouchableWithoutFeedback, Image } from 'react-native';
 import { Container, Content, Text, View } from 'native-base';
 import { Grid, Row } from 'react-native-easy-grid';
-import Authentication from '../../components/Authentication';
+import Authentication from '../../../components/Authentication';
 import Header from '../../../components/PlainHeader';
 import Loading from '../../../components/Loading';
 import EmptyDiscussion from '../../../../assets/sad_face.png';

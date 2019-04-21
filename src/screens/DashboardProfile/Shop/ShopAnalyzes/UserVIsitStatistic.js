@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions } from 'react-native';
 import { Text, View, Spinner } from 'native-base';
-import { Grid, Col, Row } from 'react-native-easy-grid';
+import { Grid, Row } from 'react-native-easy-grid';
 import { LineChart } from 'react-native-chart-kit';
 import dayjs from 'dayjs';
-import { db } from '../../../firebase.config';
-import { getMonthName } from '../../utils';
+import { db } from '../../../../../firebase.config';
+import { getMonthName } from '../../../../utils';
 
 const { width, height } = Dimensions.get('window');
 

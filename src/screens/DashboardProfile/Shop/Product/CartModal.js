@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Alert, View, Dimensions, StyleSheet } from 'react-native';
 import { Button, Text, Spinner, Form, Item, Input, Label } from 'native-base';
 import Modal from 'react-native-modal';
-import { db } from '../../../firebase.config';
+import { db } from '../../../../../firebase.config';
 
 const { height } = Dimensions.get('window');
 

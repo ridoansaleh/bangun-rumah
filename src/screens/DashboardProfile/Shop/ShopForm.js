@@ -4,8 +4,8 @@ import { StyleSheet, Dimensions, Image, TextInput } from 'react-native';
 import { Button, Form, Item, Input, Text, Label, View, Toast } from 'native-base';
 import { ImagePicker } from 'expo';
 import uuid from 'uuid';
-import defaultImage from '../../../assets/default-product.jpg';
-import { st as storageRef, db } from '../../../firebase.config';
+import defaultImage from '../../../../assets/default-product.jpg';
+import { st as storageRef, db } from '../../../../firebase.config';
 
 const { width, height } = Dimensions.get('window');
 

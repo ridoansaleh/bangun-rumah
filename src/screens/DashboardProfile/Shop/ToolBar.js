@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Alert, TouchableHighlight } from 'react-native';
 import { View, List, ListItem, Text } from 'native-base';
-import { db } from '../../../firebase.config';
-import { urls } from '../../constant';
+import { db } from '../../../../firebase.config';
+import { urls } from '../../../constant';
 
 class ToolBar extends Component {
   static propTypes = {

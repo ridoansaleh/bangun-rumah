@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { View, Dimensions, TouchableHighlight } from 'react-native';
 import { Text, Icon } from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
-import { urls } from '../../constant';
+import { urls } from '../../../../constant';
 
 const { height } = Dimensions.get('window');
 

@@ -5,13 +5,13 @@ import { Button, Content, Form, Item, Input, Text, Label, View, Toast } from 'na
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { ImagePicker } from 'expo';
 import uuid from 'uuid';
-import Loading from '../../components/Loading';
+import Loading from '../../../../components/Loading';
 import styles from './Styles';
-import loginUser from '../../../assets/default_upload.png';
-import { st as storageRef, fbs, db } from '../../../firebase.config';
-import AllCategory from '../Category/Data';
+import loginUser from '../../../../../assets/default_upload.png';
+import { st as storageRef, fbs, db } from '../../../../../firebase.config';
+import AllCategory from '../../../Category/Data';
 import initialState from './State';
-import { urls } from '../../constant';
+import { urls } from '../../../../constant';
 
 const { width } = Dimensions.get('window');
 

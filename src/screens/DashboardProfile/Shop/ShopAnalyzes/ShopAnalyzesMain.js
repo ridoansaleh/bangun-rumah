@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Container, Content } from 'native-base';
-import Authentication from '../../components/Authentication';
-import Header from '../../components/PlainHeader';
+import Authentication from '../../../../components/Authentication';
+import Header from '../../../../components/PlainHeader';
 import UserVisit from './UserVIsitStatistic';
 import ProductsReport from './ProductsReport';
 import Selling from './SellingStatistic';
