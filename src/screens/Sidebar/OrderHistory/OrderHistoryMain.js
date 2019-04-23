@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Image, Dimensions } from 'react-native';
 import { Button, Container, Content, Text, View } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import dayjs from 'dayjs';
 import Authentication from '../../../components/Authentication';
 import Header from '../../../components/PlainHeader';
@@ -51,8 +52,113 @@ class OrderHistoryScreen extends Component {
       });
   };
 
-  printOrderNote = () => {
-    // print order note
+  printOrderNote = async () => {
+    let htmlTemplate = `
+    <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            .wrapper {
+              background-color: 'white';
+            }         
+            .top-title-left, .top-title-right {
+              display: inline-block;
+            }
+            table, th, td {
+              border: 1px solid black;
+              border-collapse: collapse;
+            }            
+            table {
+              margin-top: 20px;
+            }            
+            .table-1 td {
+              border: 0;
+            }            
+            th, td {
+              padding: 5px;
+              text-align: left;
+            }
+          </style>
+        </head>
+        <body>
+        <div class="wrapper">
+          <div class="top-title">
+            <div class="top-title-right">
+              <img id="my-icon" src="https://images.unsplash.com/photo-1448227922836-6d05b3f8b663?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" height="42" width="42" />
+            </div>
+            <div class="top-title-left">
+              <b>Bukti Pemesanan Barang - Toko Jaya Abadi</b>
+            </div>
+          </div>
+          <table class="table-1" style="width:100%">
+            <tr>
+              <th colspan="2">Data Pemesan</th>
+            </tr>
+            <tr>
+              <td width="150">Nama</td>
+              <td>:  Budiman</td>
+            </tr>
+            <tr>
+              <td>Alamat</td>
+              <td>:  Jalan Bantul No. 14</td>
+            </tr>
+            <tr>
+              <td>Kontak</td>
+              <td>:  087821670023</td>
+            </tr>
+            <tr>
+              <td>Tanggal Pemesanan</td>
+              <td>:  Senin, 18 Januari 2019</td>
+            </tr>
+          </table>
+          <table style="width:100%">
+            <tr>
+              <th colspan="5">Detil Barang</th>
+            </tr>
+            <tr>
+              <th>No</th>
+              <th>Nama</th>
+              <th>Jumlah</th>
+              <th>Harga</th>
+              <th>Total</th>
+            </tr>
+            <tr>
+              <td width="150">1</td>
+              <td>Pintu Besi</td>
+              <td>2 buah</td>
+              <td>Rp 120.000</td>
+              <td>Rp 240.000</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Meja Makan</td>
+              <td>1 buah</td>
+              <td>Rp 520.000</td>
+              <td>Rp 520.000</td>
+            </tr>
+            <tr>
+              <td colspan="5">Total harga pemesanan : Rp 760.000</td>
+            </tr>
+          </table>
+            <p>
+              <b>Perhatian</b>
+              <br />
+              Mohon segera kontak penjual untuk melakukan pembayaran pesanan Anda.
+            </p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    let options = {
+      html: htmlTemplate,
+      fileName: 'test',
+      directory: 'Documents',
+    };
+
+    let file = await RNHTMLtoPDF.convert(options);
+    // console.log(file.filePath);
+    alert(file.filePath);
   };
 
   showAllProducts = index => {
