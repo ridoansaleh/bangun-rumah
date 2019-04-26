@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Image, Dimensions } from 'react-native';
+import { Print, Constants } from 'expo';
 import { Button, Container, Content, Text, View } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
-import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import PDFReader from 'rn-pdf-reader-js';
 import dayjs from 'dayjs';
 import Authentication from '../../../components/Authentication';
 import Header from '../../../components/PlainHeader';
 import Loading from '../../../components/Loading';
 import sadImage from '../../../../assets/sad_face.png';
+// import golekLogo from '../../../../assets/golek_icon.png';
 import { db } from '../../../../firebase.config';
 import { urls } from '../../../constant';
-import { convertToCurrency } from '../../../utils';
+import { convertToCurrency, convertToDate } from '../../../utils';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,6 +26,8 @@ class OrderHistoryScreen extends Component {
   state = {
     isDataFetched: false,
     dataOrders: [],
+    isPdfExist: false,
+    pdfFile: '',
   };
 
   componentDidMount() {
@@ -52,7 +56,33 @@ class OrderHistoryScreen extends Component {
       });
   };
 
-  printOrderNote = async () => {
+  generateTableRow = (index, total, data) => {
+    let result = '';
+    for (let i = 0; i < total; i++) {
+      const row = `
+        <tr>
+          <td width="50">1</td>
+          <td>${data.produk[index].nama}</td>
+          <td>${data.produk[index].jumlah} ${data.produk[index].satuan}</td>
+          <td>Rp ${convertToCurrency(data.produk[index].harga / data.produk[index].jumlah)}</td>
+          <td>Rp ${convertToCurrency(data.produk[index].harga)}</td>
+        </tr>
+      `;
+      result = result.concat(row);
+    }
+    return result;
+  };
+
+  printOrderNote = async data => {
+    let tableContent = '';
+    if (data.produk.length === 1) {
+      tableContent = this.generateTableRow(0, 1, data);
+    } else if (data.produk.length === 2) {
+      tableContent = this.generateTableRow(1, 2, data);
+    } else if (data.produk.length === 3) {
+      tableContent = this.generateTableRow(2, 3, data);
+    }
+
     let htmlTemplate = `
     <!DOCTYPE html>
       <html>
@@ -87,7 +117,7 @@ class OrderHistoryScreen extends Component {
               <img id="my-icon" src="https://images.unsplash.com/photo-1448227922836-6d05b3f8b663?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" height="42" width="42" />
             </div>
             <div class="top-title-left">
-              <b>Bukti Pemesanan Barang - Toko Jaya Abadi</b>
+              <b>Bukti Pemesanan Barang - ${data.toko}</b>
             </div>
           </div>
           <table class="table-1" style="width:100%">
@@ -96,19 +126,19 @@ class OrderHistoryScreen extends Component {
             </tr>
             <tr>
               <td width="150">Nama</td>
-              <td>:  Budiman</td>
+              <td>:  ${data.pembeli}</td>
             </tr>
             <tr>
               <td>Alamat</td>
-              <td>:  Jalan Bantul No. 14</td>
+              <td>:  ${data.alamat_pengiriman}</td>
             </tr>
             <tr>
               <td>Kontak</td>
-              <td>:  087821670023</td>
+              <td>:  ${this.props.user.email}</td>
             </tr>
             <tr>
               <td>Tanggal Pemesanan</td>
-              <td>:  Senin, 18 Januari 2019</td>
+              <td>:  ${convertToDate(data.waktu_pemesanan)}</td>
             </tr>
           </table>
           <table style="width:100%">
@@ -122,22 +152,9 @@ class OrderHistoryScreen extends Component {
               <th>Harga</th>
               <th>Total</th>
             </tr>
+            ${tableContent}
             <tr>
-              <td width="150">1</td>
-              <td>Pintu Besi</td>
-              <td>2 buah</td>
-              <td>Rp 120.000</td>
-              <td>Rp 240.000</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Meja Makan</td>
-              <td>1 buah</td>
-              <td>Rp 520.000</td>
-              <td>Rp 520.000</td>
-            </tr>
-            <tr>
-              <td colspan="5">Total harga pemesanan : Rp 760.000</td>
+              <td colspan="5">Total harga pemesanan : Rp ${convertToCurrency(data.total_harga)}</td>
             </tr>
           </table>
             <p>
@@ -152,13 +169,16 @@ class OrderHistoryScreen extends Component {
 
     let options = {
       html: htmlTemplate,
-      fileName: 'test',
-      directory: 'Documents',
     };
 
-    let file = await RNHTMLtoPDF.convert(options);
-    // console.log(file.filePath);
-    alert(file.filePath);
+    let res = await Print.printToFileAsync(options);
+
+    if (res.uri) {
+      this.setState({
+        isPdfExist: true,
+        pdfFile: res.uri,
+      });
+    }
   };
 
   showAllProducts = index => {
@@ -168,6 +188,13 @@ class OrderHistoryScreen extends Component {
   };
 
   render() {
+    if (this.state.isPdfExist) {
+      return (
+        <View style={styles.container}>
+          <PDFReader source={{ uri: this.state.pdfFile }} />
+        </View>
+      );
+    }
     return (
       <Container>
         <Header {...this.props} title="Pemesanan" />
@@ -241,18 +268,20 @@ class OrderHistoryScreen extends Component {
                       </Col>
                     </Row>
                   )}
-                  <Row>
-                    <Col size={3} />
-                    <Col size={7}>
-                      <Button
-                        small
-                        bordered
-                        style={{ marginTop: 15 }}
-                        onClick={() => this.printOrderNote()}>
-                        <Text>Cetak Bukti Pemesanan</Text>
-                      </Button>
-                    </Col>
-                  </Row>
+                  {data.status === 'Diterima' && (
+                    <Button
+                      small
+                      bordered
+                      style={{
+                        marginTop: 15,
+                        width: 0.6 * width - 17,
+                        marginLeft: 0.4 * width - 17,
+                        marginRight: 5,
+                      }}
+                      onPress={() => this.printOrderNote(data)}>
+                      <Text>Cetak Bukti Pemesanan</Text>
+                    </Button>
+                  )}
                   {data.produk.length > 1 && (
                     <Row style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10 }}>
                       <Button small onPress={() => this.showAllProducts(i + 1)}>
@@ -286,6 +315,11 @@ class OrderHistoryScreen extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#ecf0f1',
+  },
   product: {
     borderColor: 'black',
     borderWidth: 1,
