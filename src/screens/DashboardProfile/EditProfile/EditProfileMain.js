@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, Picker, Image, AsyncStorage } from 'react-native';
+import { StyleSheet, Picker, Image, AsyncStorage } from 'react-native';
 import { Button, Content, Form, Item, Input, Text, Label, View, Toast } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -9,9 +9,7 @@ import Authentication from '../../../components/Authentication';
 import Header from '../../../components/PlainHeader';
 import Loading from '../../../components/Loading';
 import { db } from '../../../../firebase.config';
-import { uploadImageAsync } from '../../../utils';
-
-const { width } = Dimensions.get('window');
+import { uploadImageAsync, width } from '../../../utils';
 
 class EditProfileScreen extends Component {
   static propTypes = {

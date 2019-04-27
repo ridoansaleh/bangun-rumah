@@ -4,7 +4,6 @@ import {
   Alert,
   StyleSheet,
   Image,
-  Dimensions,
   FlatList,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -14,10 +13,9 @@ import { Grid, Col, Row } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
 import emptyResult from '../../../../assets/empty_search_result.png';
 import { urls } from '../../../constant';
-import { convertToCurrency } from '../../../utils';
+import { convertToCurrency, width, height } from '../../../utils';
 import { db } from '../../../../firebase.config';
 
-const { width, height } = Dimensions.get('window');
 const numColumns = 2;
 const halfWidth = width / numColumns;
 

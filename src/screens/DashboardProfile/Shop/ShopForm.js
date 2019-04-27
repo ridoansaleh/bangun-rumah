@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, Image, TextInput } from 'react-native';
+import { StyleSheet, Image, TextInput } from 'react-native';
 import { Button, Form, Item, Input, Text, Label, View, Toast } from 'native-base';
 import { ImagePicker } from 'expo';
 import defaultImage from '../../../../assets/default-product.jpg';
 import { db } from '../../../../firebase.config';
-import { uploadImageAsync } from '../../../utils';
-
-const { width } = Dimensions.get('window');
+import { uploadImageAsync, width } from '../../../utils';
 
 class ShopForm extends Component {
   static propTypes = {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, FlatList, TouchableWithoutFeedback, Image } from 'react-native';
+import { StyleSheet, FlatList, TouchableWithoutFeedback, Image } from 'react-native';
 import { Container, Content, Text, View } from 'native-base';
 import { Grid, Row } from 'react-native-easy-grid';
 import Authentication from '../../../components/Authentication';
@@ -8,9 +8,8 @@ import Header from '../../../components/PlainHeader';
 import Loading from '../../../components/Loading';
 import EmptyDiscussion from '../../../../assets/sad_face.png';
 import { urls } from '../../../constant';
+import { width, height } from '../../../utils';
 import { db } from '../../../../firebase.config';
-
-const { width, height } = Dimensions.get('window');
 
 class DiscussionListScreen extends Component {
   static propTypes = {

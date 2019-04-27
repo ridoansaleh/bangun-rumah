@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, Image, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, View, Image, ScrollView } from 'react-native';
 import { Icon } from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
-
-const { width, height } = Dimensions.get('window');
+import { width, height } from '../../../../utils';
 
 class ProductPhoto extends Component {
   static propTypes = {

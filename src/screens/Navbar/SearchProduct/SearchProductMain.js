@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, Image, FlatList, Dimensions, ScrollView, Alert } from 'react-native';
+import { StyleSheet, View, Image, FlatList, ScrollView, Alert } from 'react-native';
 import { Container, Content, Text, Button, ActionSheet } from 'native-base';
 import { Grid, Row } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
@@ -9,10 +9,9 @@ import Header from '../../../components/PlainHeader';
 import Loading from '../../../components/Loading';
 import emptyResult from '../../../../assets/empty_search_result.png';
 import { db } from '../../../../firebase.config';
-import { convertToCurrency } from '../../../utils';
+import { convertToCurrency, width, height } from '../../../utils';
 
 const numColumns = 2;
-const { width, height } = Dimensions.get('window');
 const halfWidth = width / numColumns;
 
 const BUTTONS = [

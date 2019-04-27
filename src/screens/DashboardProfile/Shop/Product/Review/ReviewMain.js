@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, Dimensions, TextInput, TouchableHighlight } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableHighlight } from 'react-native';
 import { Container, Button, Content, Text } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import StarRating from 'react-native-star-rating';
@@ -8,8 +8,7 @@ import Authentication from '../../../../../components/Authentication';
 import Header from '../../../../../components/PlainHeader';
 import Loading from '../../../../../components/Loading';
 import { db } from '../../../../../../firebase.config';
-
-const { width } = Dimensions.get('window');
+import { width } from '../../../../../utils';
 
 class ReviewScreen extends Component {
   static propTypes = {

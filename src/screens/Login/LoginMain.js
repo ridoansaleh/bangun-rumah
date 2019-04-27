@@ -1,15 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Constants, Location, Permissions } from 'expo';
-import {
-  Alert,
-  AsyncStorage,
-  StyleSheet,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-  Platform,
-} from 'react-native';
+import { Alert, AsyncStorage, StyleSheet, Image, TouchableOpacity, Platform } from 'react-native';
 import {
   Button,
   Container,
@@ -28,8 +20,7 @@ import Header from '../../components/PlainHeader';
 import loginUser from '../../../assets/login-user.jpg';
 import { auth as authenticate, db } from '../../../firebase.config';
 import { urls } from '../../constant';
-
-const { width, height } = Dimensions.get('window');
+import { width, height } from '../../utils';
 
 class LoginView extends Component {
   static propTypes = {

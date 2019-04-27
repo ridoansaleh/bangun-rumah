@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, Dimensions, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, View, TextInput, ScrollView } from 'react-native';
 import { Container, Content, Text, Button } from 'native-base';
 import { Grid, Row } from 'react-native-easy-grid';
 import Authentication from '../../../../../components/Authentication';
@@ -8,8 +8,7 @@ import Header from '../../../../../components/PlainHeader';
 import Loading from '../../../../../components/Loading';
 import { db } from '../../../../../../firebase.config';
 import { urls } from '../../../../../constant';
-
-const { width, height } = Dimensions.get('window');
+import { width, height } from '../../../../../utils';
 
 class DiscussionScreen extends Component {
   static propTypes = {

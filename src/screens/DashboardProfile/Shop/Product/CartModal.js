@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, View, Dimensions, StyleSheet } from 'react-native';
+import { Alert, View, StyleSheet } from 'react-native';
 import { Button, Text, Spinner, Form, Item, Input, Label } from 'native-base';
 import Modal from 'react-native-modal';
 import { db } from '../../../../../firebase.config';
-
-const { height } = Dimensions.get('window');
+import { height } from '../../../../utils';
 
 class CartModal extends Component {
   static propTypes = {

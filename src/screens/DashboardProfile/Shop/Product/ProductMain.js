@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, Dimensions, ScrollView, Alert } from 'react-native';
+import { StyleSheet, View, ScrollView, Alert } from 'react-native';
 import { Content, Text, Button, Icon } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -12,9 +12,8 @@ import ProductDescription from './ProductDescription';
 import Interactions from './Interactions';
 import CartModal from './CartModal';
 import { urls } from '../../../../constant';
+import { width, height } from '../../../../utils';
 import { db } from '../../../../../firebase.config';
-
-const { width, height } = Dimensions.get('window');
 
 class ProductMainScreen extends Component {
   static propTypes = {

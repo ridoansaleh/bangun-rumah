@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, FlatList, TouchableWithoutFeedback, Image } from 'react-native';
+import { StyleSheet, FlatList, TouchableWithoutFeedback, Image } from 'react-native';
 import { Container, Content, Text, View } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import Authentication from '../../../components/Authentication';
@@ -9,8 +9,7 @@ import Loading from '../../../components/Loading';
 import { db } from '../../../../firebase.config';
 import NoMessage from '../../../../assets/no_message.png';
 import { urls } from '../../../constant';
-
-const { width, height } = Dimensions.get('window');
+import { width, height } from '../../../utils';
 
 class MessageScreen extends Component {
   static propTypes = {

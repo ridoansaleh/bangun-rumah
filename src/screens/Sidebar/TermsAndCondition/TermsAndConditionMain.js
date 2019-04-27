@@ -1,11 +1,10 @@
 import React from 'react';
-import { StyleSheet, Dimensions, FlatList } from 'react-native';
+import { StyleSheet, FlatList } from 'react-native';
 import { Container, Content, Text, View } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import Authentication from '../../../components/Authentication';
 import Header from '../../../components/PlainHeader';
-
-const { width } = Dimensions.get('window');
+import { width } from '../../../utils';
 
 const TermsAndConditionScreen = props => (
   <Container>

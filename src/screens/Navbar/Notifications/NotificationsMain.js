@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, FlatList, TouchableWithoutFeedback, Image } from 'react-native';
+import { StyleSheet, FlatList, TouchableWithoutFeedback, Image } from 'react-native';
 import { Container, Content, Text, View } from 'native-base';
 import { Grid, Row } from 'react-native-easy-grid';
 import Authentication from '../../../components/Authentication';
@@ -9,9 +9,7 @@ import Loading from '../../../components/Loading';
 import EmptyNotification from '../../../../assets/no_message.png';
 import { db } from '../../../../firebase.config';
 import { urls } from '../../../constant';
-import { convertToDate } from '../../../utils';
-
-const { width, height } = Dimensions.get('window');
+import { convertToDate, width, height } from '../../../utils';
 
 class NotificationScreen extends Component {
   static propTypes = {

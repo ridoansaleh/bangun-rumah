@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, TouchableOpacity, Picker, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, Picker, Image } from 'react-native';
 import { Button, Content, Form, Item, Input, Text, Label, View, Toast } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -9,9 +9,7 @@ import Header from '../../components/PlainHeader';
 import loginUser from '../../../assets/default_upload.png';
 import { auth, db } from '../../../firebase.config';
 import initialState from './State';
-import { uploadImageAsync } from '../../utils';
-
-const { width } = Dimensions.get('window');
+import { uploadImageAsync, width } from '../../utils';
 
 class RegisterView extends Component {
   static propTypes = {

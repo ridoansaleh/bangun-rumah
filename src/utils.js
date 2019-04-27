@@ -3,18 +3,18 @@ import uuid from 'uuid';
 import { st as storageRef } from '../firebase.config';
 
 const IS_IOS = Platform.OS === 'ios';
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const wp = percentage => {
-  const value = (percentage * viewportWidth) / 100;
+  const value = (percentage * width) / 100;
   return Math.round(value);
 };
 
-const slideHeight = viewportHeight * 0.25;
+const slideHeight = height * 0.25;
 const slideWidth = wp(100);
 const itemHorizontalMargin = wp(0.5);
 
-const sliderWidth = viewportWidth;
+const sliderWidth = width;
 const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 const convertToCurrency = numb => {
@@ -135,6 +135,8 @@ export {
   sliderWidth,
   slideHeight,
   itemWidth,
+  width,
+  height,
   IS_IOS,
   convertToCurrency,
   getMonthName,
