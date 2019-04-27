@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Dimensions, Image, TextInput } from 'react-native';
 import { Button, Form, Item, Input, Text, Label, View, Toast } from 'native-base';
 import { ImagePicker } from 'expo';
-import uuid from 'uuid';
 import defaultImage from '../../../../assets/default-product.jpg';
-import { st as storageRef, db } from '../../../../firebase.config';
+import { db } from '../../../../firebase.config';
+import { uploadImageAsync } from '../../../utils';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 class ShopForm extends Component {
   static propTypes = {
@@ -71,37 +71,14 @@ class ShopForm extends Component {
     try {
       // this.setState({ uploading: true });
       if (!pickerResult.cancelled) {
-        const uploadUrl = await this.uploadImageAsync(pickerResult.uri);
-        this.setState({ shopImage: uploadUrl, isPhotoUploaded: true });
+        const { download_url } = await uploadImageAsync(pickerResult.uri);
+        this.setState({ shopImage: download_url, isPhotoUploaded: true });
       }
     } catch (e) {
       console.log(e);
     } finally {
       // this.setState({ uploading: false });
     }
-  };
-
-  uploadImageAsync = async uri => {
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function(e) {
-        console.log(e);
-        reject(new TypeError('Network request failed'));
-      };
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
-      xhr.send(null);
-    });
-
-    const ref = storageRef.child(uuid.v4());
-    const snapshot = await ref.put(blob);
-
-    blob.close();
-
-    return await snapshot.ref.getDownloadURL();
   };
 
   handleSubmit = () => {

@@ -1,4 +1,6 @@
 import { Dimensions, Platform } from 'react-native';
+import uuid from 'uuid';
+import { st as storageRef } from '../firebase.config';
 
 const IS_IOS = Platform.OS === 'ios';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
@@ -103,6 +105,32 @@ const validateEmail = email => {
   return re.test(email);
 };
 
+const uploadImageAsync = async uri => {
+  const blob = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+      resolve(xhr.response);
+    };
+    xhr.onerror = function(e) {
+      console.error(e);
+      reject(new TypeError('Network request failed'));
+    };
+    xhr.responseType = 'blob';
+    xhr.open('GET', uri, true);
+    xhr.send(null);
+  });
+  const u_id = uuid.v4();
+  const ref = storageRef.child(u_id);
+  const snapshot = await ref.put(blob);
+  blob.close();
+  const downloadUrl = await snapshot.ref.getDownloadURL();
+  const result = {
+    download_url: downloadUrl,
+    image_ref: u_id,
+  };
+  return result;
+};
+
 export {
   sliderWidth,
   slideHeight,
@@ -112,4 +140,5 @@ export {
   getMonthName,
   convertToDate,
   validateEmail,
+  uploadImageAsync,
 };

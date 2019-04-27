@@ -14,13 +14,13 @@ import {
   Toast,
 } from 'native-base';
 import { ImagePicker } from 'expo';
-import uuid from 'uuid';
 import Authentication from '../../../components/Authentication';
 import Header from '../../../components/PlainHeader';
 import Loading from '../../../components/Loading';
 import defaultImage from '../../../../assets/default-product.jpg';
-import { st as storageRef, db } from '../../../../firebase.config';
+import { db } from '../../../../firebase.config';
 import { urls } from '../../../constant';
+import { uploadImageAsync } from '../../../utils';
 
 const { width } = Dimensions.get('window');
 
@@ -119,32 +119,12 @@ class ShopEditScreen extends Component {
   handleImagePicked = async pickerResult => {
     try {
       if (!pickerResult.cancelled) {
-        const uploadUrl = await this.uploadImageAsync(pickerResult.uri);
-        this.setState({ shopImage: uploadUrl, isPhotoUploaded: true });
+        const { download_url } = await uploadImageAsync(pickerResult.uri);
+        this.setState({ shopImage: download_url, isPhotoUploaded: true });
       }
     } catch (e) {
       console.log(e);
     }
-  };
-
-  uploadImageAsync = async uri => {
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function(e) {
-        console.log(e);
-        reject(new TypeError('Network request failed'));
-      };
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
-      xhr.send(null);
-    });
-    const ref = storageRef.child(uuid.v4());
-    const snapshot = await ref.put(blob);
-    blob.close();
-    return await snapshot.ref.getDownloadURL();
   };
 
   handleSubmit = () => {
