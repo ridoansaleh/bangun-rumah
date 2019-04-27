@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, StyleSheet, Dimensions, AsyncStorage } from 'react-native';
+import { Alert, StyleSheet, AsyncStorage } from 'react-native';
 import {
   Button,
   Container,
@@ -18,9 +18,7 @@ import Authentication from '../../../components/Authentication';
 import Header from '../../../components/PlainHeader';
 import { auth } from '../../../../firebase.config';
 import { urls, user } from '../../../constant';
-import { validateEmail } from '../../../utils';
-
-const { width, height } = Dimensions.get('window');
+import { validateEmail, width, height } from '../../../utils';
 
 class ChangePasswordScreen extends Component {
   static propTypes = {

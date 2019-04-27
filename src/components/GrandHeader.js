@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import {
   Header,
   Button,
@@ -16,8 +16,7 @@ import {
 } from 'native-base';
 import { urls } from '../constant';
 import { db } from '../../firebase.config';
-
-const { width } = Dimensions.get('window');
+import { width } from '../utils';
 
 class GrandHeader extends Component {
   static propTypes = {

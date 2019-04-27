@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { View, Spinner } from 'native-base';
 import Carousel from 'react-native-snap-carousel';
 import SliderEntry from './SliderEntry';
 import { db } from '../../../firebase.config';
-import { itemWidth, sliderWidth } from '../../utils';
-
-const { width } = Dimensions.get('window');
+import { itemWidth, sliderWidth, width } from '../../utils';
 
 class Promo extends Component {
   state = {

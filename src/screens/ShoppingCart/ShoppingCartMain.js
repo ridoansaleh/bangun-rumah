@@ -1,14 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Alert,
-  Image,
-  Dimensions,
-  ScrollView,
-  View,
-  StyleSheet,
-  TouchableHighlight,
-} from 'react-native';
+import { Alert, Image, ScrollView, View, StyleSheet, TouchableHighlight } from 'react-native';
 import { Container, Content, Text, CheckBox, Button } from 'native-base';
 import { Row, Grid, Col } from 'react-native-easy-grid';
 import Authentication from '../../components/Authentication';
@@ -18,10 +10,8 @@ import Loading from '../../components/Loading';
 import defaultImage from '../../../assets/default-product.jpg';
 import emptyResult from '../../../assets/empty_search_result.png';
 import { urls } from '../../constant';
-import { convertToCurrency } from '../../utils';
+import { convertToCurrency, width, height } from '../../utils';
 import { db } from '../../../firebase.config';
-
-const { width, height } = Dimensions.get('window');
 
 class ShoppingCartScreen extends Component {
   static propTypes = {

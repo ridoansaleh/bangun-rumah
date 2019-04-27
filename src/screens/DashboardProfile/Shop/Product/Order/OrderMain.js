@@ -1,14 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Dimensions,
-  StyleSheet,
-  TouchableHighlight,
-  Image,
-  Picker,
-  TextInput,
-} from 'react-native';
+import { View, StyleSheet, TouchableHighlight, Image, Picker, TextInput } from 'react-native';
 import { Content, Text, Button, Icon, Form, Input, Item } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -17,10 +9,8 @@ import Header from '../../../../../components/PlainHeader';
 import Loading from '../../../../../components/Loading';
 import thankYou from '../../../../../../assets/thank-you.png';
 import { db } from '../../../../../../firebase.config';
-import { convertToCurrency } from '../../../../../utils';
+import { convertToCurrency, height, width } from '../../../../../utils';
 import { urls } from '../../../../../constant';
-
-const { height, width } = Dimensions.get('window');
 
 class OrderMainScreen extends Component {
   static propTypes = {

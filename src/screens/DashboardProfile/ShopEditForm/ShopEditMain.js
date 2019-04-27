@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, Image, TextInput } from 'react-native';
+import { StyleSheet, Image, TextInput } from 'react-native';
 import {
   Container,
   Content,
@@ -20,9 +20,7 @@ import Loading from '../../../components/Loading';
 import defaultImage from '../../../../assets/default-product.jpg';
 import { db } from '../../../../firebase.config';
 import { urls } from '../../../constant';
-import { uploadImageAsync } from '../../../utils';
-
-const { width } = Dimensions.get('window');
+import { uploadImageAsync, width } from '../../../utils';
 
 class ShopEditScreen extends Component {
   static propTypes = {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Dimensions, Picker, Image, TextInput } from 'react-native';
+import { Alert, Picker, Image, TextInput } from 'react-native';
 import { Button, Content, Form, Item, Input, Text, Label, View, Toast } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { ImagePicker } from 'expo';
@@ -11,9 +11,7 @@ import { st as storageRef, db } from '../../../../../firebase.config';
 import AllCategory from '../../../Category/Data';
 import initialState from './State';
 import { urls } from '../../../../constant';
-import { uploadImageAsync } from '../../../../utils';
-
-const { width } = Dimensions.get('window');
+import { uploadImageAsync, width } from '../../../../utils';
 
 class EditForm extends Component {
   static propTypes = {

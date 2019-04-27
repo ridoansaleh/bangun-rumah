@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { AsyncStorage, Dimensions, Platform, StyleSheet, View } from 'react-native';
+import { AsyncStorage, Platform, StyleSheet, View } from 'react-native';
 import { Content, Text, List, ListItem, Icon, Container, Left, Thumbnail } from 'native-base';
 import Authentication from '../components/Authentication';
 import defaultPhoto from '../../assets/default_profile.jpg';
 import { loginMenus, nonLoginMenus, user, urls } from '../constant';
 import { auth } from '../../firebase.config';
-
-const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
+import { width, height } from '../utils';
 
 class SideBar extends Component {
   static propTypes = {
@@ -107,7 +106,7 @@ class SideBar extends Component {
 const styles = StyleSheet.create({
   drawerCover: {
     alignSelf: 'stretch',
-    height: deviceHeight / 3.5,
+    height: height / 3.5,
     width: null,
     position: 'relative',
     marginBottom: 10,
@@ -126,8 +125,8 @@ const styles = StyleSheet.create({
   },
   drawerImage: {
     position: 'absolute',
-    left: Platform.OS === 'android' ? deviceWidth / 10 : deviceWidth / 9,
-    top: Platform.OS === 'android' ? deviceHeight / 13 : deviceHeight / 12,
+    left: Platform.OS === 'android' ? width / 10 : width / 9,
+    top: Platform.OS === 'android' ? height / 13 : height / 12,
     width: 210,
     height: 75,
     resizeMode: 'cover',

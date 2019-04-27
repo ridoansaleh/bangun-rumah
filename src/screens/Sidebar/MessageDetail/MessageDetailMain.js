@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import { Button, Content, Text, Form, Label, Item, Input } from 'native-base';
 import { Grid, Row } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -8,9 +8,7 @@ import Authentication from '../../../components/Authentication';
 import Header from '../../../components/PlainHeader';
 import Loading from '../../../components/Loading';
 import { db } from '../../../../firebase.config';
-import { convertToDate } from '../../../utils';
-
-const { width, height } = Dimensions.get('window');
+import { convertToDate, width, height } from '../../../utils';
 
 class MessageDetailScreen extends Component {
   static propTypes = {

@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, FlatList, Image, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, FlatList, Image, TouchableWithoutFeedback } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
 import StarRating from 'react-native-star-rating';
 import emptyResult from '../../../assets/empty_search_result.png';
 import { db } from '../../../firebase.config';
-import { convertToCurrency } from '../../utils';
+import { convertToCurrency, width } from '../../utils';
 import { urls } from '../../constant';
 
 const numColumns = 2;
-const { width } = Dimensions.get('window');
 const halfWidth = width / numColumns;
 
 class ProductList extends Component {

@@ -1,8 +1,7 @@
 import React from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { View, Spinner } from 'native-base';
-
-const { width, height } = Dimensions.get('window');
+import { width, height } from '../utils';
 
 const Loading = () => (
   <View style={styles.spin}>

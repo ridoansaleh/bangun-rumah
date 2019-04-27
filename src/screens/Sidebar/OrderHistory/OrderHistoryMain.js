@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Image, Dimensions } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 import { Print, Constants } from 'expo';
 import { Button, Container, Content, Text, View } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
@@ -13,9 +13,7 @@ import sadImage from '../../../../assets/sad_face.png';
 // import golekLogo from '../../../../assets/golek_icon.png';
 import { db } from '../../../../firebase.config';
 import { urls } from '../../../constant';
-import { convertToCurrency, convertToDate } from '../../../utils';
-
-const { width, height } = Dimensions.get('window');
+import { convertToCurrency, convertToDate, width, height } from '../../../utils';
 
 class OrderHistoryScreen extends Component {
   static propTypes = {

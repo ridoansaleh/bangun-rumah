@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, StyleSheet, Image, Dimensions } from 'react-native';
+import { Alert, StyleSheet, Image } from 'react-native';
 import { Button, Container, Content, Text, View, Spinner } from 'native-base';
 import { Grid, Col, Row } from 'react-native-easy-grid';
 import dayjs from 'dayjs';
@@ -9,9 +9,7 @@ import Header from '../../../components/PlainHeader';
 import Loading from '../../../components/Loading';
 import sadImage from '../../../../assets/sad_face.png';
 import { db } from '../../../../firebase.config';
-import { convertToCurrency } from '../../../utils';
-
-const { width, height } = Dimensions.get('window');
+import { convertToCurrency, width, height } from '../../../utils';
 
 class ShopOrderScreen extends Component {
   static propTypes = {

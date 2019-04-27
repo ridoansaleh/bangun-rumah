@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Dimensions, TouchableHighlight } from 'react-native';
+import { View, TouchableHighlight } from 'react-native';
 import { Text, Icon } from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
 import { urls } from '../../../../constant';
-
-const { height } = Dimensions.get('window');
+import { height } from '../../../../utils';
 
 class Interactions extends Component {
   static propTypes = {

@@ -1,10 +1,9 @@
 import React from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Container, Content, Text, View } from 'native-base';
 import Authentication from '../../../components/Authentication';
 import Header from '../../../components/PlainHeader';
-
-const { width } = Dimensions.get('window');
+import { width } from '../../../utils';
 
 const FAQScreen = props => (
   <Container>
