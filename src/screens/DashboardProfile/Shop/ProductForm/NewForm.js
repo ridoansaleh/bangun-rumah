@@ -4,14 +4,14 @@ import { Alert, Dimensions, Picker, Image, TextInput } from 'react-native';
 import { Button, Content, Form, Item, Input, Text, Label, View, Toast } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { ImagePicker } from 'expo';
-import uuid from 'uuid';
 import Loading from '../../../../components/Loading';
 import styles from './Styles';
 import loginUser from '../../../../../assets/default_upload.png';
-import { st as storageRef, fbs, db } from '../../../../../firebase.config';
+import { fbs, db } from '../../../../../firebase.config';
 import AllCategory from '../../../Category/Data';
 import initialState from './State';
 import { urls } from '../../../../constant';
+import { uploadImageAsync } from '../../../../utils';
 
 const { width } = Dimensions.get('window');
 
@@ -160,39 +160,16 @@ class NewForm extends Component {
   handleImagePicked = async (f, s, pickerResult) => {
     try {
       if (!pickerResult.cancelled) {
-        const result = await this.uploadImageAsync(pickerResult.uri, f);
+        const { download_url, image_ref } = await uploadImageAsync(pickerResult.uri);
         this.setState({
-          [f]: result,
+          [f]: download_url,
+          [f + 'Ref']: image_ref,
           [s]: true,
         });
       }
     } catch (e) {
       console.log(e);
     }
-  };
-
-  uploadImageAsync = async (uri, f) => {
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function(e) {
-        console.log(e);
-        reject(new TypeError('Network request failed'));
-      };
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
-      xhr.send(null);
-    });
-    const u_id = uuid.v4();
-    const ref = storageRef.child(u_id);
-    const snapshot = await ref.put(blob);
-    blob.close();
-    this.setState({
-      [f + 'Ref']: u_id,
-    });
-    return await snapshot.ref.getDownloadURL();
   };
 
   handleSaveProduct = () => {

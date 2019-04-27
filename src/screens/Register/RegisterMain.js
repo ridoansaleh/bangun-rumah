@@ -5,11 +5,11 @@ import { Button, Content, Form, Item, Input, Text, Label, View, Toast } from 'na
 import DatePicker from 'react-native-datepicker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { ImagePicker } from 'expo';
-import uuid from 'uuid';
 import Header from '../../components/PlainHeader';
 import loginUser from '../../../assets/default_upload.png';
-import { st as storageRef, auth, db } from '../../../firebase.config';
+import { auth, db } from '../../../firebase.config';
 import initialState from './State';
+import { uploadImageAsync } from '../../utils';
 
 const { width } = Dimensions.get('window');
 
@@ -85,37 +85,14 @@ class RegisterView extends Component {
     try {
       // this.setState({ uploading: true });
       if (!pickerResult.cancelled) {
-        const uploadUrl = await this.uploadImageAsync(pickerResult.uri);
-        this.setState({ userPhoto: uploadUrl, isPhotoUploaded: true });
+        const { download_url } = await uploadImageAsync(pickerResult.uri);
+        this.setState({ userPhoto: download_url, isPhotoUploaded: true });
       }
     } catch (e) {
       console.log(e);
     } finally {
       // this.setState({ uploading: false });
     }
-  };
-
-  uploadImageAsync = async uri => {
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function(e) {
-        console.log(e);
-        reject(new TypeError('Network request failed'));
-      };
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
-      xhr.send(null);
-    });
-
-    const ref = storageRef.child(uuid.v4());
-    const snapshot = await ref.put(blob);
-
-    blob.close();
-
-    return await snapshot.ref.getDownloadURL();
   };
 
   handleSubmit = () => {
