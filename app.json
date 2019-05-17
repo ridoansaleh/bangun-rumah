@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "golek",
-    "slug": "golek",
+    "name": "Bangun Rumah",
+    "slug": "bangun-rumah",
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": ["ios", "android"],
@@ -9,7 +9,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/golek.png",
+      "image": "./assets/bangun-rumah.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
