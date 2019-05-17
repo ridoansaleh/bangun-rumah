@@ -1,13 +1,14 @@
-# Golek
+# BangunRumah
 
-Golek adalah aplikasi marketplace sebagai sarana jual beli bahan bangunan.
+BangunRumah adalah aplikasi marketplace sebagai sarana pemesanan bahan bangunan.
 Aplikasi ini dibangun menggunakan framework React Native sehingga dapat
-dijalankan pada device dengan OS Android maupun iOS.
+dijalankan pada device dengan OS Android maupun iOS. Namun, aplikasi hanya ditest
+pada OS Android. Sehingga belum baik digunakan di iOS.
 
 ## Penting
 
 File konfigurasi firebase tidak diupload karena alasan keamanan. Anda bisa
-membuat sendiri di website Firebase. Berikut ini source code konfigurasinya.
+membuat sendiri pada website Firebase. Berikut ini source code konfigurasinya.
 
 `./firebase.config.js`
 

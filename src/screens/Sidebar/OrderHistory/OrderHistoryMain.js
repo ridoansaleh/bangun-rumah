@@ -10,7 +10,6 @@ import Authentication from '../../../components/Authentication';
 import Header from '../../../components/PlainHeader';
 import Loading from '../../../components/Loading';
 import sadImage from '../../../../assets/sad_face.png';
-// import golekLogo from '../../../../assets/golek_icon.png';
 import { db } from '../../../../firebase.config';
 import { urls } from '../../../constant';
 import { convertToCurrency, convertToDate, width, height } from '../../../utils';
