@@ -171,12 +171,13 @@ class ProductMainScreen extends Component {
   };
 
   openShopChatting = () => {
+    const { dataProduct } = this.state;
     this.props.nav.navigation.navigate(urls.message_detail, {
-      shopId: this.state.shopId,
-      shop: this.state.shopName,
+      shopId: dataProduct.shopId,
+      shop: dataProduct.shopName,
       userId: this.props.user.id,
       chatType: 'userChatting',
-      replyId: this.state.shopId,
+      replyId: dataProduct.shopId,
     });
   };
 

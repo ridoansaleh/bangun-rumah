@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, Keyboard } from 'react-native';
 import { Button, Content, Text, Form, Label, Item, Input } from 'native-base';
 import { Grid, Row } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -27,6 +27,7 @@ class MessageDetailScreen extends Component {
     shop: this.props.nav.navigation.getParam('shop', undefined),
     replyId: this.props.nav.navigation.getParam('replyId', undefined),
     chatType: this.props.nav.navigation.getParam('chatType', undefined),
+    margin: 0,
   };
 
   componentDidMount() {
@@ -38,7 +39,27 @@ class MessageDetailScreen extends Component {
       sender = userId;
     }
     this.getMessageFromSender(sender, receiver);
+
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
   }
+
+  componentWillUnmount() {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  _keyboardDidShow = () => {
+    this.setState({
+      margin: height * 0.2,
+    });
+  };
+
+  _keyboardDidHide = () => {
+    this.setState({
+      margin: 0,
+    });
+  };
 
   getMessageFromSender = (user1, user2) => {
     let data = [];
@@ -47,10 +68,13 @@ class MessageDetailScreen extends Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
+          const resp = doc.data();
           data.push({
             id_percakapan: doc.id,
-            ...doc.data(),
+            tanggal: convertToDate(resp.waktu, 'en'),
+            ...resp,
           });
+          delete data.waktu;
         });
         this.getMessageFromReceiver(data, user2);
       })
@@ -66,16 +90,19 @@ class MessageDetailScreen extends Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
+          const resp = doc.data();
           data.push({
             id_percakapan: doc.id,
-            ...doc.data(),
+            tanggal: convertToDate(resp.waktu, 'en'),
+            ...resp,
           });
+          delete data.waktu;
         });
         if (data.length > 0) {
           let result = res.length > 0 ? [...res, ...data] : data;
           result.sort((a, b) => {
-            let c = new Date(convertToDate(a.waktu));
-            let d = new Date(convertToDate(b.waktu));
+            let c = new Date(a.tanggal);
+            let d = new Date(b.tanggal);
             return c - d;
           });
           this.setState({
@@ -154,11 +181,11 @@ class MessageDetailScreen extends Component {
             <Loading />
           ) : (
             <Grid>
-              <Row style={{ height: height * 0.7 }}>
+              <Row style={{ height: height * 0.6 }}>
                 <ScrollView>
                   {this.state.dataMessages.length > 0 ? (
                     this.state.dataMessages.map((d, i) => {
-                      if (d.id_penerima === idDiff) {
+                      if (d.id_pengirim === idDiff) {
                         return (
                           <Text key={i} style={{ textAlign: 'left', marginBottom: 15 }}>
                             {d.pesan}
@@ -177,7 +204,7 @@ class MessageDetailScreen extends Component {
                   )}
                 </ScrollView>
               </Row>
-              <Row style={{ height: height * 0.2, marginBottom: 25 }}>
+              <Row style={{ height: height * 0.2, marginBottom: this.state.margin }}>
                 <Form>
                   <Item
                     floatingLabel
