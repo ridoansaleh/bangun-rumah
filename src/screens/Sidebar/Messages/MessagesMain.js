@@ -90,6 +90,7 @@ class MessageScreen extends Component {
                       userId: this.props.user.id,
                       chatType: this.state.chatType,
                       replyId: item.id_pengirim,
+                      friendName: item.nama_pengguna,
                     })
                   }>
                   <Grid

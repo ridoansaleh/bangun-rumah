@@ -168,7 +168,10 @@ class ShopScreen extends Component {
                 onPress={() =>
                   this.props.nav.navigation.navigate(urls.messages, {
                     shopId: this.state.dataShop.id_toko,
-                    shop: this.state.dataShop,
+                    shop: {
+                      photo: this.state.dataShop.photo,
+                      nama_toko: this.state.dataShop.nama,
+                    },
                     chatType: 'shopChatting',
                   })
                 }>
