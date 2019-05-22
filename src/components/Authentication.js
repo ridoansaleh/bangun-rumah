@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { AsyncStorage } from 'react-native';
-import { auth } from '../../firebase.config';
-import { user, urls, nonAuthenticatedUrls } from '../constant';
+import { auth, db } from '../../firebase.config';
+import { urls, nonAuthenticatedUrls } from '../constant';
 
 const Authentication = Wrapped => {
   return class extends Component {
@@ -11,13 +11,26 @@ const Authentication = Wrapped => {
       isLogin: false,
     };
 
-    componentDidMount() {
+    async componentDidMount() {
+      const { navigation } = this.props;
+
+      const userId = await AsyncStorage.getItem('_id')
+        .then(id => id)
+        .catch(error => console.warn(error));
+
+      const email = await AsyncStorage.getItem('_email')
+        .then(e_mail => e_mail)
+        .catch(error => console.warn(error));
+
       auth.onAuthStateChanged(user => {
         if (user) {
-          this.getProfile();
+          this.getProfile(userId, email);
+          this.didFocusSubscription = navigation.addListener('didFocus', payload => {
+            this.getProfile(userId, email);
+          });
         } else {
-          if (nonAuthenticatedUrls.indexOf(this.props.navigation.state.routeName) === -1) {
-            this.props.navigation.navigate(urls.login);
+          if (nonAuthenticatedUrls.indexOf(navigation.state.routeName) === -1) {
+            navigation.navigate(urls.login);
           } else {
             this.setState({
               isDataFetched: true,
@@ -28,21 +41,37 @@ const Authentication = Wrapped => {
       });
     }
 
-    getProfile = () => {
-      let profile = {};
-      for (let i = 0; i < user.length; i++) {
-        AsyncStorage.getItem(user[i]).then(data => {
-          let key = user[i].substr(1, user[i].length);
-          profile[key] = data;
-          if (i === user.length - 1) {
+    componentWillUnmount() {
+      this.didFocusSubscription && this.didFocusSubscription.remove();
+    }
+
+    getProfile = (userId, email) => {
+      db.collection('user')
+        .doc(userId)
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            const data = doc.data();
             this.setState({
               isDataFetched: true,
-              dataUser: profile,
               isLogin: true,
+              dataUser: {
+                id: userId,
+                email,
+                nama: data.nama,
+                alamat: data.alamat,
+                jenisKelamin: data.jenis_kelamin,
+                tanggalLahir: data.tanggal_lahir,
+                photo: data.photo,
+              },
             });
+          } else {
+            console.error('No such document!');
           }
+        })
+        .catch(error => {
+          console.error('Error getting profil data \n', error);
         });
-      }
     };
 
     resetUserStatus = () => {

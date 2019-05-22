@@ -18,6 +18,13 @@ class ProductList extends Component {
 
   componentDidMount() {
     this.getProducts();
+    this.didFocusSubscription = this.props.navigation.addListener('didFocus', payload => {
+      this.getProducts();
+    });
+  }
+
+  componentWillUnmount() {
+    this.didFocusSubscription.remove();
   }
 
   getProducts = () => {

@@ -1,10 +1,10 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": null,
-  "packagerPort": null,
-  "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "expoServerPort": 19000,
+  "packagerPort": 19001,
+  "packagerPid": 15673,
+  "expoServerNgrokUrl": "https://aj-bvd.ridoansaleh.bangun-rumah.exp.direct",
+  "packagerNgrokUrl": "https://packager.aj-bvd.ridoansaleh.bangun-rumah.exp.direct",
+  "ngrokPid": 15764,
   "webpackServerPort": null
 }

@@ -34,13 +34,6 @@ class SideBar extends Component {
     return state;
   }
 
-  shouldComponentUpdate(nextProps) {
-    if (nextProps.isLogin && nextProps.user.nama === null) {
-      this.props.getProfile();
-    }
-    return true;
-  }
-
   handleMenuClick = route => {
     if (route === 'Logout') {
       auth

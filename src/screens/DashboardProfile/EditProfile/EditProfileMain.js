@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Picker, Image, AsyncStorage } from 'react-native';
+import { StyleSheet, Picker, Image } from 'react-native';
 import { Button, Content, Form, Item, Input, Text, Label, View, Toast } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -15,7 +15,6 @@ class EditProfileScreen extends Component {
   static propTypes = {
     nav: PropTypes.object,
     user: PropTypes.object,
-    getProfile: PropTypes.func,
   };
 
   state = {
@@ -124,12 +123,6 @@ class EditProfileScreen extends Component {
                 tanggal_lahir: born_date,
                 photo: userPhoto,
               });
-              AsyncStorage.setItem('_nama', name);
-              AsyncStorage.setItem('_alamat', address);
-              AsyncStorage.setItem('_jenisKelamin', gender);
-              AsyncStorage.setItem('_tanggalLahir', born_date);
-              AsyncStorage.setItem('_photo', userPhoto);
-              this.props.getProfile();
               this.setState({
                 isSubmit: false,
               });

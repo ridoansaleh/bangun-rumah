@@ -155,13 +155,7 @@ class LoginView extends Component {
                 if (doc.exists) {
                   const data = doc.data();
                   AsyncStorage.setItem('_id', user.uid);
-                  AsyncStorage.setItem('_nama', data.nama);
-                  AsyncStorage.setItem('_alamat', data.alamat);
                   AsyncStorage.setItem('_email', data.email);
-                  AsyncStorage.setItem('_jenisKelamin', data.jenis_kelamin);
-                  AsyncStorage.setItem('_tanggalLahir', data.tanggal_lahir);
-                  AsyncStorage.setItem('_photo', data.photo);
-                  AsyncStorage.setItem('_verfikasiEmail', user.emailVerified.toString());
                   this.setState(
                     {
                       email: '',
