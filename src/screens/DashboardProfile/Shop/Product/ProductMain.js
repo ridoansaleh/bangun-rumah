@@ -28,6 +28,7 @@ class ProductMainScreen extends Component {
     dataProduct: {},
     shopId: '',
     shopName: '',
+    shopPhoto: '',
     shopOwnership: false,
     isModalVisible: false,
   };
@@ -61,11 +62,13 @@ class ProductMainScreen extends Component {
           this.setState({
             isDataFetched: true,
             shopOwnership: true,
+            shopPhoto: data.photo,
           });
         } else {
           this.setState({
             isDataFetched: true,
             shopOwnership: false,
+            shopPhoto: data.photo,
           });
         }
       })
@@ -171,12 +174,17 @@ class ProductMainScreen extends Component {
   };
 
   openShopChatting = () => {
+    const { dataProduct } = this.state;
     this.props.nav.navigation.navigate(urls.message_detail, {
-      shopId: this.state.shopId,
-      shop: this.state.shopName,
+      shopId: dataProduct.shopId,
+      shop: {
+        photo: this.state.shopPhoto,
+        nama_toko: dataProduct.nama_toko,
+      },
       userId: this.props.user.id,
       chatType: 'userChatting',
-      replyId: this.state.shopId,
+      replyId: dataProduct.shopId,
+      friendName: dataProduct.shopName,
     });
   };
 

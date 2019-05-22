@@ -31,9 +31,9 @@ const convertToCurrency = numb => {
   return result;
 };
 
-const convertToDate = val => {
+const convertToDate = (val, lang) => {
   let a = new Date(val.seconds * 1000);
-  let months = [
+  let months_in = [
     'Januari',
     'Februari',
     'Maret',
@@ -47,8 +47,22 @@ const convertToDate = val => {
     'November',
     'Desember',
   ];
+  let months_en = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
   let year = a.getFullYear();
-  let month = months[a.getMonth()];
+  let month = lang ? months_en[a.getMonth()] : months_in[a.getMonth()];
   let date = a.getDate();
   let hour = a.getHours();
   let min = a.getMinutes();

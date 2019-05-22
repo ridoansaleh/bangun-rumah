@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, ScrollView } from 'react-native';
-import { Button, Content, Text, Form, Label, Item, Input } from 'native-base';
+import { StyleSheet, ScrollView, Keyboard } from 'react-native';
+import { View, Button, Content, Text, Form, Label, Item, Input } from 'native-base';
 import { Grid, Row } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Authentication from '../../../components/Authentication';
@@ -27,6 +27,8 @@ class MessageDetailScreen extends Component {
     shop: this.props.nav.navigation.getParam('shop', undefined),
     replyId: this.props.nav.navigation.getParam('replyId', undefined),
     chatType: this.props.nav.navigation.getParam('chatType', undefined),
+    friendName: this.props.nav.navigation.getParam('friendName', undefined),
+    margin: 0,
   };
 
   componentDidMount() {
@@ -38,7 +40,27 @@ class MessageDetailScreen extends Component {
       sender = userId;
     }
     this.getMessageFromSender(sender, receiver);
+
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
   }
+
+  componentWillUnmount() {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  _keyboardDidShow = () => {
+    this.setState({
+      margin: height * 0.2,
+    });
+  };
+
+  _keyboardDidHide = () => {
+    this.setState({
+      margin: 0,
+    });
+  };
 
   getMessageFromSender = (user1, user2) => {
     let data = [];
@@ -47,10 +69,13 @@ class MessageDetailScreen extends Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
+          const resp = doc.data();
           data.push({
             id_percakapan: doc.id,
-            ...doc.data(),
+            tanggal: convertToDate(resp.waktu, 'en'),
+            ...resp,
           });
+          delete data.waktu;
         });
         this.getMessageFromReceiver(data, user2);
       })
@@ -66,16 +91,19 @@ class MessageDetailScreen extends Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
+          const resp = doc.data();
           data.push({
             id_percakapan: doc.id,
-            ...doc.data(),
+            tanggal: convertToDate(resp.waktu, 'en'),
+            ...resp,
           });
+          delete data.waktu;
         });
         if (data.length > 0) {
           let result = res.length > 0 ? [...res, ...data] : data;
           result.sort((a, b) => {
-            let c = new Date(convertToDate(a.waktu));
-            let d = new Date(convertToDate(b.waktu));
+            let c = new Date(a.tanggal);
+            let d = new Date(b.tanggal);
             return c - d;
           });
           this.setState({
@@ -119,7 +147,7 @@ class MessageDetailScreen extends Component {
         photo:
           this.state.chatType === 'shopChatting' ? this.state.shop.photo : this.props.user.photo,
         nama_pengguna:
-          this.state.chatType === 'shopChatting' ? this.state.shop.nama : this.props.user.nama,
+          this.state.chatType === 'shopChatting' ? this.state.shop.nama_toko : this.props.user.nama,
         waktu: new Date(),
       })
       .then(docRef => {
@@ -144,31 +172,41 @@ class MessageDetailScreen extends Component {
   };
 
   render() {
-    const { message, isMessageChanged, isMessageValid, chatType, userId, shopId } = this.state;
+    const {
+      message,
+      isMessageChanged,
+      isMessageValid,
+      chatType,
+      userId,
+      shopId,
+      friendName,
+    } = this.state;
+
     const idDiff = chatType === 'shopChatting' ? shopId : userId;
+
     return (
       <KeyboardAwareScrollView enableOnAndroid>
-        <Header {...this.props} title="Pesan" />
+        <Header {...this.props} title={`Pesan - ${friendName}`} />
         <Content style={{ padding: 10 }}>
           {!this.state.isDataFetched ? (
             <Loading />
           ) : (
             <Grid>
-              <Row style={{ height: height * 0.7 }}>
+              <Row style={{ height: height * 0.6 }}>
                 <ScrollView>
                   {this.state.dataMessages.length > 0 ? (
                     this.state.dataMessages.map((d, i) => {
-                      if (d.id_penerima === idDiff) {
+                      if (d.id_pengirim === idDiff) {
                         return (
-                          <Text key={i} style={{ textAlign: 'left', marginBottom: 15 }}>
-                            {d.pesan}
-                          </Text>
+                          <View key={i} style={styles.senderBox}>
+                            <Text style={styles.senderText}>{d.pesan}</Text>
+                          </View>
                         );
                       } else {
                         return (
-                          <Text key={i} style={{ textAlign: 'right', marginBottom: 15 }}>
-                            {d.pesan}
-                          </Text>
+                          <View key={i} style={styles.receiverBox}>
+                            <Text style={styles.receiverText}>{d.pesan}</Text>
+                          </View>
                         );
                       }
                     })
@@ -177,7 +215,7 @@ class MessageDetailScreen extends Component {
                   )}
                 </ScrollView>
               </Row>
-              <Row style={{ height: height * 0.2, marginBottom: 25 }}>
+              <Row style={{ height: height * 0.2, marginBottom: this.state.margin }}>
                 <Form>
                   <Item
                     floatingLabel
@@ -211,8 +249,35 @@ class MessageDetailScreen extends Component {
 }
 
 const styles = StyleSheet.create({
+  senderBox: {
+    backgroundColor: '#E4EEE9',
+    borderRadius: 10,
+    alignSelf: 'flex-start',
+    padding: 5,
+    margin: 10,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  senderText: {
+    textAlign: 'left',
+    marginBottom: 15,
+  },
+  receiverBox: {
+    backgroundColor: '#E4EEE9',
+    borderRadius: 10,
+    alignSelf: 'flex-end',
+    padding: 5,
+    margin: 10,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  receiverText: {
+    textAlign: 'right',
+    marginBottom: 15,
+  },
   errorBox: {
     borderBottomWidth: 0,
+    marginBottom: 5,
   },
   errorMessage: {
     fontSize: 12,
