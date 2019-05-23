@@ -48,7 +48,7 @@ class DiscussionScreen extends Component {
         });
       })
       .catch(error => {
-        console.error("Error getting discussion's data \n", error);
+        console.warn("Error getting discussion's data \n", error);
       });
   };
 
@@ -72,7 +72,7 @@ class DiscussionScreen extends Component {
           this.getDataDiscussion();
         })
         .catch(error => {
-          console.error('Error adding document: ', error);
+          console.warn('Error adding document: ', error);
         });
     } else {
       this.setState({

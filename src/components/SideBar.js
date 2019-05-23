@@ -40,11 +40,11 @@ class SideBar extends Component {
         .signOut()
         .then(() => {
           AsyncStorage.multiRemove(user, error => {
-            error && console.error(error);
+            error && console.warn(error);
           });
           this.props.resetUserStatus();
         })
-        .catch(error => console.error('Error while perform logout \n', error));
+        .catch(error => console.warn('Error while perform logout \n', error));
     } else {
       if (route === urls.messages) {
         this.props.nav.navigation.navigate(urls.messages, {

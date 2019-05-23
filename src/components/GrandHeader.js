@@ -59,7 +59,7 @@ class GrandHeader extends Component {
         });
       })
       .catch(error => {
-        console.error("Error searching notification's data \n", error);
+        console.warn("Error searching notification's data \n", error);
       });
   };
 

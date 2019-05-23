@@ -49,7 +49,7 @@ class OrderHistoryScreen extends Component {
         });
       })
       .catch(error => {
-        console.error("Error getting order history's data \n", error);
+        console.warn("Error getting order history's data \n", error);
       });
   };
 

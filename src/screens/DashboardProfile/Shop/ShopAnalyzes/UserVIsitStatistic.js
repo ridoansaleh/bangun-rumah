@@ -119,7 +119,7 @@ class UserVisitStatistic extends Component {
         });
       })
       .catch(error => {
-        console.error("Error getting visiting's data \n", error);
+        console.warn("Error getting visiting's data \n", error);
       });
   };
 

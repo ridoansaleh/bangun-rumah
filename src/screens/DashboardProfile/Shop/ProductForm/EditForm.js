@@ -94,7 +94,7 @@ class EditForm extends Component {
         }
       })
       .catch(error => {
-        console.error(`Error getting product with id ${id} \n`, error);
+        console.warn(`Error getting product with id ${id} \n`, error);
       });
   };
 
@@ -233,11 +233,11 @@ class EditForm extends Component {
             }
           })
           .catch(error => {
-            console.error(`Error searching product with id ${this.props.productId} \n`, error);
+            console.warn(`Error searching product with id ${this.props.productId} \n`, error);
           });
       })
       .catch(error => {
-        console.error('Error deleting image \n', error);
+        console.warn('Error deleting image \n', error);
       });
   };
 
@@ -267,7 +267,7 @@ class EditForm extends Component {
             }
           })
           .catch(error => {
-            console.error(`Error searching product with id ${this.props.productId} \n`, error);
+            console.warn(`Error searching product with id ${this.props.productId} \n`, error);
           });
       }
     );
@@ -312,7 +312,7 @@ class EditForm extends Component {
         );
       }
     } catch (e) {
-      console.error(e);
+      console.warn(e);
     }
   };
 
@@ -346,7 +346,7 @@ class EditForm extends Component {
         }
       })
       .catch(error => {
-        console.error(`Error searching product with id ${this.props.productId} \n`, error);
+        console.warn(`Error searching product with id ${this.props.productId} \n`, error);
       });
   };
 

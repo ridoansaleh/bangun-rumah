@@ -66,11 +66,11 @@ const Authentication = Wrapped => {
               },
             });
           } else {
-            console.error('No such document!');
+            console.warn('No such document!');
           }
         })
         .catch(error => {
-          console.error('Error getting profil data \n', error);
+          console.warn('Error getting profil data \n', error);
         });
     };
 

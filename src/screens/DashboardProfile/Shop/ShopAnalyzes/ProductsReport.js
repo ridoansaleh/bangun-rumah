@@ -97,7 +97,7 @@ class ProductsReport extends Component {
         }
       })
       .catch(error => {
-        console.error('Error getting shop products data \n', error);
+        console.warn('Error getting shop products data \n', error);
       });
   };
 

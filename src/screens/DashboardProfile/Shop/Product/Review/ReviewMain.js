@@ -55,7 +55,7 @@ class ReviewScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error getting review's data \n", error);
+        console.warn("Error getting review's data \n", error);
       });
   };
 
@@ -96,7 +96,7 @@ class ReviewScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error searching review's data \n", error);
+        console.warn("Error searching review's data \n", error);
       });
   };
 
@@ -126,7 +126,7 @@ class ReviewScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error searching pemesanan's data \n", error);
+        console.warn("Error searching pemesanan's data \n", error);
       });
   };
 
@@ -179,7 +179,7 @@ class ReviewScreen extends Component {
           this.getDataReviews();
         })
         .catch(error => {
-          console.error('Error adding document: ', error);
+          console.warn('Error adding document: ', error);
         });
     } else {
       this.setState({

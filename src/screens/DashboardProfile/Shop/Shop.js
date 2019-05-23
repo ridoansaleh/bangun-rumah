@@ -59,7 +59,7 @@ class Shop extends Component {
         }
       })
       .catch(error => {
-        console.error("Error getting pemesanan's data \n", error);
+        console.warn("Error getting pemesanan's data \n", error);
       });
   };
 
@@ -72,7 +72,7 @@ class Shop extends Component {
         this.props.getShopProducts([this.props.shop], true);
       })
       .catch(error => {
-        console.error('Error deleting product \n', error);
+        console.warn('Error deleting product \n', error);
       });
   };
 

@@ -58,7 +58,7 @@ class DiscussionListScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error searching discussion's data \n", error);
+        console.warn("Error searching discussion's data \n", error);
       });
   };
 

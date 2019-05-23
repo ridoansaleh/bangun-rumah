@@ -101,7 +101,7 @@ class CartModal extends Component {
                   );
                 })
                 .catch(error => {
-                  console.error('Error adding data to keranjang \n', error);
+                  console.warn('Error adding data to keranjang \n', error);
                 });
             }
           );
@@ -114,7 +114,7 @@ class CartModal extends Component {
         }
       })
       .catch(error => {
-        console.error("Error searching promo's data \n", error);
+        console.warn("Error searching promo's data \n", error);
       });
   };
 
@@ -149,7 +149,7 @@ class CartModal extends Component {
           );
         })
         .catch(error => {
-          console.error('Error adding data to keranjang \n', error);
+          console.warn('Error adding data to keranjang \n', error);
         });
     }
   };

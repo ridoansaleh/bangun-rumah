@@ -132,7 +132,7 @@ class NewForm extends Component {
         });
       })
       .catch(error => {
-        console.error('Error deleting image from storage \n', error);
+        console.warn('Error deleting image from storage \n', error);
       });
   };
 
@@ -233,7 +233,7 @@ class NewForm extends Component {
         }, 1500);
       })
       .catch(error => {
-        console.error('Error saving product \n', error);
+        console.warn('Error saving product \n', error);
       });
   };
 

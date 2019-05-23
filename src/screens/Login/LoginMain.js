@@ -138,7 +138,7 @@ class LoginView extends Component {
         this.handleRouteChange(urls.home);
       })
       .catch(error => {
-        console.error('Error saving user logs \n', error);
+        console.warn('Error saving user logs \n', error);
       });
   };
 
@@ -169,11 +169,11 @@ class LoginView extends Component {
                     }
                   );
                 } else {
-                  console.error('No such document!');
+                  console.warn('No such document!');
                 }
               })
               .catch(error => {
-                console.error('Error getting document:', error);
+                console.warn('Error getting document:', error);
               });
           }
         });

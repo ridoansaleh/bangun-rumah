@@ -80,7 +80,7 @@ class MessageDetailScreen extends Component {
         this.getMessageFromReceiver(data, user2);
       })
       .catch(error => {
-        console.error("Error searching messages's data \n", error);
+        console.warn("Error searching messages's data \n", error);
       });
   };
 
@@ -118,7 +118,7 @@ class MessageDetailScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error searching messages's data \n", error);
+        console.warn("Error searching messages's data \n", error);
       });
   };
 
@@ -167,7 +167,7 @@ class MessageDetailScreen extends Component {
         });
       })
       .catch(error => {
-        console.error('Error sending message \n', error);
+        console.warn('Error sending message \n', error);
       });
   };
 

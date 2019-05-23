@@ -45,7 +45,7 @@ class ProductList extends Component {
         });
       })
       .catch(error => {
-        console.error("Error getting product's collection \n", error);
+        console.warn("Error getting product's collection \n", error);
       });
   };
 

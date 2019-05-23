@@ -49,7 +49,7 @@ class ShoppingCartScreen extends Component {
         });
       })
       .catch(error => {
-        console.error("Error getting cart's data \n", error);
+        console.warn("Error getting cart's data \n", error);
       });
   };
 
@@ -200,7 +200,7 @@ class ShoppingCartScreen extends Component {
         console.log('Document successfully deleted!');
       })
       .catch(function(error) {
-        console.error('Error removing document \n', error);
+        console.warn('Error removing document \n', error);
       });
   };
 

@@ -50,7 +50,7 @@ class LogScreen extends Component {
         });
       })
       .catch(error => {
-        console.error('Error getting user logs \n', error);
+        console.warn('Error getting user logs \n', error);
       });
   };
 

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, TouchableHighlight } from 'react-native';
+import { Alert, TouchableHighlight, Switch } from 'react-native';
 import { View, List, ListItem, Text } from 'native-base';
+import { Row, Grid, Col } from 'react-native-easy-grid';
 import { db } from '../../../../firebase.config';
 import { urls } from '../../../constant';
 
@@ -14,6 +15,8 @@ class ToolBar extends Component {
 
   state = {
     shopStatus: this.props.shop.status,
+    isShopActive: true,
+    shopLabel: 'Non-aktifkan Toko',
   };
 
   handleTouchItem = (url, param) => {
@@ -29,12 +32,16 @@ class ToolBar extends Component {
           docRef.update({
             status: status === 'Aktif' ? 'Tidak Aktif' : 'Aktif',
           });
+          this.setState(prevState => ({
+            isShopActive: !prevState.isShopActive,
+            shopLabel: prevState.isShopActive ? 'Aktifkan Toko' : 'Non-aktifkan Toko',
+          }));
         } else {
-          console.log('No such document!');
+          console.warn('No such document!');
         }
       })
-      .catch(function(error) {
-        console.log(`Error updating toko's status with id ${id} \n`, error);
+      .catch(error => {
+        console.warn(`Error updating toko's status with id ${id} \n`, error);
       });
   };
 
@@ -68,7 +75,7 @@ class ToolBar extends Component {
         }
       })
       .catch(error => {
-        console.error('Error searching orders data based on this shop_id \n', error);
+        console.warn('Error searching orders data based on this shop_id \n', error);
       });
   };
 
@@ -81,7 +88,7 @@ class ToolBar extends Component {
         this.deleteVisitStats(id);
       })
       .catch(function(error) {
-        console.error('Error deleting shop \n', error);
+        console.warn('Error deleting shop \n', error);
       });
   };
 
@@ -107,7 +114,7 @@ class ToolBar extends Component {
                 this.props.nav.navigation.navigate(urls.profile);
               })
               .catch(function(error) {
-                console.error('Error deleting visiting data stats \n', error);
+                console.warn('Error deleting visiting data stats \n', error);
               });
           }
         } else {
@@ -115,12 +122,12 @@ class ToolBar extends Component {
         }
       })
       .catch(error => {
-        console.error('Error searching visiting data stats \n', error);
+        console.warn('Error searching visiting data stats \n', error);
       });
   };
 
   render() {
-    const { shopStatus } = this.state;
+    const { shopStatus, isShopActive, shopLabel } = this.state;
     const { shopId } = this.props;
     return (
       <View>
@@ -144,9 +151,26 @@ class ToolBar extends Component {
             </TouchableHighlight>
           </ListItem>
           <ListItem>
-            <TouchableHighlight onPress={() => this.toggleShopStatus(shopId, shopStatus)}>
-              <Text>{shopStatus === 'Aktif' ? 'Non-aktifkan Toko' : 'Aktifkan Toko'}</Text>
-            </TouchableHighlight>
+            <Grid>
+              <Row>
+                <Col
+                  size={4}
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                  }}>
+                  <Text style={{ textAlign: 'left' }}>{shopLabel}</Text>
+                </Col>
+                <Col size={1}>
+                  <Switch
+                    value={isShopActive}
+                    onValueChange={() => this.toggleShopStatus(shopId, shopStatus)}
+                  />
+                </Col>
+              </Row>
+            </Grid>
           </ListItem>
           <ListItem>
             <TouchableHighlight onPress={() => this.deleteShop(shopId)}>

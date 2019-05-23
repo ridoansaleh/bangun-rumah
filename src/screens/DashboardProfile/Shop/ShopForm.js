@@ -99,7 +99,7 @@ class ShopForm extends Component {
         }, 1000);
       })
       .catch(error => {
-        console.error('Error adding document: ', error);
+        console.warn('Error adding document: ', error);
       });
   };
 

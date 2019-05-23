@@ -73,7 +73,7 @@ class ProductMainScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error getting shop's data \n", error);
+        console.warn("Error getting shop's data \n", error);
       });
   };
 
@@ -156,7 +156,7 @@ class ProductMainScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error searching cart's data \n", error);
+        console.warn("Error searching cart's data \n", error);
       });
   };
 
