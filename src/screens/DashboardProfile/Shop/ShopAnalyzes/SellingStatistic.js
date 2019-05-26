@@ -6,7 +6,7 @@ import { Grid, Row } from 'react-native-easy-grid';
 import { LineChart } from 'react-native-chart-kit';
 import dayjs from 'dayjs';
 import { db } from '../../../../../firebase.config';
-import { getMonthName, width, height } from '../../../../utils';
+import { getMonthName, width, height, convertToDate } from '../../../../utils';
 
 class SellingStatistic extends Component {
   static propTypes = {
@@ -20,10 +20,10 @@ class SellingStatistic extends Component {
   };
 
   componentDidMount() {
-    this.getUserVisitStats();
+    this.getSellingStats();
   }
 
-  getUserVisitStats = () => {
+  getSellingStats = () => {
     let data = [];
     const thisYear = dayjs().year();
     const thisMonth = dayjs().month();
@@ -34,21 +34,21 @@ class SellingStatistic extends Component {
     const sixMonthAgoMonth = dayjs(sixMonthAgoFull).month() + 1;
     const yearOfSixMonthAgo = dayjs(sixMonthAgoFull).year();
     let isSameYear = false;
-    let sixLastMonths = [];
+    let lastSixMonth = [];
     const isMonthShort = true;
     if (yearOfSixMonthAgo === thisYear) {
       isSameYear = true;
     }
     if (isSameYear) {
       for (let i = 0; i <= thisMonth; i++) {
-        sixLastMonths.push(getMonthName(i, isMonthShort));
+        lastSixMonth.push(getMonthName(i, isMonthShort));
       }
     } else {
       for (let j = sixMonthAgoMonth; j <= 11; j++) {
-        sixLastMonths.push(getMonthName(j, isMonthShort));
+        lastSixMonth.push(getMonthName(j, isMonthShort));
       }
       for (let k = 0; k <= thisMonth; k++) {
-        sixLastMonths.push(getMonthName(k, isMonthShort));
+        lastSixMonth.push(getMonthName(k, isMonthShort));
       }
     }
     db.collection('pemesanan')
@@ -62,22 +62,22 @@ class SellingStatistic extends Component {
             ...doc.data(),
           });
         });
-        let fiteredData = data;
+        let filteredData = data;
         if (isSameYear) {
-          fiteredData = data.map(d => {
+          filteredData = data.map(d => {
             if (dayjs(d).year() === dayjs().year()) {
               return d;
             }
           });
         } else {
-          let lastYearData = fiteredData
+          let lastYearData = filteredData
             .map(d => {
               if (dayjs(d.waktu_pemesanan).year() === lastYear) {
                 return d;
               }
             })
             .filter(r => r !== undefined);
-          let thisYearData = fiteredData
+          let thisYearData = filteredData
             .map(d => {
               if (dayjs(d.waktu_pemesanan).year() === dayjs().year()) {
                 return d;
@@ -87,46 +87,44 @@ class SellingStatistic extends Component {
           for (let l = sixMonthAgoMonth; l <= 11; l++) {
             lastYearData.map(d => {
               if (dayjs(d).month() === l) {
-                fiteredData.push(d);
+                filteredData.push(d);
               }
             });
           }
           for (let m = 0; m <= thisMonth; m++) {
             thisYearData.map(d => {
               if (dayjs(d).month() === m) {
-                fiteredData.push(d);
+                filteredData.push(d);
               }
             });
           }
         }
-        let month1 = fiteredData.filter(
-          d => sixLastMonths[0] === dayjs(d.waktu_pemesanan).format('MMM')
-        ).length;
-        let month2 = fiteredData.filter(
-          d => sixLastMonths[1] === dayjs(d.waktu_pemesanan).format('MMM')
-        ).length;
-        let month3 = fiteredData.filter(
-          d => sixLastMonths[2] === dayjs(d.waktu_pemesanan).format('MMM')
-        ).length;
-        let month4 = fiteredData.filter(
-          d => sixLastMonths[3] === dayjs(d.waktu_pemesanan).format('MMM')
-        ).length;
-        let month5 = fiteredData.filter(
-          d => sixLastMonths[4] === dayjs(d.waktu_pemesanan).format('MMM')
-        ).length;
-        let month6 = fiteredData.filter(
-          d => sixLastMonths[5] === dayjs(d.waktu_pemesanan).format('MMM')
-        ).length;
+        let month1 = this.countMonthSellingStat(filteredData, lastSixMonth, 0);
+        let month2 = this.countMonthSellingStat(filteredData, lastSixMonth, 1);
+        let month3 = this.countMonthSellingStat(filteredData, lastSixMonth, 2);
+        let month4 = this.countMonthSellingStat(filteredData, lastSixMonth, 3);
+        let month5 = this.countMonthSellingStat(filteredData, lastSixMonth, 4);
+        let month6 = this.countMonthSellingStat(filteredData, lastSixMonth, 5);
         let result = [month1, month2, month3, month4, month5, month6];
         this.setState({
           isDataFetched: true,
-          months: sixLastMonths,
+          months: lastSixMonth,
           dataOrders: result,
         });
       })
       .catch(error => {
         console.warn("Error getting visiting's data \n", error);
       });
+  };
+
+  countMonthSellingStat = (data, lastSixMonth, month) => {
+    const totalSell = data.filter(d => {
+      let date = convertToDate(d.waktu_pemesanan);
+      if (lastSixMonth[month] === dayjs(date).format('MMM')) {
+        return d;
+      }
+    }).length;
+    return totalSell;
   };
 
   render() {

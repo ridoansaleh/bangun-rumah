@@ -96,7 +96,15 @@ class CartModal extends Component {
                   Alert.alert(
                     'Info',
                     'Berhasil menambahkan produk ke Keranjang',
-                    [{ text: 'OK', onPress: () => console.log('Close alert dialog') }],
+                    [
+                      {
+                        text: 'OK',
+                        onPress: () => {
+                          console.log('Close alert dialog');
+                          this.props.closeModal();
+                        },
+                      },
+                    ],
                     { cancelable: true }
                   );
                 })
