@@ -44,7 +44,7 @@ class ShopOrderScreen extends Component {
         });
       })
       .catch(error => {
-        console.error("Error getting order history's data \n", error);
+        console.warn("Error getting order history's data \n", error);
       });
   };
 
@@ -101,7 +101,7 @@ class ShopOrderScreen extends Component {
         console.log('Successfully send a notification');
       })
       .catch(error => {
-        console.error('Error send a notification \n', error);
+        console.warn('Error send a notification \n', error);
       });
   };
 

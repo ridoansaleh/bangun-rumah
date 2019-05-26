@@ -96,12 +96,20 @@ class CartModal extends Component {
                   Alert.alert(
                     'Info',
                     'Berhasil menambahkan produk ke Keranjang',
-                    [{ text: 'OK', onPress: () => console.log('Close alert dialog') }],
+                    [
+                      {
+                        text: 'OK',
+                        onPress: () => {
+                          console.log('Close alert dialog');
+                          this.props.closeModal();
+                        },
+                      },
+                    ],
                     { cancelable: true }
                   );
                 })
                 .catch(error => {
-                  console.error('Error adding data to keranjang \n', error);
+                  console.warn('Error adding data to keranjang \n', error);
                 });
             }
           );
@@ -114,7 +122,7 @@ class CartModal extends Component {
         }
       })
       .catch(error => {
-        console.error("Error searching promo's data \n", error);
+        console.warn("Error searching promo's data \n", error);
       });
   };
 
@@ -149,7 +157,7 @@ class CartModal extends Component {
           );
         })
         .catch(error => {
-          console.error('Error adding data to keranjang \n', error);
+          console.warn('Error adding data to keranjang \n', error);
         });
     }
   };

@@ -154,7 +154,7 @@ class OrderMainScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error searching promo's data \n", error);
+        console.warn("Error searching promo's data \n", error);
       });
   };
 
@@ -199,7 +199,7 @@ class OrderMainScreen extends Component {
         this.sendNotification();
       })
       .catch(error => {
-        console.error('Error making an order \n', error);
+        console.warn('Error making an order \n', error);
       });
   };
 
@@ -218,7 +218,7 @@ class OrderMainScreen extends Component {
         console.log('Successfully send a notification');
       })
       .catch(error => {
-        console.error('Error send a notification \n', error);
+        console.warn('Error send a notification \n', error);
       });
   };
 
@@ -238,7 +238,7 @@ class OrderMainScreen extends Component {
         }
       })
       .catch(error => {
-        console.error(`Error searching shop with id ${data[0].id_toko} \n`, error);
+        console.warn(`Error searching shop with id ${data[0].id_toko} \n`, error);
       });
   };
 
@@ -258,7 +258,7 @@ class OrderMainScreen extends Component {
         console.log('Document successfully deleted!');
       })
       .catch(function(error) {
-        console.error('Error removing document \n', error);
+        console.warn('Error removing document \n', error);
       });
   };
 

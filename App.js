@@ -29,7 +29,7 @@ class App extends Component {
         isFontsLoaded: true,
       });
     } catch (error) {
-      console.error(error);
+      console.warn(error);
     }
   };
 

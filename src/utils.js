@@ -126,7 +126,7 @@ const uploadImageAsync = async uri => {
       resolve(xhr.response);
     };
     xhr.onerror = function(e) {
-      console.error(e);
+      console.warn(e);
       reject(new TypeError('Network request failed'));
     };
     xhr.responseType = 'blob';

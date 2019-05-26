@@ -151,7 +151,7 @@ class ShopEditScreen extends Component {
         }
       })
       .catch(error => {
-        console.error(`Error searching shop with id ${shopId} \n`, error);
+        console.warn(`Error searching shop with id ${shopId} \n`, error);
       });
   };
 

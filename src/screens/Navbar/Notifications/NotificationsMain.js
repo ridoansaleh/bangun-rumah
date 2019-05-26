@@ -47,7 +47,7 @@ class NotificationScreen extends Component {
         });
       })
       .catch(error => {
-        console.error("Error searching notification's data \n", error);
+        console.warn("Error searching notification's data \n", error);
       });
   };
 
@@ -67,7 +67,7 @@ class NotificationScreen extends Component {
         }
       })
       .catch(error => {
-        console.error(`Error searching notification with product_id ${data.id_produk} \n`, error);
+        console.warn(`Error searching notification with product_id ${data.id_produk} \n`, error);
       });
   };
 
@@ -92,7 +92,7 @@ class NotificationScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error getting shop's data \n", error);
+        console.warn("Error getting shop's data \n", error);
       });
   };
 
@@ -120,7 +120,7 @@ class NotificationScreen extends Component {
         }
       })
       .catch(error => {
-        console.error(`Error searching product in a Shop with id ${productId} \n`, error);
+        console.warn(`Error searching product in a Shop with id ${productId} \n`, error);
       });
   };
 

@@ -19,16 +19,32 @@ class ShoppingCartScreen extends Component {
     user: PropTypes.object,
   };
 
-  state = {
-    dataCart: [],
-    isDataFetched: false,
-    selectedProductsID: [],
-    selectedCartID: [],
-    isSelectAll: false,
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      dataCart: [],
+      isDataFetched: false,
+      selectedProductsID: [],
+      selectedCartID: [],
+      isSelectAll: false,
+    };
+
+    this.checkProduct = this.checkProduct.bind(this);
+    this.orderProducts = this.orderProducts.bind(this);
+  }
 
   componentDidMount() {
+    const { navigation } = this.props.nav;
     this.getCartData();
+    this.didFocusSubscription = navigation.addListener('didFocus', payload => {
+      this.setState({ isDataFetched: false });
+      this.getCartData();
+    });
+  }
+
+  componentWillUnmount() {
+    this.didFocusSubscription.remove();
   }
 
   getCartData = () => {
@@ -49,7 +65,7 @@ class ShoppingCartScreen extends Component {
         });
       })
       .catch(error => {
-        console.error("Error getting cart's data \n", error);
+        console.warn("Error getting cart's data \n", error);
       });
   };
 
@@ -138,8 +154,8 @@ class ShoppingCartScreen extends Component {
     }
   };
 
-  orderProducts = () => {
-    const { selectedProductsID, selectedCartID, dataCart } = this.state;
+  orderProducts = selectedProductsID => {
+    const { selectedCartID, dataCart } = this.state;
     if (selectedProductsID.length > 0) {
       if (selectedProductsID.length > 3) {
         Alert.alert(
@@ -152,22 +168,20 @@ class ShoppingCartScreen extends Component {
         this.setState({
           isDataFetched: false,
         });
-        let tempProduct = dataCart.map(d => {
+        let tempProduct = dataCart.filter(d => {
           if (selectedProductsID.indexOf(d.id_produk) > -1) {
             return d;
           }
         });
-        let tempProductFinal = tempProduct.filter(d => d !== undefined);
-        let data = tempProductFinal.map(d => {
-          if (tempProductFinal[0].toko === d.toko) {
+        let data = tempProduct.filter(d => {
+          if (tempProduct[0].toko === d.toko) {
             return d;
           }
         });
-        let dataFinal = data.filter(d => d !== undefined);
         this.setState({
           isDataFetched: true,
         });
-        if (tempProductFinal.length === dataFinal.length) {
+        if (tempProduct.length === data.length) {
           this.props.nav.navigation.navigate(urls.order, {
             products: selectedProductsID,
             carts: selectedCartID,
@@ -188,7 +202,6 @@ class ShoppingCartScreen extends Component {
         [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
         { cancelable: true }
       );
-      console.log('Nothing to order');
     }
   };
 
@@ -200,7 +213,7 @@ class ShoppingCartScreen extends Component {
         console.log('Document successfully deleted!');
       })
       .catch(function(error) {
-        console.error('Error removing document \n', error);
+        console.warn('Error removing document \n', error);
       });
   };
 
@@ -209,7 +222,7 @@ class ShoppingCartScreen extends Component {
   };
 
   render() {
-    const { isDataFetched, dataCart, isSelectAll } = this.state;
+    const { isDataFetched, dataCart, isSelectAll, selectedProductsID } = this.state;
     return (
       <Container>
         <Header
@@ -311,7 +324,7 @@ class ShoppingCartScreen extends Component {
                     bordered
                     dark
                     style={{ marginTop: 10 }}
-                    onPress={() => this.orderProducts()}>
+                    onPress={() => this.orderProducts(selectedProductsID)}>
                     <Text>Pesan</Text>
                   </Button>
                 </Col>

@@ -112,7 +112,7 @@ class RegisterView extends Component {
             console.log('Document successfully written!');
           })
           .catch(error => {
-            console.error('Error writing document: ', error);
+            console.warn('Error writing document: ', error);
           });
         this.setState({ ...initialState });
         this.showToastMessage('Kamu berhasil signup, silahkan login!');

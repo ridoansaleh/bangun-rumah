@@ -18,6 +18,13 @@ class ProductList extends Component {
 
   componentDidMount() {
     this.getProducts();
+    this.didFocusSubscription = this.props.navigation.addListener('didFocus', payload => {
+      this.getProducts();
+    });
+  }
+
+  componentWillUnmount() {
+    this.didFocusSubscription.remove();
   }
 
   getProducts = () => {
@@ -38,7 +45,7 @@ class ProductList extends Component {
         });
       })
       .catch(error => {
-        console.error("Error getting product's collection \n", error);
+        console.warn("Error getting product's collection \n", error);
       });
   };
 

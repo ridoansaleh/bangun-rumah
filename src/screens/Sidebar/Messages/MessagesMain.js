@@ -67,7 +67,7 @@ class MessageScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error searching messages's data \n", error);
+        console.warn("Error searching messages's data \n", error);
       });
   };
 

@@ -58,7 +58,7 @@ class ReviewListScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error searching review's data \n", error);
+        console.warn("Error searching review's data \n", error);
       });
   };
 

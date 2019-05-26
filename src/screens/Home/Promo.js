@@ -31,7 +31,7 @@ class Promo extends Component {
         });
       })
       .catch(error => {
-        console.error("Error getting promo's collection \n", error);
+        console.warn("Error getting promo's collection \n", error);
       });
   };
 

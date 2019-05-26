@@ -43,7 +43,7 @@ class ShopScreen extends Component {
           }
         })
         .catch(error => {
-          console.error('Error getting shop document \n', error);
+          console.warn('Error getting shop document \n', error);
         });
     } else {
       this.checkUserHaveShop();
@@ -78,7 +78,7 @@ class ShopScreen extends Component {
         }
       })
       .catch(error => {
-        console.error("Error getting shop's data \n", error);
+        console.warn("Error getting shop's data \n", error);
       });
   };
 
@@ -107,7 +107,7 @@ class ShopScreen extends Component {
         }
       })
       .catch(error => {
-        console.error('Error getting shop products data \n', error);
+        console.warn('Error getting shop products data \n', error);
       });
   };
 
@@ -129,7 +129,7 @@ class ShopScreen extends Component {
         });
       })
       .catch(error => {
-        console.error('Error adding visiting data \n', error);
+        console.warn('Error adding visiting data \n', error);
       });
   };
 
