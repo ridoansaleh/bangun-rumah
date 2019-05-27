@@ -191,15 +191,16 @@ class LoginView extends Component {
               this.showDialogMessage(
                 'Tidak Valid',
                 'Email atau password Anda salah. Ingin mengatur ulang password ?',
-                'Lupa password',
-                'ResetPassword'
+                'Reset Password',
+                urls.change_password,
+                'login'
               );
             } else {
               this.showDialogMessage(
                 'Error',
                 'Akun ini tidak ada. Apakah Anda ingin membuat akun baru ?',
                 'Daftar',
-                'Register'
+                urls.register
               );
             }
           }
@@ -207,7 +208,7 @@ class LoginView extends Component {
       });
   };
 
-  showDialogMessage = (title, message, action, url) => {
+  showDialogMessage = (title, message, action, url, param) => {
     Alert.alert(
       title,
       message,
@@ -221,7 +222,7 @@ class LoginView extends Component {
         {
           text: action,
           onPress: () => {
-            return this.props.navigation.navigate(url);
+            return this.handleRouteChange(url, param);
           },
         },
       ],

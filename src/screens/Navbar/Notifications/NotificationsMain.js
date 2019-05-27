@@ -23,9 +23,17 @@ class NotificationScreen extends Component {
   };
 
   componentDidMount() {
+    const { nav, user } = this.props;
     if (this.props.isLogin) {
-      this.getNotifications(this.props.user.id);
+      this.getNotifications(user.id);
+      this.didFocusSubscription = nav.navigation.addListener('didFocus', payload => {
+        this.getNotifications(user.id);
+      });
     }
+  }
+
+  componentWillUnmount() {
+    this.didFocusSubscription.remove();
   }
 
   getNotifications = id => {
