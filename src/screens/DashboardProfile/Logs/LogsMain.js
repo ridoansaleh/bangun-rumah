@@ -5,6 +5,7 @@ import Authentication from '../../../components/Authentication';
 import Header from '../../../components/PlainHeader';
 import Loading from '../../../components/Loading';
 import { db } from '../../../../firebase.config';
+import { convertToDate } from '../../../utils';
 
 class LogScreen extends Component {
   static propTypes = {
@@ -28,18 +29,25 @@ class LogScreen extends Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
+          const resp = doc.data();
           data.push({
             id_logs: doc.id,
-            ...doc.data(),
+            waktu_login: convertToDate(resp.terakhir_login, 'en'),
+            ...resp,
           });
         });
         let result = [];
         if (data.length > 0) {
-          result = data.map(d => {
+          let dataSorted = data.sort((a, b) => {
+            let c = new Date(a.waktu_login);
+            let d = new Date(b.waktu_login);
+            return d - c;
+          });
+          result = dataSorted.map(d => {
             let original = d.perangkat.split('-');
             let perangkat = original[1].split('"').indexOf('android') > -1 ? 'Android' : 'iOS';
             return {
-              title: `Terakhir login pada ${d.terakhir_login}`,
+              title: `Terakhir login pada ${convertToDate(d.terakhir_login)}`,
               content: `Perangkat : ${perangkat} \nLokasi: ${d.lokasi}`,
             };
           });

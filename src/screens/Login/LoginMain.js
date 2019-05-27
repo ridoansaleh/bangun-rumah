@@ -15,7 +15,6 @@ import {
   Spinner,
 } from 'native-base';
 import { Grid, Col } from 'react-native-easy-grid';
-import dayjs from 'dayjs';
 import Header from '../../components/PlainHeader';
 import loginUser from '../../../assets/login-user.jpg';
 import { auth as authenticate, db } from '../../../firebase.config';
@@ -44,7 +43,7 @@ class LoginView extends Component {
 
   checkUserPermission = () => {
     let state = {
-      time: dayjs().format('DD MMMM YYYY HH:mm:ss'),
+      time: new Date(),
       device: `${Constants.deviceName} - ${JSON.stringify(Constants.platform)}`,
     };
     if (Platform.OS === 'android' && !Constants.isDevice) {
