@@ -14,6 +14,9 @@ import { db } from '../../../../firebase.config';
 import { urls } from '../../../constant';
 import { convertToCurrency, convertToDate, width, height } from '../../../utils';
 
+const urlLogo =
+  'https://firebasestorage.googleapis.com/v0/b/golek-6378b.appspot.com/o/Screenshot%20from%202019-05-27%2022-54-41.png?alt=media&token=b98776e1-f281-46f8-9e18-b8759a2be520';
+
 class OrderHistoryScreen extends Component {
   static propTypes = {
     nav: PropTypes.object,
@@ -111,7 +114,7 @@ class OrderHistoryScreen extends Component {
         <div class="wrapper">
           <div class="top-title">
             <div class="top-title-right">
-              <img id="my-icon" src="https://images.unsplash.com/photo-1448227922836-6d05b3f8b663?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" height="42" width="42" />
+              <img id="my-icon" src=${urlLogo} height="42" width="42" />
             </div>
             <div class="top-title-left">
               <b>Bukti Pemesanan Barang - ${data.toko}</b>

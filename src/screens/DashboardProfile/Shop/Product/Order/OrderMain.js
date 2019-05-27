@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet, TouchableHighlight, Image, Picker, TextInput } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableHighlight,
+  Image,
+  Picker,
+  TextInput,
+  Keyboard,
+} from 'react-native';
 import { Content, Text, Button, Icon, Form, Input, Item } from 'native-base';
 import { Grid, Row, Col } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -37,11 +45,31 @@ class OrderMainScreen extends Component {
     address: this.props.user.alamat,
     isAddressWidgetShown: false,
     receiverId: '',
+    margin: 0,
   };
 
   componentDidMount() {
     this.getProducts(this.state.productIds[0]);
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
   }
+
+  componentWillUnmount() {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  _keyboardDidShow = () => {
+    this.setState({
+      margin: height * 0.2,
+    });
+  };
+
+  _keyboardDidHide = () => {
+    this.setState({
+      margin: 0,
+    });
+  };
 
   getProducts = id => {
     const { productIds, step, data } = this.state;
@@ -311,7 +339,7 @@ class OrderMainScreen extends Component {
           )}
           {!isDataFetched && !isOrderSucceed && <Loading />}
           {isDataFetched && !isOrderSucceed && (
-            <View>
+            <View style={{ marginBottom: this.state.margin }}>
               <Grid style={styles.userDetail}>
                 <Row style={{ marginBottom: 15 }}>
                   <Col>
